@@ -44,4 +44,4 @@ connection.close()
 connection.close()
 
 # Close the DB connection
-cnx.close()
+#cnx.close()
