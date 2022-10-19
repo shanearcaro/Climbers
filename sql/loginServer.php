@@ -23,7 +23,7 @@ function doLogin($username,$hash)
 
   //If query returns anything other than 1 row, return false
   //This would mean 2 users have the same name or the user does not exist
-  if($response->num_rows >= 0 || $response->num_rows > 1){
+  if($response->num_rows <= 0 || $response->num_rows > 1){
     return false;
   }  
   //If query returns 1 row, check if the hash matches
