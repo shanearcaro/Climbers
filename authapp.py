@@ -55,7 +55,7 @@ def submit(submit, usersubmit, pwsubmit, user, pw):
     prevent_initial_call=True
 )
 def rabbit(submit):
-    proc = subprocess.Popen("php testphp.php", shell=True, stdout=subprocess.PIPE)
+    proc = subprocess.Popen("php rabbitConnector.php chisux abc", shell=True, stdout=subprocess.PIPE)
     response = proc.stdout.read()
     response = response.decode('utf-8')
     return response
