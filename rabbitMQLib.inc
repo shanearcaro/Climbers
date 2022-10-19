@@ -176,7 +176,7 @@ class rabbitMQClient
 		  echo  "unknown uid\n";
 		  return true;
 		}
-    $this->conn_queue->ack($response->getDeliveryTag());
+    	$this->conn_queue->ack($response->getDeliveryTag());
 		$body = $response->getBody();
 		$payload = json_decode($body, true);
 		if (!(isset($payload)))
