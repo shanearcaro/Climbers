@@ -1,0 +1,87 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&display=swap');
+
+* {margin: 0; padding: 0;}
+
+.loginbutton {
+    width: 100%;
+    height: 50px;
+    border-radius: 25px;
+    border: 1px solid rgba(0, 0, 0, 0);
+    background-color: #2E0A0B;
+    color: white; 
+    font-family: 'Outfit', sans-serif;
+    font-weight: 900;
+    font-size: 15px;
+    transition: 150ms ease;
+}
+    .loginbutton:hover {
+        cursor: pointer;
+        filter: brightness(160%);
+        transition: 150ms ease;
+    }
+
+.input {
+    width: 90%;
+    height: 15px;
+    padding: 5%;
+    margin-bottom: 20px;
+    border: 1px solid #acacac;
+    border-radius: 6px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 14px;
+    transition: 50ms ease;
+}
+    .input:focus {border: 1px solid #2E0A0B;}
+
+.label {
+    margin-bottom: 5px;
+    width: 100%;
+    color: #2E0A0B;
+    font-family: 'Manrope', sans-serif;
+    font-size: 14px;
+    font-weight: 900;
+}
+
+.login-area {
+    margin: auto;
+    width: 300px;
+    display: block;
+}
+
+.layout {
+    width: 30%;
+    margin: auto;
+}
+
+.consoleoutput {
+    padding: 7px;
+    height: 75px;
+    font-family: 'Courier New', sans-serif;
+    font-size: 14px;
+    word-wrap: break-word;
+    color: white;
+    background-color: #282C34;
+}
+
+.consoletitlecontainer {
+    font-family: 'Manrope', sans-serif;
+    font-size: 14px;
+    font-weight: 900;
+    color: white;
+    background-color: #21252B;
+}
+
+.consoletitle {
+    border-bottom: 1px solid #505050;
+    padding: 5px 0px 5px 10px;
+    font-size: 12px;
+    width: 30%;
+    background-color: #282C34;
+}
+
+.console {
+    margin-top: 40px;
+    border: 1px solid lightgray;
+    width: 100%;
+}
+
