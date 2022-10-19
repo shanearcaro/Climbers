@@ -1,6 +1,7 @@
 import base64
 from dash import Dash, html, dcc, Input, Output, State
 import mysql.connector
+import subprocess
 
 app = Dash(__name__, update_title=None, suppress_callback_exceptions=True)
 
@@ -24,21 +25,20 @@ def connectDB():
 app.layout = html.Div([
     html.Div([
         html.Img(src=format_img('logo.png'), style={'margin': '30px auto', 'display': 'block'}),
-        html.Div('Username', className='label'),
+        html.Div('Username', className='label', id='hi'),
         dcc.Input('', className='input', id='user'),
         html.Div('Password', className='label'),
-        dcc.Input('', className='input', id='pw'),
+        dcc.Input('', className='input', id='pw', type='password'),
         html.Button('Continue', id='submit', className='loginbutton'),
         html.Div([
             html.Div(html.Div('Console', className='consoletitle'), className='consoletitlecontainer'),
-            html.Div('sample', id='result', className='consoleoutput'),
+            html.Div('Welcome!', id='result', className='consoleoutput'),
         ], className='console')
     ],className='login-area')
 ], className='layout')
 
 @app.callback(
-    Output('result', 'children'),
-    Input('submit', 'n_clicks'),
+    Output('hi', 'children'),
     Input('user', 'n_submit'),
     Input('pw', 'n_submit'),
     State('user', 'value'),
@@ -58,6 +58,17 @@ def submit(submit, usersubmit, pwsubmit, user, pw):
         else:
             return 'Invalid login, try again'
     return 'Unhandled error'
+
+@app.callback(
+    Output('result', 'children'),
+    Input('submit', 'n_clicks'),
+    prevent_initial_call=True
+)
+def rabbit(submit):
+    proc = subprocess.Popen("php testphp.php", shell=True, stdout=subprocess.PIPE)
+    response = proc.stdout.read()
+    return response
+
 
 if __name__ == '__main__':
     app.run_server(host="0.0.0.0", port="8050", debug=True)
