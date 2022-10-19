@@ -4,8 +4,9 @@ require_once('rabbitMQLib.inc');
 
 $client = new rabbitMQClient("testRabbitMQ.ini","testServer");
 
-if($argc != 2){
-    echo "Incorrect number of arguments! Usage: testRabbitMQClient.php <username> <hash>";
+if($argc != 3){
+	echo "Incorrect number of arguments! Usage: testRabbitMQClient.php <username> <hash>".PHP_EOL;
+	exit();
 }
 //Save agruments to variables
 $username = $argv[1];
