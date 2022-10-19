@@ -2,8 +2,10 @@
 <?php
 require_once('../rabbitMQLib.inc');
 
+//Create database connection
 $mydb = new mysqli('127.0.0.1','root','toor1029','IT490');
 
+//Check connection
 if ($mydb->errno != 0)
 {
 	echo "failed to connect to database: ". $mydb->error . PHP_EOL;
@@ -68,4 +70,3 @@ $server = new rabbitMQServer("testRabbitMQ.ini","testServer");
 $server->process_requests('requestProcessor');
 exit();
 ?>
-
