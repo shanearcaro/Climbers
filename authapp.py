@@ -1,6 +1,5 @@
 import base64
 from dash import Dash, html, dcc, Input, Output, State
-import mysql.connector
 import subprocess
 
 app = Dash(__name__, update_title=None, suppress_callback_exceptions=True)
@@ -55,9 +54,13 @@ def submit(submit, usersubmit, pwsubmit, user, pw):
     prevent_initial_call=True
 )
 def rabbit(submit):
+                            #Right here, I hard coded the crudentials and this works
+                            #So the crudentials can be passed in from the login page like this
+                            #chisux - username      abc - password/hash
     proc = subprocess.Popen("php rabbitConnector.php chisux abc", shell=True, stdout=subprocess.PIPE)
     response = proc.stdout.read()
-    response = response.decode('utf-8')
+    #This decode is what got the yo example working
+    #response = response.decode('utf-8')
     return response
 
 if __name__ == '__main__':
