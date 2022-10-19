@@ -12,16 +12,6 @@ def format_img(img):
     b64encoded_img=base64.b64encode(open(f'assets/{img}', 'rb').read())
     return f'data:image/png;base64,{b64encoded_img.decode()}'
 
-def connectDB():
-    config = {
-        'user' : 'root',
-        'password' : '',
-        'host' : '192.168.191.63',
-        'database' : 'IT490'
-    }
-    db = mysql.connector.connect(**config)
-    return db
-
 app.layout = html.Div([
     html.Div([
         html.Img(src=format_img('logo.png'), style={'margin': '30px auto', 'display': 'block'}),
@@ -67,8 +57,8 @@ def submit(submit, usersubmit, pwsubmit, user, pw):
 def rabbit(submit):
     proc = subprocess.Popen("php testphp.php", shell=True, stdout=subprocess.PIPE)
     response = proc.stdout.read()
+    response = response.decode('utf-8')
     return response
-
 
 if __name__ == '__main__':
     app.run_server(host="0.0.0.0", port="8050", debug=True)
