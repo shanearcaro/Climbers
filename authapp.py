@@ -12,6 +12,7 @@ def format_img(img):
     b64encoded_img=base64.b64encode(open(f'assets/{img}', 'rb').read())
     return f'data:image/png;base64,{b64encoded_img.decode()}'
 
+<<<<<<< HEAD
 def connectDB():
     config = {
         'user' : 'root',
@@ -22,6 +23,8 @@ def connectDB():
     db = mysql.connector.connect(**config)
     return db
 
+=======
+>>>>>>> 89c7010e89e3792b6b5b916a90950d49801ef860
 app.layout = html.Div([
     html.Div([
         html.Img(src=format_img('logo.png'), style={'margin': '30px auto', 'display': 'block'}),
@@ -70,6 +73,9 @@ def rabbit(submit):
     response = response.decode('utf-8')
     return response
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 89c7010e89e3792b6b5b916a90950d49801ef860
 if __name__ == '__main__':
     app.run_server(host="0.0.0.0", port="8050", debug=True)
