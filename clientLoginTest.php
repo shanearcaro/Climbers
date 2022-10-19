@@ -4,12 +4,19 @@ require_once('rabbitMQLib.inc');
 
 $client = new rabbitMQClient("testRabbitMQ.ini","testServer");
 
-$msg = "test message";
+if($argc != 2){
+    echo "Incorrect number of arguments! Usage: testRabbitMQClient.php <username> <hash>";
+}
+//Save agruments to variables
+$username = $argv[1];
+$hash = $argv[2];
 
-$request = array();
+//Build the request
 $request['type'] = "login";
-$request['username'] = "chisux";
-$request['hash'] = "abc";
+$request['username'] = $username;
+$request['hash'] = $hash;
+
+//Send the request
 $response = $client->send_request($request);
 //$response = $client->publish($request);
 
