@@ -36,12 +36,14 @@ app.layout = html.Div([
     prevent_initial_call=True
 )
 def submit(usersubmit, pwsubmit, user, pw):
+    
     if ((user == '') and (pw == '')):
         return 'Enter a username and password'
     elif (user == ''):
         return 'Username is empty, try again'
     elif (pw == ''):
         return 'Password is empty, try again'
+
     for login in logins:
         if (user.lower() == login[0] and pw.lower() == login[1]):
             return f'Success! Welcome, {user}'
@@ -55,10 +57,10 @@ def submit(usersubmit, pwsubmit, user, pw):
     prevent_initial_call=True
 )
 def authenticate(username, password):
-    proc = subprocess.Popen("php rabbitConnector.php {} {}", shell=True, stdout=subprocess.PIPE)
+    proc = subprocess.Popen("php loginRequest.php {username} {password}", shell=True, stdout=subprocess.PIPE)
     response = proc.stdout.read()
     #This decode is what got the yo example working
-    #response = response.decode('utf-8')
+    response = int(response.decode('utf-8'))
     return response
 
 if __name__ == '__main__':
