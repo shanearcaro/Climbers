@@ -54,11 +54,8 @@ def submit(usersubmit, pwsubmit, user, pw):
     Input('submit', 'n_clicks'),
     prevent_initial_call=True
 )
-def rabbit(submit):
-                            #Right here, I hard coded the crudentials and this works
-                            #So the crudentials can be passed in from the login page like this
-                            #chisux - username      abc - password/hash
-    proc = subprocess.Popen("php rabbitConnector.php chisux abc", shell=True, stdout=subprocess.PIPE)
+def authenticate(username, password):
+    proc = subprocess.Popen("php rabbitConnector.php {} {}", shell=True, stdout=subprocess.PIPE)
     response = proc.stdout.read()
     #This decode is what got the yo example working
     #response = response.decode('utf-8')
