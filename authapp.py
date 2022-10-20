@@ -2,7 +2,7 @@ import base64
 from dash import Dash, html, dcc, Input, Output, State
 import subprocess
 
-app = Dash(__name__, update_title=None, suppress_callback_exceptions=True)
+app = Dash(__name__, update_title='', suppress_callback_exceptions=True)
 
 logins = [['admin', '0']]
 
@@ -26,7 +26,7 @@ app.layout = html.Div([
     ],className='login-area')
 ], className='layout')
 
-# Tacki smells
+# Tacki doesn't smell. >:[
 @app.callback(
     Output('hi', 'children'),
     Input('user', 'n_submit'),
