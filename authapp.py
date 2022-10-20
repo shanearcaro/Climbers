@@ -26,6 +26,7 @@ app.layout = html.Div([
     ],className='login-area')
 ], className='layout')
 
+# Tacki smells
 @app.callback(
     Output('hi', 'children'),
     Input('user', 'n_submit'),
