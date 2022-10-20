@@ -34,7 +34,7 @@ app.layout = html.Div([
     State('pw', 'value'),
     prevent_initial_call=True
 )
-def submit(submit, usersubmit, pwsubmit, user, pw):
+def submit(usersubmit, pwsubmit, user, pw):
     if ((user == '') and (pw == '')):
         return 'Enter a username and password'
     elif (user == ''):
