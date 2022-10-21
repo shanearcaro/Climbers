@@ -1,5 +1,5 @@
 import base64
-from dash import Dash, html, dcc, Input, Output, State
+from dash import Dash, html, dcc, Input, Output, State, no_update
 import subprocess
 
 app = Dash(__name__, update_title='', suppress_callback_exceptions=True)
@@ -11,7 +11,9 @@ def format_img(img):
     b64encoded_img=base64.b64encode(open(f'assets/{img}', 'rb').read())
     return f'data:image/png;base64,{b64encoded_img.decode()}'
 
-app.layout = html.Div([
+success = html.Div('Success')
+
+login = html.Div([
     html.Div([
         html.Img(src=format_img('logo.png'), 
                  style={'margin': '30px auto', 'display': 'block'}),
@@ -29,7 +31,9 @@ app.layout = html.Div([
     ],className='login-area')
 ], className='layout')
 
-# Tacki doesn't smell. >:[
+app.layout = login
+
+# Tacki indeed does smell. >:D
 # @app.callback(
 #     Output('hi', 'children'),
 #     Input('user', 'n_submit'),
@@ -59,6 +63,7 @@ app.layout = html.Div([
 
 @app.callback(
     Output('result', 'children'),
+    Output('layout', 'children'),
     Input('submit', 'n_clicks'),
     State('user', 'value'),
     State('pw', 'value'),
@@ -67,11 +72,11 @@ app.layout = html.Div([
 def authenticate(_, username, password):
     #Guard against empty inputs
     if ((username == '') and (password == '')):
-        return html.Div('Enter a username and password')
+        return html.Div('Enter a username and password'), no_update
     elif (username == ''):
-        return html.Div('Username is empty, try again')
+        return html.Div('Username is empty, try again'), no_update
     elif (password == ''):
-        return html.Div('Password is empty, try again')
+        return html.Div('Password is empty, try again'), no_update
 
     #Call php auth script with username and password
     proc = subprocess.Popen(
@@ -87,14 +92,13 @@ def authenticate(_, username, password):
    
     #Return the response in HTML
     if response == 1:
-        return html.Div(f'Success! Welcome, {username}',
-                         style={'color': 'green'})
+        return no_update, success
     if response == 2:
         return html.Div('Invalid login, try again',
-                         style={'color': 'red'})
+                         style={'color': 'red'}), no_update
     else:
         return html.Div('Unhandled error',
-                         style={'color': 'red'})
+                         style={'color': 'red'}), no_update
 
 if __name__ == '__main__':
     app.run_server(host="0.0.0.0", port="8050", debug=True)
