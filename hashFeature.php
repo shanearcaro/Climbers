@@ -1,6 +1,16 @@
+#!/usr/bin/php
 <?php
 
-function hashPasswd($passwd, $salt)
+//There should always be 3 arguments, the script name, username, and password
+if($argc != 2){
+	echo "Incorrect number of arguments!".PHP_EOL."Usage: hashFeature.php <password_text>".PHP_EOL;
+	exit();
+}
+
+//Save agrument to variable
+$password_text = $argv[1];
+
+function hashPassword($passwd, $salt)
 {
 	$passwd .=$salt;
 	$passwd = hash('sha256', $passwd);
@@ -20,4 +30,6 @@ function getSalt()
 	
 	return $salt;
 }
+
+echo hashPassword($password_text, getSalt());
 ?>
