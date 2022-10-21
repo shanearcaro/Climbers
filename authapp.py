@@ -9,6 +9,8 @@ def format_img(img):
     b64encoded_img=base64.b64encode(open(f'assets/{img}', 'rb').read())
     return f'data:image/png;base64,{b64encoded_img.decode()}'
 
+spinner = html.Div([html.Div(), html.Div(), html.Div(), html.Div()], className='lds-ellipsis')
+
 success = html.Div('Success')
 
 login = html.Div([
