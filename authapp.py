@@ -64,7 +64,7 @@ app.layout = html.Div([
     State('pw', 'value'),
     prevent_initial_call=True
 )
-def authenticate(whyisthishere, username, password):
+def authenticate(_, username, password):
     #Guard against empty inputs
     if ((username == '') and (password == '')):
         return html.Div('Enter a username and password')
