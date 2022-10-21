@@ -1,6 +1,6 @@
 #!/usr/bin/php
 <?php
-require_once('../rabbitMQLib.inc');
+require_once('../DJMagic/rabbitMQLib.inc');
 
 //Create database connection
 $mydb = new mysqli('127.0.0.1','root','toor1029','IT490');
