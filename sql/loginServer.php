@@ -1,6 +1,6 @@
 #!/usr/bin/php
 <?php
-require_once('../DJMagic/rabbitMQLib.inc');
+require_once('../rabbitMQLib.inc');
 
 //Create database connection
 $mydb = new mysqli('127.0.0.1','root','toor1029','IT490');
@@ -65,7 +65,7 @@ function requestProcessor($request)
   return array("returnCode" => '0', 'message'=>"Server received request, but no valid type was specified");
 }
 
-$server = new rabbitMQServer("newConfig.ini","testServer");
+$server = new rabbitMQServer("../newConfig.ini","testServer");
 
 $server->process_requests('requestProcessor');
 exit();
