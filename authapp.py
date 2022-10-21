@@ -13,15 +13,18 @@ def format_img(img):
 
 app.layout = html.Div([
     html.Div([
-        html.Img(src=format_img('logo.png'), style={'margin': '30px auto', 'display': 'block'}),
+        html.Img(src=format_img('logo.png'), 
+                 style={'margin': '30px auto', 'display': 'block'}),
         html.Div('Username', className='label', id='hi'),
         dcc.Input('', className='input', id='user'),
         html.Div('Password', className='label'),
         dcc.Input('', className='input', id='pw', type='password'),
         html.Button('Continue', id='submit', className='loginbutton'),
         html.Div([
-            html.Div(html.Div('Console', className='consoletitle'), className='consoletitlecontainer'),
-            html.Div('Welcome!', id='result', className='consoleoutput'),
+            html.Div(html.Div('Console', className='consoletitle'), 
+                     className='consoletitlecontainer'),
+            html.Div('Welcome!', id='result', 
+                     className='consoleoutput'),
         ], className='console')
     ],className='login-area')
 ], className='layout')
@@ -36,13 +39,16 @@ app.layout = html.Div([
     prevent_initial_call=True
 )
 def submit(usersubmit, pwsubmit, user, pw):
-    
+    #Guard against empty inputs
     if ((user == '') and (pw == '')):
         return 'Enter a username and password'
     elif (user == ''):
         return 'Username is empty, try again'
     elif (pw == ''):
         return 'Password is empty, try again'
+
+    # Authenticate the user
+
 
     for login in logins:
         if (user.lower() == login[0] and pw.lower() == login[1]):
@@ -57,9 +63,14 @@ def submit(usersubmit, pwsubmit, user, pw):
     prevent_initial_call=True
 )
 def authenticate(username, password):
-    proc = subprocess.Popen("php loginRequest.php {username} {password}", shell=True, stdout=subprocess.PIPE)
+    #Call php auth script
+    proc = subprocess.Popen(
+        f"php loginRequest.php {username} {password}", 
+        shell=True, stdout=subprocess.PIPE)
+
     response = proc.stdout.read()
     #This decode is what got the yo example working
+    #Cast to int becuase the response is a return code
     response = int(response.decode('utf-8'))
     return response
 
