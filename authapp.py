@@ -4,8 +4,6 @@ import subprocess
 
 app = Dash(__name__, update_title='', suppress_callback_exceptions=True)
 
-logins = [['admin', '0']]
-
 # Dash requires a special image format
 def format_img(img):
     b64encoded_img=base64.b64encode(open(f'assets/{img}', 'rb').read())
@@ -29,37 +27,11 @@ login = html.Div([
                      className='consoleoutput'),
         ], className='console')
     ],className='login-area')
-], className='layout')
+], id='layout', className='layout')
 
 app.layout = login
 
 # Tacki indeed does smell. >:D
-# @app.callback(
-#     Output('hi', 'children'),
-#     Input('user', 'n_submit'),
-#     Input('pw', 'n_submit'),
-#     State('user', 'value'),
-#     State('pw', 'value'),
-#     prevent_initial_call=True
-# )
-# def submit(usersubmit, pwsubmit, user, pw):
-#     #Guard against empty inputs
-#     if ((user == '') and (pw == '')):
-#         return 'Enter a username and password'
-#     elif (user == ''):
-#         return 'Username is empty, try again'
-#     elif (pw == ''):
-#         return 'Password is empty, try again'
-
-#     # Authenticate the user
-
-
-#     for login in logins:
-#         if (user.lower() == login[0] and pw.lower() == login[1]):
-#             return f'Success! Welcome, {user}'
-#         else:
-#             return 'Invalid login, try again'
-#     return 'Unhandled error'
 
 @app.callback(
     Output('result', 'children'),
