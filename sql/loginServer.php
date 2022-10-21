@@ -65,7 +65,7 @@ function requestProcessor($request)
   return array("returnCode" => '0', 'message'=>"Server received request, but no valid type was specified");
 }
 
-$server = new rabbitMQServer("testRabbitMQ.ini","testServer");
+$server = new rabbitMQServer("newConfig.ini","testServer");
 
 $server->process_requests('requestProcessor');
 exit();
