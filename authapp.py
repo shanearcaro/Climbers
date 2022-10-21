@@ -87,7 +87,7 @@ def authenticate(whyisthishere, username, password):
    
     #Return the response in HTML
     if response == 1:
-        return html.Div('Success! Welcome, {username}',
+        return html.Div(f'Success! Welcome, {username}',
                          style={'color': 'green'})
     if response == 2:
         return html.Div('Invalid login, try again',
