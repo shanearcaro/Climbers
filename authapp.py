@@ -30,49 +30,71 @@ app.layout = html.Div([
 ], className='layout')
 
 # Tacki doesn't smell. >:[
-@app.callback(
-    Output('hi', 'children'),
-    Input('user', 'n_submit'),
-    Input('pw', 'n_submit'),
-    State('user', 'value'),
-    State('pw', 'value'),
-    prevent_initial_call=True
-)
-def submit(usersubmit, pwsubmit, user, pw):
-    #Guard against empty inputs
-    if ((user == '') and (pw == '')):
-        return 'Enter a username and password'
-    elif (user == ''):
-        return 'Username is empty, try again'
-    elif (pw == ''):
-        return 'Password is empty, try again'
+# @app.callback(
+#     Output('hi', 'children'),
+#     Input('user', 'n_submit'),
+#     Input('pw', 'n_submit'),
+#     State('user', 'value'),
+#     State('pw', 'value'),
+#     prevent_initial_call=True
+# )
+# def submit(usersubmit, pwsubmit, user, pw):
+#     #Guard against empty inputs
+#     if ((user == '') and (pw == '')):
+#         return 'Enter a username and password'
+#     elif (user == ''):
+#         return 'Username is empty, try again'
+#     elif (pw == ''):
+#         return 'Password is empty, try again'
 
-    # Authenticate the user
+#     # Authenticate the user
 
 
-    for login in logins:
-        if (user.lower() == login[0] and pw.lower() == login[1]):
-            return f'Success! Welcome, {user}'
-        else:
-            return 'Invalid login, try again'
-    return 'Unhandled error'
+#     for login in logins:
+#         if (user.lower() == login[0] and pw.lower() == login[1]):
+#             return f'Success! Welcome, {user}'
+#         else:
+#             return 'Invalid login, try again'
+#     return 'Unhandled error'
 
 @app.callback(
     Output('result', 'children'),
     Input('submit', 'n_clicks'),
+    State('user', 'value'),
+    State('pw', 'value'),
     prevent_initial_call=True
 )
-def authenticate(username, password):
-    #Call php auth script
+def authenticate(whyisthishere, username, password):
+    #Guard against empty inputs
+    if ((username == '') and (password == '')):
+        return html.Div('Enter a username and password')
+    elif (username == ''):
+        return html.Div('Username is empty, try again')
+    elif (password == ''):
+        return html.Div('Password is empty, try again')
+
+    #Call php auth script with username and password
     proc = subprocess.Popen(
         f"php loginRequest.php {username} {password}", 
         shell=True, stdout=subprocess.PIPE)
 
+    #Get output from php script
     response = proc.stdout.read()
+
     #This decode is what got the yo example working
     #Cast to int becuase the response is a return code
     response = int(response.decode('utf-8'))
-    return response
+   
+    #Return the response in HTML
+    if response == 1:
+        return html.Div('Success! Welcome, {username}',
+                         style={'color': 'green'})
+    if response == 2:
+        return html.Div('Invalid login, try again',
+                         style={'color': 'red'})
+    else:
+        return html.Div('Unhandled error',
+                         style={'color': 'red'})
 
 if __name__ == '__main__':
     app.run_server(host="0.0.0.0", port="8050", debug=True)
