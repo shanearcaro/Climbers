@@ -6,7 +6,7 @@ app = Dash(__name__, update_title='', suppress_callback_exceptions=True)
 
 # Dash requires a special image format
 def format_img(img):
-    b64encoded_img=base64.b64encode(open(f'assets/{img}', 'rb').read())
+    b64encoded_img=base64.b64encode(open(f'../assets/{img}', 'rb').read())
     return f'data:image/png;base64,{b64encoded_img.decode()}'
 
 def run_php_script(path, args):
@@ -28,7 +28,8 @@ def run_php_script(path, args):
     #decode bytes to string
     return response.decode('utf-8')
 
-spinner = html.Div([html.Div(), html.Div(), html.Div(), html.Div()], className='lds-ellipsis')
+spinner = html.Div([html.Div(), html.Div(), html.Div(), html.Div()], 
+                   className='lds-ellipsis')
 
 success = html.Div('Success')
 
@@ -82,7 +83,8 @@ def authenticate(_, username, password):
     # #Cast to int becuase the response is a return code
     # response = int(response.decode('utf-8'))
 
-    auth_response = int(run_php_script('loginRequest.php', [username, password]))
+    auth_response = int(run_php_script('loginRequest.php',
+                                        [username, password]))
    
     #Return the response in HTML
     if auth_response == 1:
