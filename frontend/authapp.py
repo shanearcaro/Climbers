@@ -6,7 +6,7 @@ app = Dash(__name__, update_title='', suppress_callback_exceptions=True)
 
 # Dash requires a special image format
 def format_img(img):
-    b64encoded_img=base64.b64encode(open(f'../assets/{img}', 'rb').read())
+    b64encoded_img=base64.b64encode(open(f'assets/{img}', 'rb').read())
     return f'data:image/png;base64,{b64encoded_img.decode()}'
 
 def run_php_script(path, args):
