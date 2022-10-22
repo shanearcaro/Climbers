@@ -2,8 +2,8 @@
 <?php
 require_once('rabbitMQLib.inc');
 
-//$client = new rabbitMQClient("rabbitConf.ini","testServer");
-$client = new rabbitMQClient("newConfig.ini","testServer");
+$client = new rabbitMQClient("rabbitConf.ini","testServer");
+//$client = new rabbitMQClient("newConfig.ini","testServer");
 
 //There should always be 3 arguments, the script name, username, and password
 if($argc != 3){

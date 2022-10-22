@@ -9,6 +9,25 @@ def format_img(img):
     b64encoded_img=base64.b64encode(open(f'assets/{img}', 'rb').read())
     return f'data:image/png;base64,{b64encoded_img.decode()}'
 
+def run_php_script(path, args):
+    # Run a PHP script and return the output
+
+    #Set up the command, and arguments if it has any
+    shellstr = f"php {path}"
+    if args:
+        for arg in args:
+            shellstr += f" {arg}"
+
+    #Run the script
+    proc = subprocess.Popen(
+        shellstr, shell=True, stdout=subprocess.PIPE)
+
+    #Get output from php script
+    response = proc.stdout.read()
+
+    #decode bytes to string
+    return response.decode('utf-8')
+
 spinner = html.Div([html.Div(), html.Div(), html.Div(), html.Div()], className='lds-ellipsis')
 
 success = html.Div('Success')
@@ -33,8 +52,7 @@ login = html.Div([
 
 app.layout = login
 
-# Tacki indeed does smell. >:D
-
+# I'm telling you, Tacki does not smell! >>>:(
 @app.callback(
     Output('result', 'children'),
     Output('layout', 'children'),
@@ -52,22 +70,24 @@ def authenticate(_, username, password):
     elif (password == ''):
         return html.Div('Password is empty, try again'), no_update
 
-    #Call php auth script with username and password
-    proc = subprocess.Popen(
-        f"php loginRequest.php {username} {password}", 
-        shell=True, stdout=subprocess.PIPE)
+    # #Call php auth script with username and password
+    # proc = subprocess.Popen(
+    #     f"php loginRequest.php {username} {password}", 
+    #     shell=True, stdout=subprocess.PIPE)
 
-    #Get output from php script
-    response = proc.stdout.read()
+    # #Get output from php script
+    # response = proc.stdout.read()
 
-    #This decode is what got the yo example working
-    #Cast to int becuase the response is a return code
-    response = int(response.decode('utf-8'))
+    # #This decode is what got the yo example working
+    # #Cast to int becuase the response is a return code
+    # response = int(response.decode('utf-8'))
+
+    auth_response = int(run_php_script('loginRequest.php', [username, password]))
    
     #Return the response in HTML
-    if response == 1:
+    if auth_response == 1:
         return no_update, success
-    if response == 2:
+    if auth_response == 2:
         return html.Div('Invalid login, try again',
                          style={'color': 'red'}), no_update
     else:
