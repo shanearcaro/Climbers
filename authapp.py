@@ -82,7 +82,7 @@ def authenticate(_, username, password):
     # #Cast to int becuase the response is a return code
     # response = int(response.decode('utf-8'))
 
-    auth_response = run_php_script('loginRequest.php', [username, password])
+    auth_response = int(run_php_script('loginRequest.php', [username, password]))
    
     #Return the response in HTML
     if auth_response == 1:
