@@ -28,7 +28,8 @@ def run_php_script(path, args):
     #decode bytes to string
     return response.decode('utf-8')
 
-spinner = html.Div([html.Div(), html.Div(), html.Div(), html.Div()], className='lds-ellipsis')
+spinner = html.Div([html.Div(), html.Div(), html.Div(), html.Div()], 
+                   className='lds-ellipsis')
 
 success = html.Div('Success')
 
@@ -82,7 +83,8 @@ def authenticate(_, username, password):
     # #Cast to int becuase the response is a return code
     # response = int(response.decode('utf-8'))
 
-    auth_response = int(run_php_script('loginRequest.php', [username, password]))
+    auth_response = int(run_php_script('loginRequest.php',
+                                        [username, password]))
    
     #Return the response in HTML
     if auth_response == 1:
