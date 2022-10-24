@@ -40,8 +40,6 @@ def get_jdict():
 
 # print(jdict)
 
-# Pretty print of raw dictionary:
-# print(yaml.dump(jdict, allow_unicode=True, default_flow_style=False))
 
 
 

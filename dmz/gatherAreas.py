@@ -1,5 +1,5 @@
 from fetchData import get_jdict
-import json, yaml
+import json
 
 # gatherAreas.py
 # -- Run file to get formatted dictionaries and
@@ -33,13 +33,22 @@ for area_dict in area_dicts:
     for climbs in area_dict['climbs']:
         area_climb_count += 1
     
-    total_climb_count += area_climb_count
-    f_area_dict = area_dict
-    f_area_dict['climbs'] = area_climb_count
-    f_area_dicts.append(f_area_dict)
+    # Old method for reference
+    # - total_climb_count += area_climb_count
+    # - f_area_dict = area_dict
+    # - f_area_dict['climbs'] = area_climb_count
+    # - f_area_dicts.append(f_area_dict)
 
-for f_area_dict in f_area_dicts:
-    print(f_area_dict)
+    f_area_dict = {'areaName': area_dict['areaName'],
+                     'climbs': area_climb_count,
+                     'lat': area_dict['metadata']['lat'],
+                     'lng': area_dict['metadata']['lng']}
+    f_area_dicts.append(f_area_dict)
+    
+
+# Print formatted area dictionaries
+# - for f_area_dict in f_area_dicts:
+# -     print(f_area_dict)
     
 print(f'----------\nStatistics:\n\nArea count: {area_count}')
 print(f'Total climb count: {total_climb_count}')
