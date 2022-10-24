@@ -53,7 +53,7 @@ login = html.Div([
 
 app.layout = login
 
-# I'm telling you, Tacki does not smell! >>>:(
+# Tacki is way too stinky! >>>:(
 @app.callback(
     Output('result', 'children'),
     Output('layout', 'children'),
@@ -97,4 +97,4 @@ def authenticate(_, username, password):
                          style={'color': 'red'}), no_update
 
 if __name__ == '__main__':
-    app.run_server(host="0.0.0.0", port="8050", debug=True)
+    app.run_server(host="0.0.0.0", port="8050", debug=False)
