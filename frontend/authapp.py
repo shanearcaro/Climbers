@@ -1,7 +1,7 @@
-import base64
+import base64, subprocess
 from dash import Dash, html, dcc, Input, Output, State, no_update
-import subprocess
 
+# Initialize Dash app
 app = Dash(__name__, update_title='', suppress_callback_exceptions=True)
 
 # Dash requires a special image format
@@ -12,27 +12,31 @@ def format_img(img):
 def run_php_script(path, args):
     # Run a PHP script and return the output
 
-    #Set up the command, and arguments if it has any
+    # Set up the command, and arguments if it has any
     shellstr = f"php {path}"
     if args:
         for arg in args:
             shellstr += f" {arg}"
 
-    #Run the script
+    # Run the script
     proc = subprocess.Popen(
         shellstr, shell=True, stdout=subprocess.PIPE)
 
-    #Get output from php script
+    # Get output from php script
     response = proc.stdout.read()
 
-    #decode bytes to string
+    # Decode bytes to string, return raw string
     return response.decode('utf-8')
 
+# Spinner element for loading (WIP)
+# TODO: Spinner for login page to show when app is checking credentials
 spinner = html.Div([html.Div(), html.Div(), html.Div(), html.Div()], 
                    className='lds-ellipsis')
 
+# Layout: Success (Temporary)
 success = html.Div('Success')
 
+# Layout: Login page
 login = html.Div([
     html.Div([
         html.Img(src=format_img('logo.png'), 
@@ -51,9 +55,13 @@ login = html.Div([
     ],className='login-area')
 ], id='layout', className='layout')
 
+# Initial app layout
+# - The login page will always be first
+# TODO: Cookies/Session?
 app.layout = login
 
-# Tacki is way too stinky! >>>:(
+# Tacki has permanent stink, no one can say otherwise >:)
+
 @app.callback(
     Output('result', 'children'),
     Output('layout', 'children'),
@@ -63,7 +71,7 @@ app.layout = login
     prevent_initial_call=True
 )
 def authenticate(_, username, password):
-    #Guard against empty inputs
+    # Guard against empty inputs
     if ((username == '') and (password == '')):
         return html.Div('Enter a username and password'), no_update
     elif (username == ''):
@@ -86,7 +94,7 @@ def authenticate(_, username, password):
     auth_response = int(run_php_script('loginRequest.php',
                                         [username, password]))
    
-    #Return the response in HTML
+    # Return the response in HTML
     if auth_response == 1:
         return no_update, success
     if auth_response == 2:
@@ -96,5 +104,6 @@ def authenticate(_, username, password):
         return html.Div('Unhandled error',
                          style={'color': 'red'}), no_update
 
+# Run dash server
 if __name__ == '__main__':
     app.run_server(host="0.0.0.0", port="8050", debug=False)
