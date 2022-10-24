@@ -57,7 +57,7 @@ login = html.Div([
 
 # Initial app layout
 # - The login page will always be first
-# TODO: Cookies/Session?
+# - TODO: Cookies/Session?
 app.layout = login
 
 # Tacki has permanent stink, no one can say otherwise >:)
@@ -105,5 +105,6 @@ def authenticate(_, username, password):
                          style={'color': 'red'}), no_update
 
 # Run dash server
+# - Set debug=False when in deployment
 if __name__ == '__main__':
     app.run_server(host="0.0.0.0", port="8050", debug=False)
