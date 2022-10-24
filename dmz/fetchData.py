@@ -1,5 +1,5 @@
 import requests as r
-import json, yaml
+import json
 
 #THIS QUERY IS INCOMPLETE
 #IT WILL RETURN SOME BROKEN DATA THAT WILL NEED TO BE FILTERED OUT
@@ -35,21 +35,15 @@ myreq = r.post('https://api.openbeta.io',
 # To edog: >:) Challenge accepted
 jdict = json.loads(myreq.text)
 
+def get_jdict():
+  return jdict
+
 # print(jdict)
 
 # Pretty print of raw dictionary:
 # print(yaml.dump(jdict, allow_unicode=True, default_flow_style=False))
 
-area_count = 0
 
-areas = jdict['data']['areas'][0]['children']
-for area in areas:
-  for child in area['children']:
-    # print(str(child['children']) + '\n')
-    for areaName in child['children']:
-      area_count += 1;
-      print(areaName)
 
-print(f'\n Area count: {area_count}')
 
 
