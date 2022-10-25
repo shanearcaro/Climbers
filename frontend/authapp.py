@@ -47,8 +47,9 @@ login = html.Div([
         dcc.Input('', className='input', id='pw', type='password'),
         html.Button('Continue', id='submit', className='loginbutton'),
         html.Div([
-            html.Div(html.Div('Console', className='consoletitle'), 
-                     className='consoletitlecontainer'),
+            html.Div(
+                html.Div('Console', className='consoletitle'), 
+                         className='consoletitlecontainer'),
             html.Div('Welcome!', id='result', 
                      className='consoleoutput'),
         ], className='console')
