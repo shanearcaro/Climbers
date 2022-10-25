@@ -11,22 +11,28 @@ raw_data = get_raw_data()
 # Get pandas dataframe for figure
 df = pd.DataFrame(raw_data)
 
+# Create figure object for hex graph
 fig = ff.create_hexbin_mapbox(
     data_frame=df, 
     lat="lat", lon="lng",
-    nx_hexagon=15, opacity=0.5, 
-    labels={"color": "Climb Count"},
-    min_count=1,
+    height=800,
+    nx_hexagon=15, opacity=0.5, # 15 h hexagons 
+    labels={"color": "Climb Count"}, # Color by climb
+    min_count=1, # Does not count 0 climbs
     color_continuous_scale="Viridis",
-    show_original_data=True,
+    show_original_data=True, # Show points underneath
     original_data_marker=dict(
                     size=10, opacity=0.6, 
                     color="lime")
 )
+# Need a map underneath
 fig.update_layout(mapbox_style="open-street-map")
 
+# App layout
 app.layout = html.Div([
-    dcc.Graph(figure=fig)
+    dcc.Graph(figure=fig, style={
+        'height':'100%'
+    })
 ], style={
     'width': '90%',
     'display': 'block',
