@@ -23,7 +23,6 @@ query = ''' query {
   }
 }
 '''
-#test 2
 
 myreq = r.post('https://api.openbeta.io', 
                 headers={'content-type': 'application/json'},
