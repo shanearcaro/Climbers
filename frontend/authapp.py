@@ -61,7 +61,7 @@ login = html.Div([
 # - TODO: Cookies/Session?
 app.layout = login
 
-# Tacki has permanent stink, no one can say otherwise >:)
+# Tacki is impervious to the laws of physics, and therefore, stink
 
 @app.callback(
     Output('result', 'children'),
