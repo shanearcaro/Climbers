@@ -80,19 +80,7 @@ def authenticate(_, username, password):
     elif (password == ''):
         return html.Div('Password is empty, try again'), no_update
 
-    # #Call php auth script with username and password
-    # proc = subprocess.Popen(
-    #     f"php loginRequest.php {username} {password}", 
-    #     shell=True, stdout=subprocess.PIPE)
-
-    # #Get output from php script
-    # response = proc.stdout.read()
-
-    # #This decode is what got the yo example working
-    # #Cast to int becuase the response is a return code
-    # response = int(response.decode('utf-8'))
-
-    auth_response = int(run_php_script('loginRequest.php',
+    auth_response = int(run_php_script('requestScripts/loginRequest.php',
                                         [username, password]))
    
     # Return the response in HTML
