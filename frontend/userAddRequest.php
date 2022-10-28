@@ -33,5 +33,5 @@ $request['salt'] = $salt;
 $response = $client->send_request($request);
 
 //echo the return code from the server
-echo $response;
+echo $response['returnCode'];
 ?>
