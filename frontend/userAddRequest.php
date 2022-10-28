@@ -16,18 +16,12 @@ if($argc != 5){
 	exit();
 }
 
-//Save agruments to variables
-$username = $argv[1];
-$email = $argv[2];
-$hash = $argv[3];
-$salt = $argv[4];
-
 //Build the request
 $request['type'] = "useradd";
-$request['username'] = $username;
-$request['email'] = $email;
-$request['hash'] = $hash;
-$request['salt'] = $salt;
+$request['username'] = $argv[1];
+$request['email'] = $argv[2];
+$request['hash'] = $argv[3];
+$request['salt'] = $argv[4];
 
 //Send the request
 $response = $client->send_request($request);

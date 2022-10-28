@@ -14,14 +14,10 @@ if($argc != 3){
 	exit();
 }
 
-//Save agruments to variables
-$username = $argv[1];
-$hash = $argv[2];
-
 //Build the request
 $request['type'] = "login";
-$request['username'] = $username;
-$request['hash'] = $hash;
+$request['username'] = $argv[1];
+$request['hash'] = $argv[2];
 
 //Send the request
 $response = $client->send_request($request);
