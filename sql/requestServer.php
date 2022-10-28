@@ -49,6 +49,7 @@ function doUserAdd($username,$email,$hash,$salt){
   $query = "SELECT username FROM Users WHERE username='$username';";
   $response = $mydb->query($query);
   if($response->num_rows > 0){
+    //return error if username already exists
     return array("returnCode" => '2', 'message'=>"Account with that username already exists");
   }
 
@@ -56,6 +57,7 @@ function doUserAdd($username,$email,$hash,$salt){
   $query = "SELECT email FROM Users WHERE email='$email';";
   $response = $mydb->query($query);
   if($response->num_rows > 0){
+    //return error if email does exist
     return array("returnCode" => '2', 'message'=>"Account with that email already exists");
   }
 
@@ -63,10 +65,12 @@ function doUserAdd($username,$email,$hash,$salt){
   $query = "INSERT INTO Users (username,email,hash,salt) VALUES ('$username','$email','$hash','$salt');";
   $response = $mydb->query($query);
   if($response){
-    return true;
+    //Return success
+    return array("returnCode" => '1', 'message'=>"User added successfully");
   }
   else{
-    return false;
+    //Return failure
+    return array("returnCode" => '2', 'message'=>"User add failed");
   }
 }
 
@@ -76,7 +80,7 @@ function requestProcessor($request)
   var_dump($request);
   if(!isset($request['type']))
   {
-    return "ERROR: No message type set!";
+    return array("returnCode" => '0', 'message'=>"Server received request, but no valid type was specified");
   }
   switch ($request['type'])
   {
@@ -89,7 +93,10 @@ function requestProcessor($request)
         return array("returnCode" => '2', 'message'=>"Login failed!");
       }
     case "useradd":
-      return;
+      return doUserAdd($request['username'],
+                       $request['email'],
+                       $request['hash'],
+                       $request['salt']);
   }
   return array("returnCode" => '0', 'message'=>"Server received request, but no valid type was specified");
 }
