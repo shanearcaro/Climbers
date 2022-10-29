@@ -1,4 +1,3 @@
-from fetchData import get_jdict
 import json
 
 # gatherAreas.py
@@ -7,7 +6,10 @@ import json
 # -- Function will return list of formatted dicts    
 
 # Get raw dictionary
-jdict = get_jdict()
+#jdict = get_jdict()
+
+#jdict has to be recieved as a response from rabbitmq
+jdict = None
 
 # Get area dictionary
 area_dicts = []
