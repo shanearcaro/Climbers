@@ -9,6 +9,7 @@ import json
 #jdict = get_jdict()
 
 #jdict has to be recieved as a response from rabbitmq
+#It will also be cleaned up before it gets here
 jdict = None
 
 # Get area dictionary
