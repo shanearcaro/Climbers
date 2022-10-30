@@ -1,6 +1,6 @@
 #!/usr/bin/php
 <?php
-require_once('../djmagic/rabbitMQLib.inc');
+require_once('../../djmagic/rabbitMQLib.inc');
 
 //This is localhost for testing
 //$client = new rabbitMQClient("../config/rabbitConf.ini","testServer");
