@@ -1,9 +1,4 @@
-querystring = ''' fragment climbData on Area{
-	totalClimbs
-  climbs {
-    id
-  }
-}
+querystring = ''' 
 
 fragment locationData on Area{
   metadata {
@@ -12,36 +7,35 @@ fragment locationData on Area{
   }
 }
 
-query {
-  areas(filter: {area_name: {match: "New Jersey"}}) {
+query AreasWithLatLng{
+  areas(filter: {area_name: {match: "New Jersey"}}){
     children {
       areaName
+      ...locationData
       children {
         areaName
         ...locationData
-        ...climbData
         children {
           areaName
           ...locationData
-          ...climbData
           children {
             areaName
             ...locationData
-        	...climbData
             children{
               areaName
               ...locationData
-        	  ...climbData
               children{
               	areaName
               	...locationData
-        		...climbData
                 children{
-              		areaName
-              		...locationData
-        			...climbData
+              	  areaName
+              	  ...locationData
+                  children{
+              	    areaName
+              	    ...locationData
+                  }
                 }
-            	}
+              }
             }
           }
         }
@@ -50,3 +44,9 @@ query {
   }
 }
 '''
+# fragment climbData on Area{
+# 	totalClimbs
+#   climbs {
+#     id
+#   }
+# }
