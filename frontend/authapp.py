@@ -80,7 +80,7 @@ def authenticate(_, username, password):
     elif (password == ''):
         return html.Div('Password is empty, try again'), no_update
 
-    auth_response = int(run_php_script('requestScripts/loginRequest.php',
+    auth_response = int(run_php_script('loginRequest.php',
                                         [username, password]))
    
     # Return the response in HTML
