@@ -8,8 +8,7 @@ from util import *
 dash.register_page(
     __name__,
     title='Login',
-    path='/login',
-    redirect_from='/'
+    path='/login'
 )
 
 # Layout: Login Form
@@ -22,8 +21,8 @@ loginform = [
     dcc.Input('', className='input', id='pw', type='password'),
     html.Div(
         dcc.Link(
-            "Don't have an account?", 
-            href=dash.page_registry['pages.signup']['path']
+            "Already have an account?", 
+            href='/signup'
         ), 
         id='login-toggle', 
         className='login-signup-toggle'

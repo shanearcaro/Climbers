@@ -23,8 +23,8 @@ signupform = [
     dcc.Input('', className='input', id='pw', type='password'),
     html.Div(
         dcc.Link(
-            "Don't have an account?", 
-            href=dash.page_registry['pages.login']['path']
+            "Already have an account?", 
+            href='/login'
         ), 
         id='signin-toggle', 
         className='login-signup-toggle'
@@ -50,5 +50,8 @@ signuppage = html.Div([
     className='layout'
 )
 
+
+
 def layout():
     return signuppage
+
