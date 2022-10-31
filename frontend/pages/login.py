@@ -36,7 +36,7 @@ loginpage = html.Div([
     html.Div(children=loginform, id='form-area', className='form-area'),
 
     #Empty Div for logic reasons
-    html.Div(id='hidden-div', style={'display': 'none'}),
+    html.Div(id='hidden-login-div', style={'display': 'none'}),
 
     #Console shit
     html.Div([
@@ -57,7 +57,7 @@ spinner = html.Div([html.Div(), html.Div(), html.Div(), html.Div()],
 #(copilot wrote the spaghetti part lmao) 
 
 @dash.callback(
-    Output('hidden-div', 'children'),
+    Output('hidden-login-div', 'children'),
     Input('submit', 'n_clicks'),
     State('user', 'value'),
     State('pw', 'value'),

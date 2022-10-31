@@ -38,7 +38,7 @@ signuppage = html.Div([
         html.Div(children=signupform, id='form-area', className='form-area'),
 
         #Empty Div for logic reasons
-        html.Div(id='hidden-div', style={'display': 'none'}),
+        html.Div(id='hidden-signin-div', style={'display': 'none'}),
 
         #Console shit
         html.Div([
@@ -54,7 +54,7 @@ signuppage = html.Div([
 )
 
 @dash.callback(
-    Output('hidden-div', 'children'),
+    Output('hidden-signin-div', 'children'),
     Input('submit', 'n_clicks'),
     State('user', 'value'),
     State('pw', 'value'),
