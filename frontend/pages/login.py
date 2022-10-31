@@ -1,11 +1,17 @@
 import dash
 from dash import html, dcc, callback, Input, Output, State, no_update
 import sys, os
+import signup
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from util import *
 
-dash.register_page(__name__)
+dash.register_page(
+    __name__,
+    title='Login',
+    path='/login',
+    redirect_from='/'
+)
 
 # Layout: Login Form
 loginform = [
@@ -79,3 +85,13 @@ def authenticate(_, username, password):
     else:
         return html.Div('Unhandled error',
                          style={'color': 'red'}), no_update
+
+@dash.callback(
+    Output('page-content', 'children'),
+    Input('login-toggle', 'n_clicks')
+)
+def toLogin(_):
+    return signup.layout()
+
+def layout():
+    return loginpage
