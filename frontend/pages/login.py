@@ -1,7 +1,6 @@
 import dash
 from dash import html, dcc, callback, Input, Output, State, no_update
 import sys, os
-import signup
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from util import *
@@ -21,8 +20,14 @@ loginform = [
     dcc.Input('', className='input', id='user'),
     html.Div('Password', className='label'),
     dcc.Input('', className='input', id='pw', type='password'),
-    html.Button("Don't have an account?", id='login-toggle', 
-                className='login-signup-toggle'),
+    html.Div(
+        dcc.Link(
+            "Don't have an account?", 
+            href=dash.page_registry['pages.signup']['path']
+        ), 
+        id='login-toggle', 
+        className='login-signup-toggle'
+    ),
     html.Button('Continue', id='submit', className='loginbutton'),
 ]
 
@@ -39,7 +44,6 @@ loginpage = html.Div([
         html.Div('Welcome!', id='result', 
                     className='consoleoutput'),
     ], className='console'),
-    dcc.Store(id='current-form', data='login'),
 ], id='layout', className='layout')
 
 # Spinner element for loading (WIP)
@@ -85,13 +89,6 @@ def authenticate(_, username, password):
     else:
         return html.Div('Unhandled error',
                          style={'color': 'red'}), no_update
-
-@dash.callback(
-    Output('page-content', 'children'),
-    Input('login-toggle', 'n_clicks')
-)
-def toLogin(_):
-    return signup.layout()
-
+                         
 def layout():
     return loginpage
