@@ -29,13 +29,16 @@ signupform = [
         id='signin-toggle', 
         className='login-signup-toggle'
     ),
-    #html.Button('Continue', id='submit', className='loginbutton'),
+    html.Button('Continue', id='submit', className='loginbutton'),
 ]
 
 # Layout: Signup page
 signuppage = html.Div([
         #Login form (with logo)
         html.Div(children=signupform, id='form-area', className='form-area'),
+
+        #Empty Div for logic reasons
+        html.Div(id='hidden-div', style={'display': 'none'}),
 
         #Console shit
         html.Div([
@@ -50,8 +53,37 @@ signuppage = html.Div([
     className='layout'
 )
 
+@dash.callback(
+    Output('hidden-div', 'children'),
+    Input('submit', 'n_clicks'),
+    State('user', 'value'),
+    State('pw', 'value'),
+    prevent_initial_call=True
+)
+def authenticate(_, username, password):
+    # Guard against empty inputs
+    if ((username == '') and (password == '')):
+        return html.Div('Enter a username and password')
+    elif (username == ''):
+        return html.Div('Username is empty, try again')
+    elif (password == ''):
+        return html.Div('Password is empty, try again')
 
+    try:
+        auth_response = int(run_php_script('loginRequest.php',
+                                            [username, password]))
+    except:
+        return html.Div('An error occurred while running the login script')
+   
+    # Return the response in HTML
+    if auth_response == 1:
+        return dcc.Location(pathname='/logSucc', id='redirect')
+    if auth_response == 2:
+        return html.Div('Invalid login, try again',
+                         style={'color': 'red'})
+    else:
+        return html.Div('Unhandled error',
+                         style={'color': 'red'})
 
 def layout():
     return signuppage
-
