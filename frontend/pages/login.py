@@ -31,22 +31,13 @@ loginform = [
 ]
 
 # Layout: Login page
-loginpage = html.Div([
+loginpage = html.Div(id='layout', className='layout', children=[
     #Login form (with logo)
     html.Div(children=loginform, id='form-area', className='form-area'),
 
     #Empty Div for logic reasons
-    html.Div(id='hidden-login-div', style={'display': 'none'}),
-
-    #Console shit
-    html.Div([
-        html.Div(
-            html.Div('Console', className='consoletitle'), 
-                        className='consoletitlecontainer'),
-        html.Div('Welcome!', id='result', 
-                    className='consoleoutput'),
-    ], className='console'),
-], id='layout', className='layout')
+    html.Div(id='hidden-login-div', style={'display': 'none'})
+])
 
 # Spinner element for loading (WIP)
 # TODO: Spinner for login page to show when app is checking credentials

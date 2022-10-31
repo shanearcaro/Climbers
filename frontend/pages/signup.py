@@ -38,16 +38,8 @@ signuppage = html.Div([
         html.Div(children=signupform, id='form-area', className='form-area'),
 
         #Empty Div for logic reasons
-        html.Div(id='hidden-signin-div', style={'display': 'none'}),
+        html.Div(id='hidden-signin-div', style={'display': 'none'})
 
-        #Console shit
-        html.Div([
-            html.Div(
-                html.Div('Console', className='consoletitle'), 
-                            className='consoletitlecontainer'),
-            html.Div('Welcome!', id='result', 
-                        className='consoleoutput'),
-        ], className='console'),
     ], 
     id='layout', 
     className='layout'
