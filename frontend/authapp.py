@@ -127,8 +127,6 @@ def authenticate(_, username, password):
                          style={'color': 'red'}), no_update
 
 @app.callback(
-    Output('result', 'children'),
-    Output('layout', 'children'),
     Input('toggle', 'n_clicks'),
     prevent_initial_call=True
 )
