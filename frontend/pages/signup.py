@@ -49,21 +49,22 @@ signuppage = html.Div([
     Output('hidden-signin-div', 'children'),
     Input('submit', 'n_clicks'),
     State('user', 'value'),
+    State('email', 'value'),
     State('pw', 'value'),
     prevent_initial_call=True
 )
-def authenticate(_, username, password):
+def register(_, username, email, password):
     # Guard against empty inputs
-    if ((username == '') and (password == '')):
-        return html.Div('Enter a username and password')
-    elif (username == ''):
+    if (username == ''):
         return html.Div('Username is empty, try again')
+    elif (email == ''):
+        return html.Div('Email is empty, try again')
     elif (password == ''):
         return html.Div('Password is empty, try again')
 
     try:
-        auth_response = int(run_php_script('loginRequest.php',
-                                            [username, password]))
+        auth_response = int(run_php_script('userAddRequest.php',
+                                            [username, email, password]))
     except:
         return html.Div('An error occurred while running the login script')
    
