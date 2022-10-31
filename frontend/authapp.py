@@ -40,15 +40,17 @@ success = html.Div('Success')
 login = html.Div([
     html.Div([
         #Login form (with logo)
-        html.Img(src=format_img('logo.png'), 
+        html.Div([
+            html.Img(src=format_img('logo.png'), 
                  style={'margin': '30px auto', 'display': 'block'}),
-        html.Div('Username', className='label', id='username-label'),
-        dcc.Input('', className='input', id='user'),
-        html.Div('Password', className='label'),
-        dcc.Input('', className='input', id='pw', type='password'),
-        html.Button("Don't have an account?", id='toggle', 
-                    className='login-signup-button'),
-        html.Button('Continue', id='submit', className='loginbutton'),
+            html.Div('Username', className='label', id='username-label'),
+            dcc.Input('', className='input', id='user'),
+            html.Div('Password', className='label'),
+            dcc.Input('', className='input', id='pw', type='password'),
+            html.Button("Don't have an account?", id='toggle', 
+                        className='login-signup-button'),
+            html.Button('Continue', id='submit', className='loginbutton'),
+        ], id='form-area', className='form-area'),
 
         #Console shit
         html.Div([
@@ -65,18 +67,19 @@ login = html.Div([
 signup = html.Div([
     html.Div([
         #Sign up form (with logo)
-        html.Img(src=format_img('logo.png'), 
-                 style={'margin': '30px auto', 'display': 'block'}),
-        html.Div('Username', className='label'),
-        dcc.Input('', className='input', id='user'),
-        html.Div('E-Mail', className='label'),
-        dcc.Input('', className='input', id='email', type='email'),
-        html.Div('Password', className='label'),
-        dcc.Input('', className='input', id='pw', type='password'),
-        html.Button('Already have an account?', id='toggle', 
-                    className='login-signup-button'),
-        #html.Button('Continue', id='submit', className='loginbutton'),
-
+        html.Div([
+            html.Img(src=format_img('logo.png'), 
+                    style={'margin': '30px auto', 'display': 'block'}),
+            html.Div('Username', className='label'),
+            dcc.Input('', className='input', id='user'),
+            html.Div('E-Mail', className='label'),
+            dcc.Input('', className='input', id='email', type='email'),
+            html.Div('Password', className='label'),
+            dcc.Input('', className='input', id='pw', type='password'),
+            html.Button('Already have an account?', id='toggle', 
+                        className='login-signup-button'),
+            #html.Button('Continue', id='submit', className='loginbutton'),
+    ], id='form-area', className='form-area'),
         #Console shit
         html.Div([
             html.Div(
@@ -127,6 +130,7 @@ def authenticate(_, username, password):
                          style={'color': 'red'}), no_update
 
 @app.callback(
+    Output('form-area', 'children'),
     Input('toggle', 'n_clicks'),
     prevent_initial_call=True
 )
