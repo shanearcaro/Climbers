@@ -13,8 +13,7 @@ function requestProcessor($request)
   switch ($request['type'])
   {
     case "bottomareas":
-      $state = $request['state']
-	  $
+      return array("returnCode" => '1', 'message'=>"bottomareas processed");
   }
   return array("returnCode" => '0', 'message'=>"Server received request, but no valid type was specified");
 }
