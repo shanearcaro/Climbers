@@ -39,13 +39,45 @@ success = html.Div('Success')
 # Layout: Login page
 login = html.Div([
     html.Div([
+        #Login form (with logo)
         html.Img(src=format_img('logo.png'), 
                  style={'margin': '30px auto', 'display': 'block'}),
-        html.Div('Username', className='label', id='hi'),
+        html.Div('Username', className='label', id='username-label'),
         dcc.Input('', className='input', id='user'),
         html.Div('Password', className='label'),
         dcc.Input('', className='input', id='pw', type='password'),
+        html.Button("Don't have an account?", id='toggle', 
+                    className='login-signup-button'),
         html.Button('Continue', id='submit', className='loginbutton'),
+
+        #Console shit
+        html.Div([
+            html.Div(
+                html.Div('Console', className='consoletitle'), 
+                         className='consoletitlecontainer'),
+            html.Div('Welcome!', id='result', 
+                     className='consoleoutput'),
+        ], className='console')
+    ],className='login-area')
+], id='layout', className='layout')
+
+#Layout: Sign up page
+signup = html.Div([
+    html.Div([
+        #Sign up form (with logo)
+        html.Img(src=format_img('logo.png'), 
+                 style={'margin': '30px auto', 'display': 'block'}),
+        html.Div('Username', className='label'),
+        dcc.Input('', className='input', id='user'),
+        html.Div('E-Mail', className='label'),
+        dcc.Input('', className='input', id='email', type='email'),
+        html.Div('Password', className='label'),
+        dcc.Input('', className='input', id='pw', type='password'),
+        html.Button('Already have an account?', id='toggle', 
+                    className='login-signup-button'),
+        #html.Button('Continue', id='submit', className='loginbutton'),
+
+        #Console shit
         html.Div([
             html.Div(
                 html.Div('Console', className='consoletitle'), 
@@ -61,7 +93,8 @@ login = html.Div([
 # - TODO: Cookies/Session?
 app.layout = login
 
-# Tacki is impervious to the laws of physics, and therefore, stink
+# Tacki smells like spaghetti, which is a good thing
+#(copilot wrote the spaghetti part lmao) 
 
 @app.callback(
     Output('result', 'children'),
@@ -92,6 +125,19 @@ def authenticate(_, username, password):
     else:
         return html.Div('Unhandled error',
                          style={'color': 'red'}), no_update
+
+@app.callback(
+    Output('result', 'children'),
+    Output('layout', 'children'),
+    Input('toggle', 'n_clicks'),
+    prevent_initial_call=True
+)
+def toggle_login_page(_):
+    # Toggle between login and sign up
+    if app.layout == login:
+        return no_update, signup
+    else:
+        return no_update, login
 
 # Run dash server
 # - Set debug=False when in deployment
