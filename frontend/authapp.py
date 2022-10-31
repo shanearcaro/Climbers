@@ -1,6 +1,8 @@
 import base64, subprocess
 from dash import Dash, html, dcc, Input, Output, State, no_update
 
+#We need to implement pages so badly
+
 # Initialize Dash app
 app = Dash(__name__, update_title='', suppress_callback_exceptions=True)
 
