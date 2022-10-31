@@ -1,12 +1,12 @@
 #!/usr/bin/php
 <?php
-require_once('../../djmagic/rabbitMQLib.inc');
+require_once('../djmagic/rabbitMQLib.inc');
 
 //This is localhost for testing
 $client = new rabbitMQClient("../config/rabbitConf.ini","testServer");
 
 //This is for cross VM communication
-//$client = new rabbitMQClient("../../config/newConfig.ini","testServer");
+//$client = new rabbitMQClient("../config/newConfig.ini","testServer");
 
 //There should always be 3 arguments, the script name, username, and password
 if($argc != 3){
