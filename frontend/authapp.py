@@ -37,20 +37,20 @@ spinner = html.Div([html.Div(), html.Div(), html.Div(), html.Div()],
 success = html.Div('Success')
 
 # Layout: Login Form
-loginform = html.Div([
+loginform = [
     html.Img(src=format_img('logo.png'), 
             style={'margin': '30px auto', 'display': 'block'}),
     html.Div('Username', className='label', id='username-label'),
     dcc.Input('', className='input', id='user'),
     html.Div('Password', className='label'),
     dcc.Input('', className='input', id='pw', type='password'),
-    html.Button("Don't have an account?", id='toggle', 
-                className='login-signup-button'),
+    html.Button("Don't have an account?", id='login-toggle', 
+                className='login-signup-toggle'),
     html.Button('Continue', id='submit', className='loginbutton'),
-], id='form-area', className='form-area'),
+]
 
 # Layout: Signup Form
-signupform = html.Div([
+signupform = [
     html.Img(src=format_img('logo.png'), 
             style={'margin': '30px auto', 'display': 'block'}),
     html.Div('Username', className='label'),
@@ -59,43 +59,25 @@ signupform = html.Div([
     dcc.Input('', className='input', id='email', type='email'),
     html.Div('Password', className='label'),
     dcc.Input('', className='input', id='pw', type='password'),
-    html.Button('Already have an account?', id='toggle', 
-                className='login-signup-button'),
+    html.Button('Already have an account?', id='signin-toggle', 
+                className='login-signup-toggle'),
     #html.Button('Continue', id='submit', className='loginbutton'),
-], id='form-area', className='form-area'),
+]
 
 # Layout: Login page
 login = html.Div([
-    html.Div([
-        #Login form (with logo)
-        loginform,
+    #Login form (with logo)
+    html.Div(children=loginform, id='form-area', className='form-area'),
 
-        #Console shit
-        html.Div([
-            html.Div(
-                html.Div('Console', className='consoletitle'), 
-                         className='consoletitlecontainer'),
-            html.Div('Welcome!', id='result', 
-                     className='consoleoutput'),
-        ], className='console')
-    ],className='login-area')
-], id='layout', className='layout')
-
-#Layout: Sign up page
-signup = html.Div([
+    #Console shit
     html.Div([
-        #Sign up form (with logo)
-        signupform,
-        
-        #Console shit
-        html.Div([
-            html.Div(
-                html.Div('Console', className='consoletitle'), 
-                         className='consoletitlecontainer'),
-            html.Div('Welcome!', id='result', 
-                     className='consoleoutput'),
-        ], className='console')
-    ],className='login-area')
+        html.Div(
+            html.Div('Console', className='consoletitle'), 
+                        className='consoletitlecontainer'),
+        html.Div('Welcome!', id='result', 
+                    className='consoleoutput'),
+    ], className='console'),
+    dcc.Store(id='current-form', data='login'),
 ], id='layout', className='layout')
 
 # Initial app layout
@@ -138,15 +120,20 @@ def authenticate(_, username, password):
 
 @app.callback(
     Output('form-area', 'children'),
-    Input('toggle', 'n_clicks'),
+    Input('form-toggle', 'n_clicks'),
     prevent_initial_call=True
 )
-def toggle_login_page(_):
-    # Toggle between login and sign up
-    if app.layout == login:
-        return no_update, signup
-    else:
-        return no_update, login
+def to_login_page(_, current_form):
+    return no_update, signupform
+   
+
+@app.callback(
+    Output('form-area', 'children'),
+    Input('signin-toggle', 'n_clicks'),
+    prevent_initial_call=True
+)
+def to_signin_page(_, current_form):
+    return no_update, loginform
 
 # Run dash server
 # - Set debug=False when in deployment
