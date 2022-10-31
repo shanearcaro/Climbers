@@ -36,21 +36,39 @@ spinner = html.Div([html.Div(), html.Div(), html.Div(), html.Div()],
 # Layout: Success (Temporary)
 success = html.Div('Success')
 
+# Layout: Login Form
+loginform = html.Div([
+    html.Img(src=format_img('logo.png'), 
+            style={'margin': '30px auto', 'display': 'block'}),
+    html.Div('Username', className='label', id='username-label'),
+    dcc.Input('', className='input', id='user'),
+    html.Div('Password', className='label'),
+    dcc.Input('', className='input', id='pw', type='password'),
+    html.Button("Don't have an account?", id='toggle', 
+                className='login-signup-button'),
+    html.Button('Continue', id='submit', className='loginbutton'),
+], id='form-area', className='form-area'),
+
+# Layout: Signup Form
+signupform = html.Div([
+    html.Img(src=format_img('logo.png'), 
+            style={'margin': '30px auto', 'display': 'block'}),
+    html.Div('Username', className='label'),
+    dcc.Input('', className='input', id='user'),
+    html.Div('E-Mail', className='label'),
+    dcc.Input('', className='input', id='email', type='email'),
+    html.Div('Password', className='label'),
+    dcc.Input('', className='input', id='pw', type='password'),
+    html.Button('Already have an account?', id='toggle', 
+                className='login-signup-button'),
+    #html.Button('Continue', id='submit', className='loginbutton'),
+], id='form-area', className='form-area'),
+
 # Layout: Login page
 login = html.Div([
     html.Div([
         #Login form (with logo)
-        html.Div([
-            html.Img(src=format_img('logo.png'), 
-                 style={'margin': '30px auto', 'display': 'block'}),
-            html.Div('Username', className='label', id='username-label'),
-            dcc.Input('', className='input', id='user'),
-            html.Div('Password', className='label'),
-            dcc.Input('', className='input', id='pw', type='password'),
-            html.Button("Don't have an account?", id='toggle', 
-                        className='login-signup-button'),
-            html.Button('Continue', id='submit', className='loginbutton'),
-        ], id='form-area', className='form-area'),
+        loginform,
 
         #Console shit
         html.Div([
@@ -67,19 +85,8 @@ login = html.Div([
 signup = html.Div([
     html.Div([
         #Sign up form (with logo)
-        html.Div([
-            html.Img(src=format_img('logo.png'), 
-                    style={'margin': '30px auto', 'display': 'block'}),
-            html.Div('Username', className='label'),
-            dcc.Input('', className='input', id='user'),
-            html.Div('E-Mail', className='label'),
-            dcc.Input('', className='input', id='email', type='email'),
-            html.Div('Password', className='label'),
-            dcc.Input('', className='input', id='pw', type='password'),
-            html.Button('Already have an account?', id='toggle', 
-                        className='login-signup-button'),
-            #html.Button('Continue', id='submit', className='loginbutton'),
-    ], id='form-area', className='form-area'),
+        signupform,
+        
         #Console shit
         html.Div([
             html.Div(
