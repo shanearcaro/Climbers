@@ -10,7 +10,7 @@ import json
 
 #jdict has to be recieved as a response from rabbitmq
 #It will also be cleaned up before it gets here
-jdict = None
+
 
 # Get area dictionary
 area_dicts = []
