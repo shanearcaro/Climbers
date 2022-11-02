@@ -9,6 +9,7 @@ import json
 import datetime as dt
 from datetime import date
 
+#------This-is-to-be-replaced-by-api/dmz-functionality-------\
 app = Dash(__name__, update_title='', suppress_callback_exceptions=True)
 
 # Get raw data for graph (formatted raw dictionaries)
@@ -134,9 +135,8 @@ for area_dict in lowest_areas:
                      'lng': area_dict['metadata']['lng'],
                      'children': area_dict['children']}
   lowest_areas_formatted.append(temp_dict)
-
-hours = [(dt.time(i).strftime('%I %p')) for i in range(24)]
-
+#------------------------------------------------------------   
+hours = [(dt.time(i).strftime('%I %p')) for i in range(24)]     
 # Get pandas dataframe for figure
 df = pd.DataFrame(lowest_areas_formatted)
 
