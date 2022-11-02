@@ -28,6 +28,7 @@ function doLogin($username,$hash)
   if($response->num_rows <= 0 || $response->num_rows > 1){
     return false;
   }  
+
   //If query returns 1 row, check if the hash matches
   else{
     $row = $response->fetch_assoc();
@@ -41,16 +42,49 @@ function doLogin($username,$hash)
   }
 }
 
+function doUserAdd($username,$email,$hash){
+  global $mydb;
+
+  //Check if username already exists
+  $query = "SELECT username FROM Users WHERE username='$username';";
+  $response = $mydb->query($query);
+  if($response->num_rows > 0){
+    //return error if username already exists
+    return array("returnCode" => '2', 'message'=>"Account with that username already exists");
+  }
+
+  //Check if email already exists
+  $query = "SELECT email FROM Users WHERE email='$email';";
+  $response = $mydb->query($query);
+  if($response->num_rows > 0){
+    //return error if email does exist
+    return array("returnCode" => '2', 'message'=>"Account with that email already exists");
+  }
+
+  //Add user to database
+  $query = "INSERT INTO Users (username,email,hash,salt) VALUES ('$username','$email','$hash','');";
+  $response = $mydb->query($query);
+  if($response){
+    //Return success
+    return array("returnCode" => '1', 'message'=>"User added successfully");
+  }
+  else{
+    //Return failure
+    return array("returnCode" => '2', 'message'=>"User add failed");
+  }
+}
+
 function requestProcessor($request)
 {
   echo "received request".PHP_EOL;
   var_dump($request);
   if(!isset($request['type']))
   {
-    return "ERROR: No message type set!";
+    return array("returnCode" => '0', 'message'=>"Server received request, but no valid type was specified");
   }
   switch ($request['type'])
   {
+    //Login Functionality
     case "login":
       $succ = doLogin($request['username'],$request['hash']);
       if($succ){
@@ -59,14 +93,18 @@ function requestProcessor($request)
       else{
         return array("returnCode" => '2', 'message'=>"Login failed!");
       }
-    //case "validate_session":
-    //  return doValidate($request['sessionId']);
+      
+    //User Add Functionality
+    case "useradd":
+      return doUserAdd($request['username'],
+                       $request['email'],
+                       $request['hash']);
   }
   return array("returnCode" => '0', 'message'=>"Server received request, but no valid type was specified");
 }
 
-$server = new rabbitMQServer("../config/newConfig.ini","testServer");
-//$server = new rabbitMQServer("../config/rabbitConf.ini","testServer");
+//$server = new rabbitMQServer("../config/newConfig.ini","testServer");
+$server = new rabbitMQServer("../config/rabbitConf.ini","testServer");
 
 $server->process_requests('requestProcessor');
 exit();
