@@ -172,9 +172,13 @@ app.layout = html.Div([
 @app.callback(
     Output('click', 'children'),
     Input('map', 'clickData'),
+    prevent_initial_call=True
 )
 def click(clickdata):
     print(clickdata)
+    
+    
+    
     return str(clickdata)
 
 if __name__ == '__main__':

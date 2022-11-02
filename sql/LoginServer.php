@@ -42,7 +42,7 @@ function doLogin($username,$hash)
   }
 }
 
-function doUserAdd($username,$email,$hash,$salt){
+function doUserAdd($username,$email,$hash){
   global $mydb;
 
   //Check if username already exists
@@ -62,7 +62,7 @@ function doUserAdd($username,$email,$hash,$salt){
   }
 
   //Add user to database
-  $query = "INSERT INTO Users (username,email,hash,salt) VALUES ('$username','$email','$hash','$salt');";
+  $query = "INSERT INTO Users (username,email,hash,salt) VALUES ('$username','$email','$hash','');";
   $response = $mydb->query($query);
   if($response){
     //Return success
@@ -84,6 +84,7 @@ function requestProcessor($request)
   }
   switch ($request['type'])
   {
+    //Login Functionality
     case "login":
       $succ = doLogin($request['username'],$request['hash']);
       if($succ){
@@ -92,11 +93,12 @@ function requestProcessor($request)
       else{
         return array("returnCode" => '2', 'message'=>"Login failed!");
       }
+      
+    //User Add Functionality
     case "useradd":
       return doUserAdd($request['username'],
                        $request['email'],
-                       $request['hash'],
-                       $request['salt']);
+                       $request['hash']);
   }
   return array("returnCode" => '0', 'message'=>"Server received request, but no valid type was specified");
 }

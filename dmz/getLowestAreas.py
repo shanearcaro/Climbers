@@ -1,6 +1,5 @@
 import requests as r
 import json
-from pprint import pprint
 
 q_nj_areas = ''' 
 fragment locationData on Area{
@@ -56,26 +55,7 @@ query NJAreasWithLatLng{
 }
 '''
 
-querystring2 = '''
-fragment climbData on Area{
-  totalClimbs
-  climbs {
-    id
-    fa
-    yds  
-    content{
-      description
-      protection
-    }
-  }
-}
 
-query SingleArea{
-  area(uuid: ""){
-    ...climbData
-  }
-}
-'''
 
 def get_lowest_area_dicts(area_dicts_list):
   '''
@@ -115,6 +95,7 @@ responseDictionary = responseDictionary['data']['areas'][0]['children']
 #Then we can run our facny recursive function
 lowest_areas = get_lowest_area_dicts(responseDictionary)
 
+<<<<<<< HEAD:dmz/fetchData.py
 lowest_areas_formatted = []
 for area_dict in lowest_areas:
   temp_dict = {'uuid': area_dict['uuid'],
@@ -127,3 +108,5 @@ print(lowest_areas_formatted)
 
 #pprint(responseDictionary)
 #pprint(get_lowest_area_dicts(responseDictionary))
+=======
+print(lowest_areas)

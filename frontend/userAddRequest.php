@@ -10,9 +10,9 @@ $client = new rabbitMQClient("../config/rabbitConf.ini","testServer");
 
 //There should always be 5 arguments: 
 //the script name, username, email, hash, and salt
-if($argc != 5){
+if($argc != 4){
 	echo "Incorrect number of arguments!".PHP_EOL
-    ."Usage: userAddRequesst.php <username> <email> <hash> <salt>".PHP_EOL;
+    ."Usage: userAddRequesst.php <username> <email> <password".PHP_EOL;
 	exit();
 }
 
@@ -21,7 +21,6 @@ $request['type'] = "useradd";
 $request['username'] = $argv[1];
 $request['email'] = $argv[2];
 $request['hash'] = $argv[3];
-$request['salt'] = $argv[4];
 
 //Send the request
 $response = $client->send_request($request);
