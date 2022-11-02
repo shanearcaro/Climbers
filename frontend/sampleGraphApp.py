@@ -6,6 +6,8 @@ import plotly.express as px
 import plotly.graph_objects as go
 import requests as r
 import json
+import datetime as dt
+from datetime import date
 
 app = Dash(__name__, update_title='', suppress_callback_exceptions=True)
 
@@ -132,15 +134,26 @@ for area_dict in lowest_areas:
                      'lng': area_dict['metadata']['lng'],
                      'children': area_dict['children']}
   lowest_areas_formatted.append(temp_dict)
-        
+
+hours = [(dt.time(i).strftime('%I %p')) for i in range(24)]
+
 # Get pandas dataframe for figure
 df = pd.DataFrame(lowest_areas_formatted)
 
 fig = px.scatter_mapbox(df, lat="lat", lon="lng",
                   size_max=14, 
-                  zoom=7)
+                  zoom=7,
+                  hover_data=["areaName"])
 
-fig.update_layout(mapbox_style="open-street-map")
+fig.update_layout(mapbox_style="open-street-map", hoverlabel=dict(
+        bgcolor="white",
+        font_size=16,
+    ))
+
+fig.update_traces(
+    marker=dict(size=10),
+    selector=dict(mode="markers"),
+)
 
 # App layout
 app.layout = html.Div([
@@ -154,12 +167,41 @@ app.layout = html.Div([
         'margin':'auto'
     }),
     html.Div([
-        'hi'
+        html.Div([
+          'Select an area on the map'
+        ], id='area', style={
+            'font-size':'30px'
+          }),
+        html.Div([
+          
+        ], id='lat'),
+        html.Div([
+          
+        ], id='lon'),
+        html.Div('Select a date', style={
+            'margin-top':'20px'
+          }),
+        dcc.DatePickerSingle(
+          id='my-date-picker-single',
+          min_date_allowed=dt.datetime.now(),
+          max_date_allowed=date(2022, 12, 31),
+          placeholder='Select date',
+        ),
+        html.Div('Select a time', style={
+            'margin-top':'20px'
+          }),
+        dcc.Dropdown(hours, id='time-dropdown',
+          style={
+            'width': '50%'
+          }),
+        html.Div(id='output-container-date-picker-single'),
+        html.Button('Schedule')
     ], id='click', style={
         'height':'70%',
         'min-width':'70%',
-        'border':'1px solid darkgray' ,
-        'margin':'auto'
+        'border':'1px solid darkgray',
+        'margin':'auto',
+        'padding':'10px'
     })
 ], style={
     'display':'grid',
@@ -170,16 +212,33 @@ app.layout = html.Div([
 })
 
 @app.callback(
-    Output('click', 'children'),
+    Output('area', 'children'),
+    Output('lat', 'children'),
+    Output('lon', 'children'),
     Input('map', 'clickData'),
     prevent_initial_call=True
 )
 def click(clickdata):
     print(clickdata)
-    
-    
-    
-    return str(clickdata)
+    points = clickdata['points'][0]
+    print(points['lat'])
+    print(points['lon'])
+    print(points['customdata'][0])
+    print(points)
+    return points['customdata'][0], points['lat'], points['lon']
+  
+@app.callback(
+    Output('output-container-date-picker-single', 'children'),
+    Input('my-date-picker-single', 'date'),
+    State('time-dropdown', 'value'),
+    prevent_initial_call=True)
+def update_output(date_value, time):
+    string_prefix = 'You have selected: '
+    if time is not None:
+      if date_value is not None:
+          date_object = date.fromisoformat(date_value)
+          date_string = date_object.strftime('%B %d, %Y')
+          return string_prefix + date_string + ' at ' + time
 
 if __name__ == '__main__':
     app.run_server(host="0.0.0.0", port="8050", debug=True)
