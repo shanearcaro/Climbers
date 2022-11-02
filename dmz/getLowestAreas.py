@@ -95,18 +95,7 @@ responseDictionary = responseDictionary['data']['areas'][0]['children']
 #Then we can run our facny recursive function
 lowest_areas = get_lowest_area_dicts(responseDictionary)
 
-<<<<<<< HEAD:dmz/fetchData.py
-lowest_areas_formatted = []
-for area_dict in lowest_areas:
-  temp_dict = {'uuid': area_dict['uuid'],
-                     'areaName': area_dict['areaName'],
-                     'lat': area_dict['metadata']['lat'],
-                     'lng': area_dict['metadata']['lng'],
-                     'children': area_dict['children']}
-  lowest_areas_formatted.append(temp_dict)
-print(lowest_areas_formatted)
-
+print(lowest_areas)
 #pprint(responseDictionary)
 #pprint(get_lowest_area_dicts(responseDictionary))
-=======
-print(lowest_areas)
+
