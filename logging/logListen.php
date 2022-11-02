@@ -1,4 +1,4 @@
-#!usr/bin/php
+#!/usr/bin/php
 <?php
 require_once('../djmagic/rabbitMQLib.inc');
 
