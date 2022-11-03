@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 # This script is used to run the DMZ services
-source ../logging/logListen.php
-source ./apiServer.php
+/usr/bin/php ../logging/logListen.php
+/usr/bin/php ./apiServer.php
