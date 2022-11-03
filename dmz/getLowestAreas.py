@@ -1,5 +1,6 @@
-import requests as r
 import json
+
+import requests as r
 
 q_nj_areas = ''' 
 fragment locationData on Area{

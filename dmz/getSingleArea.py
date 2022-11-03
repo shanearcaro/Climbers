@@ -1,5 +1,6 @@
-import requests as r
 import json
+
+import requests as r
 
 q_single_area = '''
 fragment climbData on Area{
