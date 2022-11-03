@@ -8,15 +8,15 @@ $client = new rabbitMQClient("../config/dataConfig.ini","testServer");
 function logProcessor($request)
 {
     //echo "received request".PHP_EOL;
-    var_dump($request);
-    
-    return array("returnCode" => '1', 'message'=>"Log updated");
-
-    //return array("returnCode" => '0', 'message'=>"Write to log failed!");
+    //var_dump($request);
+    if(!isset($request['message']))
+    {
+        file_put_contents('logs/log'.date("m-d-Y-h:i:s").'.txt', $request[message].PHP_EOL , FILE_APPEND | LOCK_EX);
+        echo $request['message']
+    }
 }
 
 $server = new rabbitMQServer("../config/logConfig.ini","testServer");
-//$server = new rabbitMQServer("../config/rabbitConf.ini","testServer");
 
 $server->process_requests('logProcessor');
 exit();
