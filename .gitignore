@@ -4,4 +4,4 @@ __pycache__/
 *.pyc
 .vscode/
 logging/logs/*.txt
-
+logging/logs/logConfig.ini
