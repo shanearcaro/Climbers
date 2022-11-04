@@ -2,11 +2,10 @@
 <?php
 require_once('../djmagic/rabbitMQLib.inc');
 
-//This is localhost for testing
-//$client = new rabbitMQClient("../config/rabbitConf.ini","testServer");
+$config = parse_ini_file("userConfig.ini");
 
 //This is for cross VM communication
-$client = new rabbitMQClient("../config/logConfig.ini","testServer");
+$client = new rabbitMQClient("../config/".$config['name']."_logConfig.ini","testServer");
 
 //This is a function-ized version of the code below that is used by
 //server scripts to send messages to the logging exchange

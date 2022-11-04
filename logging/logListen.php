@@ -2,8 +2,7 @@
 <?php
 require_once('../djmagic/rabbitMQLib.inc');
 
-//This is for cross VM communication
-$client = new rabbitMQClient("../config/dataConfig.ini","testServer");
+$config = parse_ini_file("userConfig.ini");
 
 function logProcessor($request)
 {
@@ -15,7 +14,7 @@ function logProcessor($request)
     
 }
 
-$server = new rabbitMQServer("../config/logConfig.ini","testServer");
+$server = new rabbitMQServer("../config/".$config['name']."_logConfig.ini","testServer");
 
 $server->process_requests('logProcessor');
 exit();
