@@ -1,13 +1,13 @@
-import dash
-from dash import Dash, html, dcc, callback, Input, Output, State, no_update
+import datetime as dt
+import json
+from datetime import date
+
 import pandas as pd
-import plotly.figure_factory as ff
 import plotly.express as px
+import plotly.figure_factory as ff
 import plotly.graph_objects as go
 import requests as r
-import json
-import datetime as dt
-from datetime import date
+from dash import Dash, Input, Output, State, callback, dcc, html, no_update
 
 #------This-is-to-be-replaced-by-api/dmz-functionality-------\
 app = Dash(__name__, update_title='', suppress_callback_exceptions=True)
@@ -136,6 +136,7 @@ for area_dict in lowest_areas:
                      'children': area_dict['children']}
   lowest_areas_formatted.append(temp_dict)
 #------------------------------------------------------------   
+
 hours = [(dt.time(i).strftime('%I %p')) for i in range(24)]     
 # Get pandas dataframe for figure
 df = pd.DataFrame(lowest_areas_formatted)
