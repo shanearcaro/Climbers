@@ -184,8 +184,8 @@ app.layout = html.Div([
           }),
         dcc.DatePickerSingle(
           id='my-date-picker-single',
-          min_date_allowed=dt.datetime.now(),
-          max_date_allowed=date(2022, 12, 31),
+          min_date_allowed=dt.datetime.now()-dt.timedelta(days=1),
+          max_date_allowed=dt.datetime.now()+dt.timedelta(days=365),
           placeholder='Select date',
         ),
         html.Div('Select a time', style={
