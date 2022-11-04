@@ -26,9 +26,8 @@ def run_php_script(path, args):
     # Decode bytes to string, return raw string
     return response.decode('utf-8')
 
-def createLog(message){
+def createLog(message):
     '''Sends a log request to the rabbitmq server which gets sent to 
     all other clients through a fanout exchange. Each client's then 
     creates their own log file locally'''
     return run_php_script("../logging/logPublish.php", [message])
-}
