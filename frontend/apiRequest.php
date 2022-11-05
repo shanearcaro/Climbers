@@ -8,6 +8,8 @@ require_once('../djmagic/rabbitMQLib.inc');
 //This is for cross VM communication
 $client = new rabbitMQClient("../config/dataConfig.ini","testServer");
 
+//This request is hard coded for getting NJ results, so no arguments are needed
+
 //There should always be 2 arguments, the script name and the state
 // if($argc != 2){
 // 	echo "Incorrect number of arguments!".PHP_EOL."Usage: apiRequest.php <State>".PHP_EOL;
