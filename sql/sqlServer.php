@@ -66,11 +66,11 @@ function doUserAdd($username,$email,$hash){
   $response = $mydb->query($query);
   if($response){
     //Return success with userid
-    $query = "SELECT userid FROM Users WHERE username='$username';";
+    $query = "SELECT id FROM Users WHERE username='$username';";
     $response = $mydb->query($query);
     
     $row = $response->fetch_assoc();
-    return array("returnCode" => '1', 'message'=>"User added successfully", 'userid'=>$row['userid']);
+    return array("returnCode" => '1', 'message'=>"User added successfully", 'userid'=>$row['id']);
   }
   else{
     //Return failure
@@ -83,7 +83,7 @@ function doSchedule($userid,$areauuid,$goaldate){
   global $mydb;
 
   //Check if user already has a schedule for this area
-  $query = "SELECT userid FROM Schedules WHERE userid=$userid AND areauuid='$areauuid';";
+  $query = "SELECT id FROM Schedules WHERE id=$userid AND areauuid='$areauuid';";
   $response = $mydb->query($query);
   if($response->num_rows > 0){
     //return error if user already has a schedule for this area
@@ -119,11 +119,11 @@ function requestProcessor($request)
       $succ = doLogin($request['username'],$request['hash']);
       if($succ){
         //Return success with userid
-        $query = "SELECT userid FROM Users WHERE username='".$request['username']."';";
+        $query = "SELECT id FROM Users WHERE username='".$request['username']."';";
         $response = $mydb->query($query);
         
         $row = $response->fetch_assoc();
-        return array("returnCode" => '1', 'message'=>"Login successful!", 'userid'=>$row['userid']);
+        return array("returnCode" => '1', 'message'=>"Login successful!", 'userid'=>$row['id']);
       }
       else{
         return array("returnCode" => '2', 'message'=>"Login failed!");
