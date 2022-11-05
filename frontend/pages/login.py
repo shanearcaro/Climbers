@@ -18,7 +18,7 @@ dash.register_page(
 # Layout: Login Form
 loginform = [
     #Fun image
-    html.Img(src=format_img('logo.png'), 
+    html.Img(src=util.format_img('logo.png'), 
             style={'margin': '30px auto', 'display': 'block'}),
 
     #Actual form area
