@@ -32,11 +32,11 @@ def createLog(message=''):
     '''Sends a log request to the rabbitmq server which gets sent to 
     all other clients through a fanout exchange. Each client's then 
     creates their own log file locally'''
-    return run_php_script("../../logging/logPublish.php", [message])
+    return run_php_script("../logging/logPublish.php", [message])
 
 def loginRequest(username='', password=''):
     return json.loads(
-        run_php_script("../loginRequest.php", [username, password]))
+        run_php_script("loginRequest.php", [username, password]))
 
 def scheduleRequest():
     return #run_php_script("../scheduleRequest.php", [])
