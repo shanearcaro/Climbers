@@ -196,7 +196,7 @@ app.layout = html.Div([
             'width': '50%'
           }),
         html.Div(id='output-container-date-picker-single'),
-        html.Button('Schedule')
+        html.Button('Schedule', id='submit')
     ], id='click', style={
         'height':'70%',
         'min-width':'70%',
