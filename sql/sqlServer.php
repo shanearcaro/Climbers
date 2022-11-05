@@ -135,16 +135,18 @@ function requestProcessor($request)
                        $request['email'],
                        $request['hash']);
 
-    case "schedule":
-      return doSchedule($request['userid'],
-                        $request['areauuid'],
-                        $request['datetime']);
+    //In order to send data over a separate channel, this fuction will
+    //have to be moved into another file and called from the services script
+    // case "schedule":
+    //   return doSchedule($request['userid'],
+    //                     $request['areauuid'],
+    //                     $request['datetime']);
   }
   return array("returnCode" => '0', 'message'=>"Server received request, but no valid type was specified");
 }
 
 //$server = new rabbitMQServer("../config/newConfig.ini","testServer");
-$server = new rabbitMQServer("../config/rabbitConf.ini","testServer");
+$server = new rabbitMQServer("../config/loginConfig.ini","testServer");
 
 $server->process_requests('requestProcessor');
 exit();

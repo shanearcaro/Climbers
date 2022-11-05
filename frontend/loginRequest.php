@@ -3,7 +3,7 @@
 require_once('../djmagic/rabbitMQLib.inc');
 
 //This is localhost for testing
-$client = new rabbitMQClient("../config/loginConf.ini","testServer");
+$client = new rabbitMQClient("../config/loginConfig.ini","testServer");
 
 //This is for cross VM communication
 //$client = new rabbitMQClient("../config/newConfig.ini","testServer");
