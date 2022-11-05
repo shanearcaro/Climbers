@@ -1,7 +1,6 @@
 import base64
 import subprocess
 
-
 # Dash requires a special image format
 def format_img(img):
     b64encoded_img=base64.b64encode(open(f'assets/{img}', 'rb').read())
@@ -30,4 +29,7 @@ def createLog(message):
     '''Sends a log request to the rabbitmq server which gets sent to 
     all other clients through a fanout exchange. Each client's then 
     creates their own log file locally'''
-    return run_php_script("../logging/logPublish.php", [message])
+    return run_php_script("../../logging/logPublish.php", [message])
+
+def setSchedule():
+    return run_php_script("../scheduleRequest.php", [])

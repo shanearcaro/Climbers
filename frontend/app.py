@@ -1,6 +1,6 @@
-import sys, os
 import dash
-from dash import Dash, html, dcc, callback, Input, Output, State, no_update
+from dash import Dash, html
+
 #from pages import login, signup
 
 # Initialize Dash app

@@ -20,7 +20,7 @@ html, body {margin: 0; height: 100%; overflow: hidden}
         transition: 150ms ease;
     }
 
-.login-signup-toggle {
+#login-signup-toggle {
     width: 100%;
     height: 50px;
     border-radius: 25px;
@@ -32,7 +32,7 @@ html, body {margin: 0; height: 100%; overflow: hidden}
     font-size: 13px;
     transition: 150ms ease;
 }
-    .login-signup-toggle:hover {
+    #login-signup-toggle:hover {
         cursor: pointer;
         filter: brightness(160%);
         transition: 150ms ease;

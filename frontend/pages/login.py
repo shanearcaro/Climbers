@@ -1,6 +1,8 @@
+import os
+import sys
+
 import dash
-from dash import html, dcc, callback, Input, Output, State, no_update
-import sys, os
+from dash import Input, Output, State, callback, dcc, html, no_update
 
 #Relative path import for util.py
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
@@ -28,7 +30,7 @@ loginform = [
     #Button to toggle between login and signup
     html.Div(
         dcc.Link(
-            "Already have an account?", 
+            "Don't Have an Account?", 
             href='/signup'
         ), 
         id='login-toggle', 

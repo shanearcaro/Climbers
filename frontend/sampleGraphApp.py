@@ -1,5 +1,7 @@
 import datetime as dt
 import json
+import os
+import sys
 from datetime import date
 
 import pandas as pd
@@ -8,6 +10,10 @@ import plotly.figure_factory as ff
 import plotly.graph_objects as go
 import requests as r
 from dash import Dash, Input, Output, State, callback, dcc, html, no_update
+
+#Relative path import for util.py
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+from util import *
 
 #------This-is-to-be-replaced-by-api/dmz-functionality-------\
 app = Dash(__name__, update_title='', suppress_callback_exceptions=True)
