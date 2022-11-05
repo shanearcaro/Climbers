@@ -78,6 +78,7 @@ def authenticate(_, username, password):
     # We do a try-except block because the script may
     # throw some error and we want to be able to handle that
     # without breaking the webpage
+    auth_response = None
     try:
         auth_response = util.loginRequest(username, password)
     except:
