@@ -28,7 +28,7 @@ loginform = [
     #Button to toggle between login and signup
     html.Div(
         dcc.Link(
-            "Already have an account?", 
+            "Don't Have an Account?", 
             href='/signup'
         ), 
         id='login-toggle', 
