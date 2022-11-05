@@ -74,6 +74,30 @@ function doUserAdd($username,$email,$hash){
   }
 }
 
+function doSchedule($userid,$areauuid,$goaldate){
+
+  global $mydb;
+
+  //Check if user already has a schedule for this area
+  $query = "SELECT userid FROM Schedules WHERE userid=$userid AND areauuid='$areauuid';";
+  $response = $mydb->query($query);
+  if($response->num_rows > 0){
+    //return error if user already has a schedule for this area
+    return array("returnCode" => '2', 'message'=>"User already has a schedule for this area");
+  }
+
+  //Add schedule to database
+  $query = "INSERT INTO Schedules (userid,areauuid,goaldate) VALUES ($userid,'$areauuid','$goaldate');";
+  $response = $mydb->query($query);
+  if($response){
+    //Return success
+    return array("returnCode" => '1', 'message'=>"Schedule added successfully");
+  }
+  else{
+    //Return failure{
+  }
+}
+
 function requestProcessor($request)
 {
   echo "received request".PHP_EOL;
@@ -99,6 +123,11 @@ function requestProcessor($request)
       return doUserAdd($request['username'],
                        $request['email'],
                        $request['hash']);
+
+    case "schedule":
+      return doSchedule($request['userid'],
+                        $request['areauuid'],
+                        $request['datetime']);
   }
   return array("returnCode" => '0', 'message'=>"Server received request, but no valid type was specified");
 }
