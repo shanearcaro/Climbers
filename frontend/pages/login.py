@@ -1,6 +1,8 @@
+import os
+import sys
+
 import dash
-from dash import html, dcc, callback, Input, Output, State, no_update
-import sys, os
+from dash import Input, Output, State, callback, dcc, html, no_update
 
 #Relative path import for util.py
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
