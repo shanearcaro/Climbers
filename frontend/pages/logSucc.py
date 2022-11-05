@@ -21,7 +21,7 @@ success = html.Div( children=[
 @callback(
     Output('userid-text', 'children'),
     Input('interval', 'modified_timestamp'),
-    State('session', 'data'),
+    State('stored-userid', 'data'),
 )
 def getuid(n, data):
     data = data or {}

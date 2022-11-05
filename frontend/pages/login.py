@@ -86,7 +86,7 @@ def authenticate(_, username, password):
    
     # Return the response in HTML
     if auth_response["returnCode"] == "1":
-        dcc.Store(id='userid', 
+        dcc.Store(id='stored-userid', 
                 data=auth_response["userid"], 
                 storage_type='session')
         return dcc.Location(pathname='/logSucc', id='redirect')

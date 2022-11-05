@@ -82,7 +82,7 @@ def register(_, username, email, password):
    
     # Return the response in HTML
     if add_response["returnCode"] == "1":
-        dcc.Store(id='userid', 
+        dcc.Store(id='stored-userid', 
                 data=add_response["userid"], 
                 storage_type='session')
         return dcc.Location(pathname='/logSucc', id='redirect')
