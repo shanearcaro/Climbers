@@ -31,5 +31,8 @@ def createLog(message):
     creates their own log file locally'''
     return run_php_script("../../logging/logPublish.php", [message])
 
-def setSchedule():
+def loginRequest(username, password):
+    return run_php_script("../loginRequest.php", [username, password])
+
+def scheduleRequest():
     return run_php_script("../scheduleRequest.php", [])
