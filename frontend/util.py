@@ -37,6 +37,10 @@ def createLog(message=''):
 def loginRequest(username='', password=''):
     return json.loads(
         run_php_script("loginRequest.php", [username, password]))
+        
+def signupRequest(username='', email='', password=''):
+    return json.loads(
+        run_php_script("userAddRequest.php", [username, email, password]))
 
 def scheduleRequest():
     return #run_php_script("../scheduleRequest.php", [])

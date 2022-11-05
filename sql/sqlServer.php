@@ -104,6 +104,8 @@ function doSchedule($userid,$areauuid,$goaldate){
 
 function requestProcessor($request)
 {
+  global $mydb;
+
   echo "received request".PHP_EOL;
   var_dump($request);
   if(!isset($request['type']))
@@ -116,7 +118,12 @@ function requestProcessor($request)
     case "login":
       $succ = doLogin($request['username'],$request['hash']);
       if($succ){
-        return array("returnCode" => '1', 'message'=>"Login successful!");
+        //Return success with userid
+        $query = "SELECT userid FROM Users WHERE username='".$request['username']."';";
+        $response = $mydb->query($query);
+        
+        $row = $response->fetch_assoc();
+        return array("returnCode" => '1', 'message'=>"Login successful!", 'userid'=>$row['userid']);
       }
       else{
         return array("returnCode" => '2', 'message'=>"Login failed!");

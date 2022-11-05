@@ -8,16 +8,25 @@ dash.register_page(
 )
 
 # Layout: Success (Temporary)
-success = html.Div(children=[
-    html.Div('Success!')
-    html.Div(id='userid_text')
+success = html.Div( children=[
+    html.Div('Success!'),
+    html.Div(id='userid-text'),
+    dcc.Interval(
+            id='interval',
+            interval=1*1000, # in milliseconds
+            n_intervals=0
+        )
 ])
 
 @callback(
     Output('userid-text', 'children'),
+    Input('interval', 'modified_timestamp'),
     State('session', 'data'),
 )
-def getuid():
-    return
+def getuid(n, data):
+    data = data or {}
+    return data.get('userid', 'No User ID')
+
+
 def layout():
     return success

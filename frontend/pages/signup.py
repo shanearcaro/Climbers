@@ -6,7 +6,7 @@ from dash import Input, Output, State, callback, dcc, html, no_update
 
 #Relative path import for util.py
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-from util import *
+import util
 
 #Dash requires pages to be registered
 dash.register_page(
@@ -18,7 +18,7 @@ dash.register_page(
 # Layout: Signup Form
 signupform = [
     #Fun image
-    html.Img(src=format_img('logo.png'), 
+    html.Img(src=util.format_img('logo.png'), 
             style={'margin': '30px auto', 'display': 'block'}),
 
     #Actual form area
@@ -74,16 +74,19 @@ def register(_, username, email, password):
     # We do a try-except block because the script may
     # throw some error and we want to be able to handle that
     # without breaking the webpage
+    add_response = ''
     try:
-        add_response = int(run_php_script('userAddRequest.php',
-                                            [username, email, password]))
+        add_response = util.signupRequest(username, email, password)
     except:
         return html.Div('An error occurred while running the useradd script')
    
     # Return the response in HTML
-    if add_response == 1:
+    if add_response["returnCode"] == "1":
+        dcc.Store(id='userid', 
+                data=add_response["userid"], 
+                storage_type='session')
         return dcc.Location(pathname='/logSucc', id='redirect')
-    if add_response == 2:
+    if add_response["returnCode"] == "2":
         return html.Div('Invalid login, try again',
                          style={'color': 'red'})
     else:

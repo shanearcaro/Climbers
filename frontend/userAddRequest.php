@@ -3,16 +3,16 @@
 require_once('../djmagic/rabbitMQLib.inc');
 
 //This is localhost for testing
-$client = new rabbitMQClient("../config/rabbitConf.ini","testServer");
+$client = new rabbitMQClient("../config/loginConf.ini","testServer");
 
 //This is for cross VM communication
 //$client = new rabbitMQClient("../config/newConfig.ini","testServer");
 
 //There should always be 5 arguments: 
-//the script name, username, email, hash, and salt
+//the script name, username, email, password
 if($argc != 4){
 	echo "Incorrect number of arguments!".PHP_EOL
-    ."Usage: userAddRequesst.php <username> <email> <password".PHP_EOL;
+    ."Usage: userAddRequesst.php <username> <email> <password>".PHP_EOL;
 	exit();
 }
 
@@ -26,5 +26,7 @@ $request['hash'] = $argv[3];
 $response = $client->send_request($request);
 
 //echo the return code from the server
-echo $response['returnCode'];
+//echo $response['returnCode'];
+
+print_r(json_encode($response));
 ?>
