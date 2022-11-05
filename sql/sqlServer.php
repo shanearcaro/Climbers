@@ -65,8 +65,12 @@ function doUserAdd($username,$email,$hash){
   $query = "INSERT INTO Users (username,email,hash,salt) VALUES ('$username','$email','$hash','');";
   $response = $mydb->query($query);
   if($response){
-    //Return success
-    return array("returnCode" => '1', 'message'=>"User added successfully");
+    //Return success with userid
+    $query = "SELECT userid FROM Users WHERE username='$username';";
+    $response = $mydb->query($query);
+    
+    $row = $response->fetch_assoc();
+    return array("returnCode" => '1', 'message'=>"User added successfully", 'userid'=>$row['userid']);
   }
   else{
     //Return failure

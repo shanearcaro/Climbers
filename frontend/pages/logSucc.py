@@ -1,5 +1,5 @@
 import dash
-from dash import html, dcc, callback, Input, Output, State, no_update
+from dash import Input, Output, State, callback, dcc, html, no_update
 
 dash.register_page(
     __name__, 
@@ -8,7 +8,16 @@ dash.register_page(
 )
 
 # Layout: Success (Temporary)
-success = html.Div('Success!')
+success = html.Div(children=[
+    html.Div('Success!')
+    html.Div(id='userid_text')
+])
 
+@callback(
+    Output('userid-text', 'children'),
+    State('session', 'data'),
+)
+def getuid():
+    return
 def layout():
     return success
