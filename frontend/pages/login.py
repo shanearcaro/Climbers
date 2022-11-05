@@ -6,7 +6,7 @@ from dash import Input, Output, State, callback, dcc, html, no_update
 
 #Relative path import for util.py
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-from util import *
+import util
 
 #Dash requires pages to be registered
 dash.register_page(
@@ -79,15 +79,14 @@ def authenticate(_, username, password):
     # throw some error and we want to be able to handle that
     # without breaking the webpage
     try:
-        auth_response = int(run_php_script('loginRequest.php',
-                                            [username, password]))
+        auth_response = util.loginRequest(username, password)
     except:
         return html.Div('An error occurred while running the login script')
    
     # Return the response in HTML
-    if auth_response == 1:
+    if auth_response["returnCode"] == 1:
         return dcc.Location(pathname='/logSucc', id='redirect')
-    if auth_response == 2:
+    if auth_response["returnCode"] == 2:
         return html.Div('Invalid login, try again',
                          style={'color': 'red'})
     else:

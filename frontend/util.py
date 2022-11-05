@@ -1,4 +1,5 @@
 import base64
+import json
 import subprocess
 
 # Dash requires a special image format
@@ -25,14 +26,17 @@ def run_php_script(path, args):
     # Decode bytes to string, return raw string
     return response.decode('utf-8')
 
-def createLog(message):
+#The following functions are wrappers for the PHP scripts
+
+def createLog(message=''):
     '''Sends a log request to the rabbitmq server which gets sent to 
     all other clients through a fanout exchange. Each client's then 
     creates their own log file locally'''
     return run_php_script("../../logging/logPublish.php", [message])
 
-def loginRequest(username, password):
-    return run_php_script("../loginRequest.php", [username, password])
+def loginRequest(username='', password=''):
+    return json.loads(
+        run_php_script("../loginRequest.php", [username, password]))
 
 def scheduleRequest():
-    return run_php_script("../scheduleRequest.php", [])
+    return #run_php_script("../scheduleRequest.php", [])
