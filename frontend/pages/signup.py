@@ -81,12 +81,12 @@ def register(_, username, email, password):
         return html.Div('An error occurred while running the useradd script')
    
     # Return the response in HTML
-    if add_response["returnCode"] == "1":
+    if add_response.get("returnCode") == "1":
         dcc.Store(id='stored-userid', 
-                data=add_response["userid"], 
+                data=add_response.get("userid"), 
                 storage_type='session')
         return dcc.Location(pathname='/logSucc', id='redirect')
-    if add_response["returnCode"] == "2":
+    if add_response.get("returnCode") == "2":
         return html.Div('Invalid login, try again',
                          style={'color': 'red'})
     else:
