@@ -26,7 +26,7 @@ $response = $client->send_request($request);
 //$response = $client->publish($request);
 
 //echo "client received response: ".PHP_EOL;
-echo $response["returnCode"];
+echo $response["message"];
 //echo "\n\n";
 
 //echo $argv[0]." END".PHP_EOL;
