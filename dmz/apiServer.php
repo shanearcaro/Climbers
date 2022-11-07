@@ -21,7 +21,7 @@ function requestProcessor($request)
     case "bottomareas":
       return array("returnCode" => '1', 'message'=>runPythonScript("getLowestAreas.py"));
   }
-  return array("returnCode" => '0', 'message'=>"Server received request, but no valid type was specified");
+  return array("returnCode" => '0', 'message'=>"Unhandled error");
 }
 
 $server = new rabbitMQServer("../config/dataConfig.ini","testServer");
