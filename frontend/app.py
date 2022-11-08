@@ -10,9 +10,7 @@ app = Dash(__name__,
           use_pages=True
         )
 
-app.layout = html.Div(
-    dash.page_container
-)
+app.layout = html.Div(children=[dash.page_container])
 
 # This was provided by the Dash documentation
 #
