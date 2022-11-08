@@ -2,6 +2,7 @@
 <?php
 require_once('../djmagic/rabbitMQLib.inc');
 
+echo "Starting api server..." . PHP_EOL;
 function runPythonScript($path){
     $cmd = escapeshellcmd("python3 $path");
     $output = shell_exec($cmd);
