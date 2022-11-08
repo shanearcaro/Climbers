@@ -60,42 +60,37 @@ spinner = html.Div([html.Div(), html.Div(), html.Div(), html.Div()],
 
 @dash.callback(
     Output('hidden-login-div', 'children'),
-    Input('submit', 'n_clicks'),
+    Input('submit-val', 'n_clicks'),
     State('user', 'value'),
     State('pw', 'value'),
     prevent_initial_call=True
 )
 def authenticate(_, username, password):
     # Guard against empty inputs
-    if ((username == '') and (password == '')):
+    if username == '' and password == '':
         return html.Div('Enter a username and password')
-    elif (username == ''):
+    elif username == '':
         return html.Div('Username is empty, try again')
-    elif (password == ''):
+    elif password == '':
         return html.Div('Password is empty, try again')
 
-    # Try to run the auth script, and return the result
-    # We do a try-except block because the script may
-    # throw some error and we want to be able to handle that
-    # without breaking the webpage
     auth_response = None
     try:
         auth_response = util.loginRequest(username, password)
     except:
         return html.Div('An error occurred while running the login script')
-   
-    # Return the response in HTML
-    if auth_response["returnCode"] == "1":
+
+    response = auth_response['returnCode']
+
+    if response == '1':
         dcc.Store(id='stored-userid', 
                 data=auth_response["userid"], 
                 storage_type='session')
         return dcc.Location(pathname='/logSucc', id='redirect')
-    if auth_response["returnCode"] == "2":
-        return html.Div('Invalid login, try again',
-                         style={'color': 'red'})
+    elif auth_response["returnCode"] == "2":
+        return html.Div('Invalid login, try again', style={'color': 'red'})
     else:
-        return html.Div('Unhandled error',
-                         style={'color': 'red'})
-                         
+        return html.Div('Unhandled error', style={'color': 'red'})
+
 def layout():
     return loginpage
