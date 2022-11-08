@@ -3,7 +3,7 @@
 require_once('../djmagic/rabbitMQLib.inc');
 
 //Create database connection
-$mydb = new mysqli('127.0.0.1','root','toor1029','IT490');
+$mydb = new mysqli('127.0.0.1','it490user','it490pass','IT490');
 
 //Check connection
 if ($mydb->errno != 0)
@@ -88,6 +88,30 @@ function doSchedule($userid,$areauuid,$goaldate){
   if($response->num_rows > 0){
     //return error if user already has a schedule for this area
     return array("returnCode" => '2', 'message'=>"User already has a schedule for this area");
+  }
+
+  //Add schedule to database
+  $query = "INSERT INTO Schedules (userid,areauuid,goaldate) VALUES ($userid,'$areauuid','$goaldate');";
+  $response = $mydb->query($query);
+  if($response){
+    //Return success
+    return array("returnCode" => '1', 'message'=>"Schedule added successfully");
+  }
+  else{
+    //Return failure{
+  }
+}
+
+function doChatGroup($userid,$areauuid,$goaldate){
+
+  global $mydb;
+
+  //Check if user already has a schedule for this area
+  $query = "SELECT * FROM MessageGroups areauuid='$areauuid' AND goaldate='$goaldate';";
+  $response = $mydb->query($query);
+  if($response->num_rows > 0){
+    //return error if user already has a schedule for this area
+    return array("returnCode" => '2', 'message'=>"Message Group Already Exists for this time");
   }
 
   //Add schedule to database
