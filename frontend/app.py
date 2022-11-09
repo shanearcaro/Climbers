@@ -1,5 +1,5 @@
 import dash
-from dash import Dash, html
+from dash import Dash, html, dcc
 
 #from pages import login, signup
 
@@ -10,7 +10,11 @@ app = Dash(__name__,
           use_pages=True
         )
 
-app.layout = html.Div(children=[dash.page_container])
+app.layout = html.Div(children=[
+    dash.page_container, 
+    dcc.Store(id='session-userid', storage_type='session')
+    ]
+)
 
 # This was provided by the Dash documentation
 #

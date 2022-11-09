@@ -38,7 +38,7 @@ loginform = [
     ),
 
     #Submit button
-    html.Button('Continue', id='submit', className='loginbutton'),
+    html.Button('Continue', id='submit-val', className='loginbutton'),
 ]
 
 # Layout: Login page
@@ -47,7 +47,7 @@ loginpage = html.Div(id='layout', className='layout', children=[
     html.Div(children=loginform, id='form-area', className='form-area'),
 
     #Empty Div for logic reasons
-    html.Div(id='hidden-login-div', style={'display': 'none'})
+    html.Div(id='hidden-login-div')
 ])
 
 # Spinner element for loading (WIP)
@@ -59,7 +59,8 @@ spinner = html.Div([html.Div(), html.Div(), html.Div(), html.Div()],
 #(copilot wrote the spaghetti part lmao) 
 
 @dash.callback(
-    Output('hidden-login-div', 'children'),
+    [Output('hidden-login-div', 'children'), 
+    Output('session-userid', 'data'),],
     Input('submit-val', 'n_clicks'),
     State('user', 'value'),
     State('pw', 'value'),
@@ -68,29 +69,27 @@ spinner = html.Div([html.Div(), html.Div(), html.Div(), html.Div()],
 def authenticate(_, username, password):
     # Guard against empty inputs
     if username == '' and password == '':
-        return html.Div('Enter a username and password')
+        return html.Div('Enter a username and password'), -1
     elif username == '':
-        return html.Div('Username is empty, try again')
+        return html.Div('Username is empty, try again'), -1
     elif password == '':
-        return html.Div('Password is empty, try again')
+        return html.Div('Password is empty, try again'), -1
 
     auth_response = None
     try:
         auth_response = util.loginRequest(username, password)
     except:
-        return html.Div('An error occurred while running the login script')
+        return html.Div('An error occurred while running the useradd script'), -1
 
     response = auth_response['returnCode']
 
     if response == '1':
-        dcc.Store(id='stored-userid', 
-                data=auth_response["userid"], 
-                storage_type='session')
-        return dcc.Location(pathname='/logSucc', id='redirect')
+        # return html.Div(auth_response['userid']), auth_response['userid']
+        return dcc.Location(pathname='/logSucc', id='redirect'), auth_response['userid']
     elif auth_response["returnCode"] == "2":
-        return html.Div('Invalid login, try again', style={'color': 'red'})
+        return html.Div(auth_response['message'], style={'color': 'red'}), -1
     else:
-        return html.Div('Unhandled error', style={'color': 'red'})
+        return html.Div('Unhandled error', style={'color': 'red'}), -1
 
 def layout():
     return loginpage
