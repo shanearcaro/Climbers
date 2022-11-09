@@ -1,7 +1,7 @@
 #!/usr/bin/php
 <?php
 require_once('../djmagic/rabbitMQLib.inc');
-require_once('../logs/logPublish.php');
+require_once('../logging/logPublish.php');
 
 //Create database connection
 $mydb = new mysqli('127.0.0.1','root','toor1029','IT490');
