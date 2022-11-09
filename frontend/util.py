@@ -42,5 +42,9 @@ def signupRequest(username='', email='', password=''):
     return json.loads(
         run_php_script("userAddRequest.php", [username, email, password]))
 
+def createChatRequest(area='', time='', userid=''):
+    return json.loads(
+        run_php_script("createChatRequest.php", [area, time, userid]))
+
 def scheduleRequest():
     return #run_php_script("../scheduleRequest.php", [])
