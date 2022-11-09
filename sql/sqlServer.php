@@ -71,7 +71,7 @@ function doUserAdd($username, $email, $hash)
     $response = $mydb->query($query);
 
     $row = $response->fetch_assoc();
-    echo "Account created: userid" . $row['userid'];
+    echo "Account created: userid " . $row['userid'] . PHP_EOL;
     return array("returnCode" => '1', 'message' => "User added successfully", 'userid' => $row['userid']);
   } else {
     //Return failure
@@ -104,35 +104,11 @@ function doSchedule($userid, $areauuid, $goaldate)
   }
 }
 
-function doChatGroup($userid, $areauuid, $goaldate)
-{
-
-  global $mydb;
-
-  //Check if user already has a schedule for this area
-  $query = "SELECT * FROM MessageGroups areauuid='$areauuid' AND goaldate='$goaldate';";
-  $response = $mydb->query($query);
-  if ($response->num_rows > 0) {
-    //return error if user already has a schedule for this area
-    return array("returnCode" => '2', 'message' => "Message Group Already Exists for this time");
-  }
-
-  //Add schedule to database
-  $query = "INSERT INTO Schedules (userid,areauuid,goaldate) VALUES ($userid,'$areauuid','$goaldate');";
-  $response = $mydb->query($query);
-  if ($response) {
-    //Return success
-    return array("returnCode" => '1', 'message' => "Schedule added successfully");
-  } else {
-    //Return failure{
-  }
-}
-
 function requestProcessor($request)
 {
   global $mydb;
 
-  echo "received request" . PHP_EOL;
+  echo "Received Request[LOGIN SERVER]" . PHP_EOL;
   var_dump($request);
   if (!isset($request['type'])) {
     return array("returnCode" => '0', 'message' => "Server received request, but no valid type was specified");

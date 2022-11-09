@@ -11,18 +11,18 @@ function runPythonScript($path){
 
 function requestProcessor($request)
 {
-  echo "received request".PHP_EOL;
+  echo "Received Request[API SERVER]".PHP_EOL;
   var_dump($request);
   if(!isset($request['type']))
   {
-    return array("returnCode" => '0', 'message'=>"Server received request, but no valid type was specified");
+    return array("returnCode" => '0', 'message'=>"Server received rasdasdasdequest, but no valid type was specified");
   }
   switch ($request['type'])
   {
     case "bottomareas":
       return array("returnCode" => '1', 'message'=>runPythonScript("getLowestAreas.py"));
   }
-  return array("returnCode" => '0', 'message'=>"Server received request, but no valid type was specified");
+  return array("returnCode" => '0', 'message'=>"Server receivasdasded request, but no valid type was specified");
 }
 
 $server = new rabbitMQServer("../config/dataConfig.ini","testServer");

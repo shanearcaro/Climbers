@@ -87,7 +87,7 @@ def register(_, username, email, password):
 
     if response == '1':
         return dcc.Location(pathname='/login', id='redirect')
-    elif auth_response["returnCode"] == "2":
+    elif response == "2":
         return html.Div(auth_response['message'], style={'color': 'red'})
     else:
         return html.Div('Unhandled error', style={'color': 'red'})

@@ -16,35 +16,75 @@ function doChatGroup($area, $time, $userid)
 {
   global $mydb;
 
-  //Check if user already has a schedule for this area
-  $query = "INSERT INTO MessageGroup(area, time, userid), VALUES ('$area', 'time', '')";
+  var_dump($area, $time, $userid);
+  //Check if user is in this group
+  $query = "SELECT c.chatid FROM Chats AS c 
+    JOIN ChatMembers as cm on c.chatid=cm.chatid 
+    WHERE c.area='$area' AND c.time='$time' AND cm.userid='$userid'";
   $response = $mydb->query($query);
+  
+  echo "Chat Operations[CHAT SERVER]" . PHP_EOL;
+  // User is already in this group
+  if ($response->num_rows > 0)
+    return array("returnCode" => '2', 'message' => "User already in chat");
+
+  // Check if group exists
+  $query = "SELECT chatid FROM Chats WHERE area='$area' AND time='$time'";
+  $response = $mydb->query($query);
+
+  // Group exists, join
   if ($response->num_rows > 0) {
-    //return error if user already has a schedule for this area
-    return array("returnCode" => '2', 'message' => "Message Group Already Exists for this time");
+    $row = $response->fetch_assoc();
+    $chatid = $row['chatid'];
+
+    $query = "INSERT INTO ChatMembers(userid, chatid) VALUES('$userid', '$chatid')";
+    $response = $mydb->query($query);
+    
+    // User added
+    if ($response)
+      return array("returnCode" => '1', 'message' => "User added to chat");
+    else
+      return array("returnCode" => '3', 'message' => "Failed adding user into chat");
   }
 
-  //Add schedule to database
-//   $query = "INSERT INTO Schedules (userid,areauuid,goaldate) VALUES ($userid,'$areauuid','$goaldate');";
-//   $response = $mydb->query($query);
-//   if ($response) {
-//     //Return success
-//     return array("returnCode" => '1', 'message' => "Schedule added successfully");
-//   } else {
-//     //Return failure{
-//   }
+  // Chat doesn't exist, create and join
+  $query = "INSERT INTO Chats(area, time) VALUES('$area', '$time')";
+  $response = $mydb->query($query);
+
+  // Check to see if chat was created
+  if (!$response)
+    return array("returnCode" => '4', 'message' => "Failed creating chat group");
+
+  $query = "SELECT chatid FROM Chats ORDER BY chatid DESC LIMIT 1";
+  $response = $mydb->query($query);
+
+  // Check to see if chat was retrieved
+  if (!$response)
+    return array("returnCode" => '5', 'message' => "Failed retrieving chatid");
+  $row = $response->fetch_assoc();
+  $chatid = $row['chatid'];
+
+  // Insert user into created chat
+  $query = "INSERT INTO ChatMembers(userid, chatid) VALUES('$userid', '$chatid')";
+  $response = $mydb->query($query);
+
+  if ($response)
+    return array("returnCode" => '1', 'message' => "User added to chat");
+  else
+    return array("returnCode" => '3', 'message' => "Failed adding user into chat");
 }
 
 function requestProcessor($request)
 {
   global $mydb;
 
-  echo "received request" . PHP_EOL;
-  var_dump($request);
+  echo "Received Request[CHAT SERVER]" . PHP_EOL;
   if (!isset($request['type'])) {
     return array("returnCode" => '0', 'message' => "Server received request, but no valid type was specified");
   }
   switch ($request['type']) {
+    case "createchat":
+      return doChatGroup($request['area'], $request['time'], $request['userid']); 
   }
   return array("returnCode" => '0', 'message' => "Server received request, but no valid type was specified");
 }

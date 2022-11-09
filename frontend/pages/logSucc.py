@@ -32,22 +32,45 @@ chats = html.Div(children=[
     html.Div('SWITCHED')
 ])
 
-# Get userid and store in hidden div
+# # Get userid and store in hidden div
+# @dash.callback(
+#     Output('userid-text', 'value'),
+#     [Input('session-userid', 'data')])
+# def on_data(data):
+#     return data
+
+# @dash.callback(
+#     Output('chat-table', 'children'),
+#     Input('create-chat', 'n_clicks'),
+#     Input('userid-text', 'value'),
+#     prevent_initial_call=True
+# )
+# def create_group(n_clicks, userid):
+#     # TODO: Needs to be changed to accept areas instead of n_clicks
+#     response = util.createChatRequest(userid, "time", userid)
+#     return html.Div(response['message'])
+
 @dash.callback(
-    Output('userid-text', 'children'),
-    [Input('session-userid', 'data')])
-def on_data(data):
-    id = data
-    return html.Div(id)
+    Output('userid-text', 'value'),
+    Input('create-chat', 'n_clicks'),
+    State('session-userid', 'data'),
+    prevent_initial_call=True
+)
+def setid(_, data):
+    return data
 
 @dash.callback(
     Output('chat-table', 'children'),
-    Input('create-chat', 'n_click'),
-    Input('userid-txt', 'data')
+    Input('userid-text', 'value'),
+    prevent_initial_call=True
 )
-def create_group(n_click, userid):
-    response = util.createChatRequest(n_click, "time", userid)
-    return html.Div(response)
+def create_group(userid):
+    response = None
+    try:
+        response = util.createChatRequest(userid, "time", userid)
+    except:
+        return html.Div('An error occurred while running the createGroup script')
+    return html.Div(response['message'])
 
 
 def layout():
