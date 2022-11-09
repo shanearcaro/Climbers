@@ -90,13 +90,15 @@ myreq = r.post('https://api.openbeta.io',
 # This is a dictionary containing the entire response
 responseDictionary = json.loads(myreq.text)
 
+
 #So we start by peeling off the outer layers
-responseDictionary = responseDictionary['data']['areas'][0]['children']
+responseDictionary = responseDictionary['data']['areas']
+print(responseDictionary)
 
 #Then we can run our facny recursive function
-lowest_areas = get_lowest_area_dicts(responseDictionary)
+#lowest_areas = get_lowest_area_dicts(responseDictionary)
 
-print(lowest_areas)
+#print(lowest_areas)
 #pprint(responseDictionary)
 #pprint(get_lowest_area_dicts(responseDictionary))
 

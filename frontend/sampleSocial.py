@@ -14,15 +14,42 @@ app = Dash(__name__, update_title='', suppress_callback_exceptions=True)
 
 # Get raw data for graph (formatted raw dictionaries)
 
+friends_list = ['John', 'Frank', 'Eric', 'Bob', 'Dylan', 'Shawn', 'Shane', 'Kobe Bryant', 'Hi', 'Hello', 'Hola', 'Shalom']
+friends_div_list = []
+
+for friend in friends_list:
+  friends_div_list.append(
+    html.Div([friend], style={
+            'height':'10%',
+            'width':'100%',
+            'border-bottom':'1px solid black',
+            'display':'block',
+            'align-items':'center'
+          }),
+  )
+
 # App layout
 app.layout = html.Div([
   html.Div([
       html.Div([
-        'friends'
+        html.Div([
+          'friends'
+        ], style={
+          'height':'15%',
+          'width':'100%',
+          'border-bottom':'1px solid black'
+        }),
+        html.Div(friends_div_list, 
+          style={
+            'height':'85%',
+            'width':'100%',
+            'overflow':'scroll'
+          }),
       ], style={
       'margin':'10px',
+      'width':'90%',
       'height':'90%',
-      'border':'1px solid black'
+      'border':'1px solid black',
     }),
   ], style={
       'width':'90%',
@@ -38,7 +65,7 @@ app.layout = html.Div([
   'display':'grid',
   'grid-template-columns':'auto auto',
   'width':'95%',
-  'height':'95%'
+  'height':'95vh'
 })
 
 @app.callback(
