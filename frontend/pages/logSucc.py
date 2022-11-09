@@ -14,7 +14,6 @@ dash.register_page(
     path='/logSucc'
 )
 
-
 # Layout: Success (Temporary)
 success = html.Div( children=[
     html.Div('Success!'),
@@ -28,28 +27,7 @@ success = html.Div( children=[
     )
 ])
 
-chats = html.Div(children=[
-    html.Div('SWITCHED')
-])
-
-# # Get userid and store in hidden div
-# @dash.callback(
-#     Output('userid-text', 'value'),
-#     [Input('session-userid', 'data')])
-# def on_data(data):
-#     return data
-
-# @dash.callback(
-#     Output('chat-table', 'children'),
-#     Input('create-chat', 'n_clicks'),
-#     Input('userid-text', 'value'),
-#     prevent_initial_call=True
-# )
-# def create_group(n_clicks, userid):
-#     # TODO: Needs to be changed to accept areas instead of n_clicks
-#     response = util.createChatRequest(userid, "time", userid)
-#     return html.Div(response['message'])
-
+# Pull the userid session
 @dash.callback(
     Output('userid-text', 'value'),
     Input('create-chat', 'n_clicks'),
@@ -59,19 +37,21 @@ chats = html.Div(children=[
 def setid(_, data):
     return data
 
+# Join a chat
 @dash.callback(
     Output('chat-table', 'children'),
     Input('userid-text', 'value'),
     prevent_initial_call=True
 )
-def create_group(userid):
+def join(userid):
     response = None
     try:
-        response = util.createChatRequest(userid, "time", userid)
+        # TODO: Implement dynamic area and time elements with the graph area gui
+        response = util.createChatRequest(1, "time", userid)
     except:
         return html.Div('An error occurred while running the createGroup script')
     return html.Div(response['message'])
 
-
+# Set page layout
 def layout():
     return success
