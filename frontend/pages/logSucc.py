@@ -16,7 +16,6 @@ dash.register_page(
 
 # Layout: Success (Temporary)
 success = html.Div( children=[
-    html.Div('Success!'),
     html.Div(id='userid-text', style={'display': 'none'}),
     html.Button('Create Chat', id='create-chat', className='create-button'),
     html.Table(id="chat-table"),
@@ -39,7 +38,10 @@ def setid(_, data):
 
 # Join a chat
 @dash.callback(
-    Output('chat-table', 'children'),
+    [
+        Output('chat-table', 'children'),
+        Output('create-chat', 'style')
+    ],
     Input('userid-text', 'value'),
     prevent_initial_call=True
 )
@@ -50,7 +52,14 @@ def join(userid):
         response = util.createChatRequest(1, "time", userid)
     except:
         return html.Div('An error occurred while running the createGroup script')
-    return html.Div(response['message'])
+    return [
+        html.Div("Area: 1 Time: time", id='messages-area', className='label'),
+        html.Table("CHAT", id='messages-table', style={'width': '100px', 'height': '100px', 'overflow-y': 'scroll'}),
+        dcc.Input('', className='input', id='message-input'),
+        html.Button("Send Message", id="send-message")
+        ], {'display': 'none'}
+
+# User has joined a chat
 
 # Set page layout
 def layout():
