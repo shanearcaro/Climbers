@@ -9,7 +9,7 @@ function logProcessor($request)
     //echo "received request".PHP_EOL;
     var_dump($request);
     
-    file_put_contents('logs/log-'.date("Y-m-d").'.txt', "[".date()."]".$request['message'].PHP_EOL , FILE_APPEND | LOCK_EX);
+    file_put_contents('logs/log-'.date("Y-m-d").'.txt', "[".date("h:i:s")."]".$request['message'].PHP_EOL , FILE_APPEND | LOCK_EX);
     echo $request['message'];
     
 }
