@@ -22,11 +22,13 @@ function doChatGroup($area, $time, $userid)
     JOIN ChatMembers as cm on c.chatid=cm.chatid 
     WHERE c.area='$area' AND c.time='$time' AND cm.userid='$userid'";
   $response = $mydb->query($query);
-  
+  $row = $response->fetch_assoc();
+  $chatid = $row['chatid'];
+
   echo "Chat Operations[CHAT SERVER]" . PHP_EOL;
   // User is already in this group
   if ($response->num_rows > 0)
-    return array("returnCode" => '2', 'message' => "User already in chat");
+    return array("returnCode" => '2', 'message' => "User already in chat", 'chatid' => $chatid);
 
   // Check if group exists
   $query = "SELECT chatid FROM Chats WHERE area='$area' AND time='$time'";
@@ -39,10 +41,10 @@ function doChatGroup($area, $time, $userid)
 
     $query = "INSERT INTO ChatMembers(userid, chatid) VALUES('$userid', '$chatid')";
     $response = $mydb->query($query);
-    
+
     // User added
     if ($response)
-      return array("returnCode" => '1', 'message' => "User added to chat");
+      return array("returnCode" => '1', 'message' => "User added to chat", 'chatid' => $chatid);
     else
       return array("returnCode" => '3', 'message' => "Failed adding user into chat");
   }
@@ -69,9 +71,23 @@ function doChatGroup($area, $time, $userid)
   $response = $mydb->query($query);
 
   if ($response)
-    return array("returnCode" => '1', 'message' => "User added to chat");
+    return array("returnCode" => '1', 'message' => "User added to chat", 'chatid' => $chatid);
   else
     return array("returnCode" => '3', 'message' => "Failed adding user into chat");
+}
+
+function doMessage($userid, $chatid, $message)
+{
+  global $mydb;
+
+  var_dump($userid, $chatid, $message);
+  // Insert message
+  $query = "INSERT INTO ChatMessages(userid, chatid, message) VALUES('$userid', '$chatid', '$message')";
+  $response = $mydb->query($query);
+
+  if ($response)
+    return array("returnCode" => '1', 'message' => "Message added.");
+  return array("returnCode" => '2', 'message' => "Message failed to add");
 }
 
 function requestProcessor($request)
@@ -83,8 +99,10 @@ function requestProcessor($request)
     return array("returnCode" => '0', 'message' => "Server received request, but no valid type was specified");
   }
   switch ($request['type']) {
-    case "createchat":
-      return doChatGroup($request['area'], $request['time'], $request['userid']); 
+    case "create_chat":
+      return doChatGroup($request['area'], $request['time'], $request['userid']);
+    case "create_message":
+      return doMessage($request['userid'], $request['chatid'], $request['message']);
   }
   return array("returnCode" => '0', 'message' => "Server received request, but no valid type was specified");
 }

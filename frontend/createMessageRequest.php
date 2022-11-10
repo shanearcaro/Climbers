@@ -8,19 +8,19 @@ $client = new rabbitMQClient("../config/chatConfig.ini", "testServer");
 //This is for cross VM communication
 //$client = new rabbitMQClient("../config/newConfig.ini","testServer");
 
-//There should always be 5 arguments: 
-//the script name, username, email, password
+//There should always be 4 arguments: 
+//the script name, userid, chatid, message
 if ($argc != 4) {
 	echo "Incorrect number of arguments!" . PHP_EOL
-		. "Usage: createChatRequest.php <area> <time> <userid>" . PHP_EOL;
+		. "Usage: createMessageRequest.php <userid> <chatid> <message>" . PHP_EOL;
 	exit();
 }
 
 //Build the request
-$request['type'] = "create_chat";
-$request['area'] = $argv[1];
-$request['time'] = $argv[2];
-$request['userid'] = $argv[3];
+$request['type'] = "create_message";
+$request['userid'] = $argv[1];
+$request['chatid'] = $argv[2];
+$request['message'] = $argv[3];
 
 //Send the request
 $response = $client->send_request($request);
