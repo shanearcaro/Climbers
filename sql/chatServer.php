@@ -90,6 +90,26 @@ function doMessage($userid, $chatid, $message)
   return array("returnCode" => '2', 'message' => "Message failed to add");
 }
 
+function getMessages($userid, $chatid) {
+  global $mydb;
+
+  var_dump($userid, $chatid);
+  // Get all messages
+  $query = "SELECT * FROM ChatMessages WHERE chatid='$chatid'";
+  $response = $mydb->query($query);
+
+  // Get all data
+  $data = array();
+  while ($row = $response->fetch_assoc()) {
+    array_push($data, $row);
+  }
+  array_push($data, $userid);
+
+  if ($response)
+    return array("returnCode" => '1', 'message' => "Message retrieved.", 'data' => $data);
+  return array("returnCode" => '2', 'message' => "Message failed to load");
+}
+
 function requestProcessor($request)
 {
   global $mydb;
@@ -103,6 +123,8 @@ function requestProcessor($request)
       return doChatGroup($request['area'], $request['time'], $request['userid']);
     case "create_message":
       return doMessage($request['userid'], $request['chatid'], $request['message']);
+    case "get_messages":
+      return getMessages($request['userid'], $request['chatid']);
   }
   return array("returnCode" => '0', 'message' => "Server received request, but no valid type was specified");
 }

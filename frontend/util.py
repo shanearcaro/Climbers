@@ -50,5 +50,9 @@ def createMessageRequest(userid='', chatid='', message=''):
     return json.loads(
         run_php_script("createMessageRequest.php", [userid, chatid, message]))
 
+def getMessagesRequest(userid='', chatid=''):
+        return json.loads(
+            run_php_script("getMessagesRequest.php", [userid, chatid]))
+
 def scheduleRequest():
     return #run_php_script("../scheduleRequest.php", [])

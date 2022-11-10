@@ -1,5 +1,6 @@
 import os
 import sys
+import json
 
 import dash
 from dash import Input, Output, State, callback, dcc, html, no_update
@@ -22,7 +23,7 @@ success = html.Div( children=[
     html.Div(id='chat-id', style={'display': 'none'}),
     dcc.Interval(
         id='interval',
-        interval=1*1000, # in milliseconds
+        interval=1*10000, # in milliseconds
         n_intervals=0
     )
 ])
@@ -66,6 +67,39 @@ def join(userid):
         ], {'display': 'none'}, response['chatid']
 
 # Populate Chat
+@dash.callback(
+    Output('messages-table', 'children'),
+    Input('interval', 'n_intervals'),
+    State('messages-table', 'children'),
+    Input('userid-text', 'value'),
+    State('chat-id', 'value'),
+)
+def load(_, children, userid, chatid):
+    response = None
+    try:
+        response = util.getMessagesRequest(userid, chatid)
+    except:
+        return html.Div('An error occurred while running the createMessage script')
+    code = response['returnCode']
+
+    data = response['data']
+
+    # if code == 1:
+    #     children.append(html.P(response['message']))
+    # else:
+    #     children.append(html.P(response['message']))
+
+    newChildren = []
+    for index in data:
+        
+        newChildren.append(index[0: -1])
+    return newChildren
+    # if code == 1:
+    #     for index in data:
+    #         children.append(html.P("MESSAGE"))
+    # else:
+    #     children.append(html.P(response['data']))
+    # return children
 # @dash.callback(
 #     Output('messages-table', 'children'), 
 #     Output('message-input', 'value'),
