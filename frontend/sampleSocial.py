@@ -30,14 +30,18 @@ for friend in friends_list:
 
 # App layout
 app.layout = html.Div([
-  html.Div([
       html.Div([
         html.Div([
-          'friends'
+          'Friends List'
         ], style={
           'height':'15%',
           'width':'100%',
-          'border-bottom':'1px solid black'
+          'border-bottom':'1px solid black',
+          'background-color':'#2f4f04',
+          'color':'white',
+          'font-weight':'bold',
+          'font-size':'30px',
+          'text-align':'center',
         }),
         html.Div(friends_div_list, 
           style={
@@ -46,26 +50,64 @@ app.layout = html.Div([
             'overflow':'scroll'
           }),
       ], style={
-      'margin':'10px',
+      'margin':'auto',
       'width':'90%',
       'height':'90%',
       'border':'1px solid black',
     }),
-  ], style={
-      'width':'90%',
-      'height':'90%'
-    }),
   html.Div([
-      'hi'
-  ], style={
-      'width':'90%',
-      'height':'90%'
+      html.Div([
+        'Messages'
+      ], style={
+        'height':'10%',
+        'width':'100%',
+        'border-bottom':'1px solid black',
+        'background-color':'#2f4f04',
+        'color':'white',
+        'font-weight':'bold',
+        'font-size':'30px',
+      }),
+      html.Div([
+        # Messages
+      ], style={
+        'width':'100%',
+        'height':'80%',
+        'border-bottom':'1px solid black'
+      }),
+      html.Div([
+        dcc.Input(
+          id='send_message_enter',
+          style={
+          'height':'50%',
+          'width':'80%',
+          'overflow':'wrap',
+          'margin-left': '10px'
+        }),
+        html.Button(['Send'], 
+          id='send_message_btn', 
+          style={
+          'height':'50%',
+          'width':'10%',
+          'margin-left':'5px'
+        })
+      ], style={
+        'width':'100%',
+        'height':'10%',
+        'display':'flex',
+        'align-items':'center'
+      })
+    ], style={
+        'margin':'auto',
+        'width':'80%',
+        'height':'90%',
+        'border':'1px solid black',
     }),
 ], style={
   'display':'grid',
   'grid-template-columns':'auto auto',
   'width':'95%',
-  'height':'95vh'
+  'height':'95vh',
+  'margin':'auto'
 })
 
 @app.callback(
