@@ -9,7 +9,16 @@ $client = new rabbitMQClient("../config/".$config['name']."_logConfig.ini","test
 
 //This is a function-ized version of the code below that is used by
 //server scripts to send messages to the logging exchange
+function writeLocalLog($message){
+	//This is the same function call that is used by the logging server
+	//Because we are pubishing the message when running this, we need to
+	//locally write the log as well
+    file_put_contents('logs/log-'.date("Y-m-d").'.txt', "[".date("h:i:s")."]".$message.PHP_EOL , FILE_APPEND | LOCK_EX);
+}
+
 function processLog($message){
+	writeLocalLog($message);
+	global $client;
 	//Build the request
 	$request['message'] = $message;
 	//Publish the log message
@@ -25,6 +34,9 @@ if(get_included_files()[0] == __FILE__) {
 		echo "Incorrect number of arguments!".PHP_EOL."Usage: logPublish.php <log_message>".PHP_EOL.PHP_EOL;
 		exit();
 	}
+
+	//Write the log locally
+	writeLocalLog($argv[1]);
 
 	//Build the request
 	$request['message'] = $argv[1];

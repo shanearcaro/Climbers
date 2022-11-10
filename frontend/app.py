@@ -27,7 +27,7 @@ app.layout = html.Div(
 #         return '404'
 
 if __name__ == "__main__":
-    app.run_server(debug=True)
+    app.run_server()
 
 
 # Initial app layout

@@ -9,9 +9,8 @@ function logProcessor($request)
     //echo "received request".PHP_EOL;
     var_dump($request);
     
-    file_put_contents('logs/log-'.date("m-d-Y-h:i:s").'.txt', $request['message'].PHP_EOL , FILE_APPEND | LOCK_EX);
-    echo $request['message'];
-    
+    file_put_contents('logs/log-'.date("Y-m-d").'.txt', "[".date("h:i:s")."]".$request['message'].PHP_EOL , FILE_APPEND | LOCK_EX);
+    echo PHP_EOL.$request['message'].PHP_EOL;
 }
 
 $server = new rabbitMQServer("../config/".$config['name']."_logConfig.ini","testServer");

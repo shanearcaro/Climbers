@@ -1,6 +1,7 @@
 #!/usr/bin/php
 <?php
 require_once('../djmagic/rabbitMQLib.inc');
+require_once('../logging/logPublish.php');
 
 //Create database connection
 $mydb = new mysqli('127.0.0.1','root','toor1029','IT490');
@@ -50,6 +51,7 @@ function doUserAdd($username,$email,$hash){
   $response = $mydb->query($query);
   if($response->num_rows > 0){
     //return error if username already exists
+    processLog("Attempt to create duplicate account with username $username");
     return array("returnCode" => '2', 'message'=>"Account with that username already exists");
   }
 
@@ -58,7 +60,8 @@ function doUserAdd($username,$email,$hash){
   $response = $mydb->query($query);
   if($response->num_rows > 0){
     //return error if email does exist
-    return array("returnCode" => '2', 'message'=>"Account with that email already exists");
+    processLog("Attempt to create duplicate account with email $email");
+    return array("returnCode" => '2', 'message'=>"Account with that email already exists"); 
   }
 
   //Add user to database
@@ -70,10 +73,12 @@ function doUserAdd($username,$email,$hash){
     $response = $mydb->query($query);
     
     $row = $response->fetch_assoc();
+    processLog("Account created for $username with id ".$row['id']);
     return array("returnCode" => '1', 'message'=>"User added successfully", 'userid'=>$row['id']);
   }
   else{
     //Return failure
+    processLog("Failed to create account for user $username with email $email");
     return array("returnCode" => '2', 'message'=>"User add failed");
   }
 }
@@ -99,6 +104,8 @@ function doSchedule($userid,$areauuid,$goaldate){
   }
   else{
     //Return failure{
+    processLog("Failed to create schedule for user $userid in area $areauuid");
+    return array("returnCode" => '2', 'message'=>"Schedule add failed");
   }
 }
 
@@ -110,6 +117,7 @@ function requestProcessor($request)
   var_dump($request);
   if(!isset($request['type']))
   {
+    processLog("Request received with invalid type ".$request['type']);
     return array("returnCode" => '0', 'message'=>"Server received request, but no valid type was specified");
   }
   switch ($request['type'])
@@ -126,6 +134,7 @@ function requestProcessor($request)
         return array("returnCode" => '1', 'message'=>"Login successful!", 'userid'=>$row['id']);
       }
       else{
+        processLog("Failed login attempt for user ".$request['username']);
         return array("returnCode" => '2', 'message'=>"Login failed!");
       }
       
@@ -142,6 +151,7 @@ function requestProcessor($request)
     //                     $request['areauuid'],
     //                     $request['datetime']);
   }
+  processLog("Recieved invalid request:".PHP_EOL.var_dump($request));
   return array("returnCode" => '0', 'message'=>"Server received request, but no valid type was specified");
 }
 
