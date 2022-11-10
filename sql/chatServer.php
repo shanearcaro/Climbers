@@ -95,13 +95,16 @@ function getMessages($userid, $chatid) {
 
   var_dump($userid, $chatid);
   // Get all messages
-  $query = "SELECT * FROM ChatMessages WHERE chatid='$chatid'";
+  $query = "SELECT cm.userid, cm.message, cm.timestamp, u.username FROM ChatMessages cm INNER JOIN Users as u on cm.userid=u.userid WHERE chatid='$chatid'";
   $response = $mydb->query($query);
 
   // Get all data
   $data = array();
   while ($row = $response->fetch_assoc()) {
-    array_push($data, $row);
+    array_push($data, $row['userid']);
+    array_push($data, $row['message']);
+    array_push($data, $row['timestamp']);
+    array_push($data, $row['username']);
   }
   array_push($data, $userid);
 
