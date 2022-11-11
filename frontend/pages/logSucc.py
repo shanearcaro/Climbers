@@ -1,6 +1,6 @@
 import os
 import sys
-import json
+import pipes
 
 import dash
 from dash import Input, Output, State, callback, dcc, html, no_update
@@ -16,14 +16,15 @@ dash.register_page(
 )
 
 # Layout: Success (Temporary)
-success = html.Div( children=[
+success = html.Div(id='main-content', children=[
     html.Div(id='userid-text', style={'display': 'none'}),
     html.Button('Create Chat', id='create-chat', className='create-button'),
-    html.Div(id="chat-table"),
+    html.Div(id='chat-table'),
+    html.Div(id='error-text'),
     html.Div(id='chat-id', style={'display': 'none'}),
     dcc.Interval(
         id='interval',
-        interval=1*10000, # in milliseconds
+        interval=1*1000, # in milliseconds
         n_intervals=0
     )
 ])
@@ -60,11 +61,13 @@ def join(userid):
         return html.Div(response['message'], style={'color': 'red'}), {'display': 'none'}, '-1'
     return [
         html.Div("Area: 1 Time: time", id='messages-area', className='label'),
-        html.Div(children=[], id='messages-table', style={'width': '700px', 'height': '300px', 'overflowY': 'scroll'}),
-        dcc.Input('', className='input', id='message-input'),
-        html.Button("Send Message", id="send-message"),
-        html.Div(id='error-text'),
-        ], {'display': 'none'}, response['chatid']
+        html.Div(children=[], id='messages-table'),
+        html.Div(id='input-area', 
+        children=[
+            dcc.Input('', className='input', id='message-input'),
+            html.Button("Send Message", id="send-message", n_clicks=0)
+        ])
+    ], {'display': 'none'}, response['chatid']
 
 # Populate Chat
 @dash.callback(
@@ -74,6 +77,7 @@ def join(userid):
     State('messages-table', 'children'),
     Input('userid-text', 'value'),
     State('chat-id', 'value'),
+    prevent_initial_call=True
 )
 def load(_, n_clicks, children, userid, chatid):
     response = None
@@ -85,11 +89,8 @@ def load(_, n_clicks, children, userid, chatid):
 
     data = response['data']
 
-    # if code == 1:
-    #     children.append(html.P(response['message']))
-    # else:
-    #     children.append(html.P(response['message']))
-
+    # Create new child structure with messages
+    # Terribly inefficent
     newChildren = []
     for index in range(0, len(data) - 1, 4):
         user = data[index]
@@ -97,56 +98,44 @@ def load(_, n_clicks, children, userid, chatid):
         timestamp = data[index + 2]
         username = data[index + 3]
 
-
-        regular = {'fontSize': '1rem', 'padding': '0px', 'margin': '0px', 'alignSelf': 'right'}
-        if user == userid:
-            regular['alignSelf'] = 'left'
-        small = regular.copy()
-        small['fontSize'] = '0.5rem'
         newChildren.append(html.Div(children=[
-            html.P(username, style=regular),
-            html.P(message, style=regular),
-            html.P(timestamp, style=small)
-        ], style={'display': 'flex', 'flexDirection': 'column', 'justifyContent': 'center', 'padding': '0px', 'margin': '0px'}))
+            html.P(username, className='message-username'),
+            html.P(message, className='message-content'),
+            html.P(timestamp, className='message-timestamp')
+        ], className="chat-message message-" + "right" if user == userid else "left"))
         
     return newChildren
-    # if code == 1:
-    #     for index in data:
-    #         children.append(html.P("MESSAGE"))
-    # else:
-    #     children.append(html.P(response['data']))
-    # return children
-# @dash.callback(
-#     Output('messages-table', 'children'), 
-#     Output('message-input', 'value'),
-#     Input('send-message', 'n_clicks'), 
-#     # Input('chat-table', 'children'),
-#     State('message-input', 'value'),
-#     State('messages-table', 'children'),
-#     prevent_initial_call=True
-# )
-# def load(n_clicks, message, children):
-#     if message != '':
-#         children.append(html.P(message))
-#     return children, ''
 
 # Send a message
 @dash.callback(
     Output('error-text', 'children'),
     Output('message-input', 'value'),
     Input('send-message', 'n_clicks'),
-    Input('userid-text', 'value'),
+    State('userid-text', 'value'),
     State('chat-id', 'value'),
     State('message-input', 'value'),
     prevent_initial_call=True
 )
 def send_message(_, userid, groupid, message):
+    # # Fixes userid update bug
+    if message == '':
+        return no_update, no_update
+    message = pipes.quote(message)
+    # If server fails to send message, retry
     response = None
-    try:
-        response = util.createMessageRequest(userid, groupid, message)
-    except:
-        return html.Div('An error occurred while running the createMessage script'), ''
-    return html.Div(response['message']), ''
+    retryLimit = 10
+    trys = 0
+
+    while trys < retryLimit:
+        try:
+            response = util.createMessageRequest(userid, groupid, message)
+        except:
+            trys += 1
+            continue
+        break
+    if response:
+        return html.Div(response['message']), ''
+    return html.Div('[System] Message failed to send'), ''
 
 # Display users
 

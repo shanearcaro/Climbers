@@ -27,8 +27,9 @@ CREATE TABLE ChatMessages(
     messageid INT NOT NULL AUTO_INCREMENT,
     userid INT NOT NULL,
     chatid INT NOT NULL,
-    timestamp TIME NOT NULL,
-    PRIMARY KEY(messageid),
+    message VARCHAR(300) NOT NULL,
+    timestamp DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (userid) REFERENCES Users(userid),
-    FOREIGN KEY (chatid) REFERENCES Chats(chatid)
+    FOREIGN KEY (chatid) REFERENCES Chats(chatid),
+    PRIMARY KEY(messageid)
 );

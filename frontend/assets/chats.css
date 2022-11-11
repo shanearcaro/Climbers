@@ -1,0 +1,55 @@
+#chat-table {
+    width: 80%;
+
+    background-color: grey;
+    margin: 4rem;
+}
+
+#messages-area {
+    font-size: 2rem;
+    font-weight: thin;
+    color: red;
+}
+
+#messages-table {
+
+}
+
+.chat-messages {
+    background-color: green;
+    display: flex;
+    width: 10%;
+}
+
+.message-username {
+
+}
+
+.message-content {
+
+}
+
+.message-timestamp {
+
+}
+
+#input-area {
+    min-width: 80%;
+    height: 20%;
+    background-color: black;
+}
+
+#message-input {
+    width: 10%;
+    height: 20px;
+    padding: 0px;
+    border-radius: 0px;
+    
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+#send-message {
+    border-radius: 0px;
+}
