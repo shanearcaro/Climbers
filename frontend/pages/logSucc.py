@@ -51,7 +51,8 @@ def join(userid):
     response = None
     try:
         # TODO: Implement dynamic area and time elements with the graph area gui
-        response = util.createChatRequest(1, "time", userid)
+        # Need to fix input, both inputs will be broken with certain characters and spaces
+        response = util.createChatRequest("Mountains", "9AM", userid)
     except:
         return html.Div('An error occurred while running the createGroup script')
     r_c = response['returnCode']
@@ -60,12 +61,14 @@ def join(userid):
     if r_c == 3 or r_c == 4 or r_c == 5:
         return html.Div(response['message'], style={'color': 'red'}), {'display': 'none'}, '-1'
     return [
-        html.Div("Area: 1 Time: time", id='messages-area', className='label'),
-        html.Div(children=[], id='messages-table'),
+        html.Div(children=[
+            html.H1(response['area']),
+            html.P(response['time'])
+        ], id='messages-area', className='label'),
+        html.Table(children=[], id='messages-table'),
         html.Div(id='input-area', 
         children=[
-            dcc.Input('', className='input', id='message-input'),
-            html.Button("Send Message", id="send-message", n_clicks=0)
+            dcc.Input('', className='input', id='message-input', debounce=True, type='text'),
         ])
     ], {'display': 'none'}, response['chatid']
 
@@ -98,11 +101,15 @@ def load(_, n_clicks, children, userid, chatid):
         timestamp = data[index + 2]
         username = data[index + 3]
 
-        newChildren.append(html.Div(children=[
-            html.P(username, className='message-username'),
-            html.P(message, className='message-content'),
-            html.P(timestamp, className='message-timestamp')
-        ], className="chat-message message-" + "right" if user == userid else "left"))
+        classes = "message-container message-"
+        classes = classes + "right" if user == userid else classes + "left"
+        newChildren.append(html.Tr(children=[
+            html.Td(children=[
+                html.P(username, className='message-element message-username'),
+                html.P(message,  className='message-element message-content'),
+                html.P("Now",    className='message-element message-timestamp')
+            ], className=classes)
+        ], className="message-row"))
         
     return newChildren
 
@@ -110,13 +117,12 @@ def load(_, n_clicks, children, userid, chatid):
 @dash.callback(
     Output('error-text', 'children'),
     Output('message-input', 'value'),
-    Input('send-message', 'n_clicks'),
+    Input('message-input', 'value'),
     State('userid-text', 'value'),
     State('chat-id', 'value'),
-    State('message-input', 'value'),
     prevent_initial_call=True
 )
-def send_message(_, userid, groupid, message):
+def send_message(message, userid, groupid):
     # # Fixes userid update bug
     if message == '':
         return no_update, no_update

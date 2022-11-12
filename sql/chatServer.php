@@ -40,7 +40,7 @@ function doChatGroup($area, $time, $userid)
       return array("returnCode" => '3', 'message' => "Failed creating chat group");
 
     // Get chatid
-    $query = "SELECT chatid FROM Chats 
+    $query = "SELECT chatid, area, time FROM Chats 
               ORDER BY chatid 
               DESC LIMIT 1";
     $response = $mydb->query($query);
@@ -50,6 +50,8 @@ function doChatGroup($area, $time, $userid)
       return array("returnCode" => '4', 'message' => "Failed retrieving chatid");
     $row = $response->fetch_assoc();
     $chatid = $row['chatid'];
+    $area = $row['area'];
+    $time = $row['time'];
 
     // Insert user into created chat
     $query = "INSERT INTO ChatMembers(userid, chatid) 
@@ -58,16 +60,20 @@ function doChatGroup($area, $time, $userid)
 
     // Check if user was added, exit
     if ($response)
-      return array("returnCode" => '1', 'message' => "User added to chat", 'chatid' => $chatid);
+      return array("returnCode" => '1', 'message' => "User added to chat", 'chatid' => $chatid, 'area' => $area, 'time' => $time);
     else
       return array("returnCode" => '2', 'message' => "Failed adding user into chat");
   }
 
   // else, chat exists
   // Check if user is in chatroom
-  $query = "SELECT userid FROM ChatMembers 
-            WHERE userid='$userid' AND chatid='$chatid'";
+  $query = "SELECT cm.userid, c.area, c.time FROM ChatMembers AS cm
+            INNER JOIN Chats AS c ON cm.chatid=c.chatid
+            WHERE cm.userid='$userid' AND cm.chatid='$chatid'";
   $response = $mydb->query($query);
+  $row = $response->fetch_assoc();
+  $area = $row['area'];
+  $time = $row['time'];
 
   // If user not in chatroom
   if ($response->num_rows == 0) {
@@ -75,16 +81,19 @@ function doChatGroup($area, $time, $userid)
     $query = "INSERT INTO ChatMembers(userid, chatid) 
               VALUES('$userid', '$chatid')";
     $response = $mydb->query($query);
+    $row = $response->fetch_assoc();
+    $area = $row['area'];
+    $time = $row['time'];
 
     // Check if user was added, exit
     if ($response)
-      return array("returnCode" => '1', 'message' => "User added to chat", 'chatid' => $chatid);
+      return array("returnCode" => '1', 'message' => "User added to chat", 'chatid' => $chatid, 'area' => $area, 'time' => $time);
     else
       return array("returnCode" => '2', 'message' => "Failed adding user into chat");
   }
 
   // else, user is in chatroom already
-  return array("returnCode" => '5', 'message' => "User in chatroom already!", 'chatid' => $chatid);
+  return array("returnCode" => '5', 'message' => "User in chatroom already!", 'chatid' => $chatid, 'area' => $area, 'time' => $time);
 }
 
 function doMessage($userid, $chatid, $message)
