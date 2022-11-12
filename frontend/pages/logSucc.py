@@ -1,6 +1,9 @@
 import os
 import sys
 import pipes
+import math
+
+from datetime import datetime
 
 import dash
 from dash import Input, Output, State, callback, dcc, html, no_update
@@ -88,7 +91,6 @@ def load(_, n_clicks, children, userid, chatid):
         response = util.getMessagesRequest(userid, chatid)
     except:
         return html.Div('An error occurred while running the createMessage script')
-    code = response['returnCode']
 
     data = response['data']
 
@@ -102,12 +104,12 @@ def load(_, n_clicks, children, userid, chatid):
         username = data[index + 3]
 
         classes = "message-container message-"
-        classes = classes + "right" if user == userid else classes + "left"
+        classes = classes + "right" if user == userid else classes + "left message-blocked"
         newChildren.append(html.Tr(children=[
             html.Td(children=[
                 html.P(username, className='message-element message-username'),
-                html.P(message,  className='message-element message-content'),
-                html.P("Now",    className='message-element message-timestamp')
+                html.P(message, className='message-element message-content'),
+                html.P(getTimestamp(timestamp), className='message-element message-timestamp')
             ], className=classes)
         ], className="message-row"))
         
@@ -142,6 +144,29 @@ def send_message(message, userid, groupid):
     if response:
         return html.Div(response['message']), ''
     return html.Div('[System] Message failed to send'), ''
+
+def getTimestamp(timestamp):
+    format = "%Y-%m-%d %H:%M:%S"
+
+    now = datetime.now()
+    message_time = datetime.strptime(timestamp, format)
+
+    now_seconds = now.timestamp()
+    message_seconds = message_time.timestamp()
+
+    elapsed_time = now_seconds - message_seconds
+    elapsed_timestamp = ''
+
+    if elapsed_time < math.pow(60, 1):
+        return str(int(elapsed_time)) + " seconds ago"
+    elif elapsed_time < math.pow(60, 2):
+        return str(int(elapsed_time / math.pow(60, 1))) + " minutes ago"
+    elif elapsed_time < math.pow(60, 3):
+        return str(int(elapsed_time / math.pow(60, 2))) + " hours ago"
+    elif elapsed_time < math.pow(60, 4):
+        return str(int(elapsed_time / math.pow(60, 3))) + " days ago"
+    elif elapsed_time < math.pow(60, 5):
+        return str(int(elapsed_time / math.pow(60, 4))) + " weeks ago"
 
 # Display users
 
