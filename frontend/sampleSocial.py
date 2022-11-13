@@ -1,5 +1,5 @@
 import dash
-from dash import Dash, html, dcc, callback, Input, Output, State, no_update
+from dash import Dash, html, dcc, callback, Input, Output, State
 import pandas as pd
 import plotly.figure_factory as ff
 import plotly.express as px
@@ -19,7 +19,11 @@ friends_div_list = []
 
 for friend in friends_list:
   friends_div_list.append(
-    html.Div([friend], style={
+    html.Div([
+      friend,
+      html.Button(['Chat'], id=f'{friend}-chatbtn'),
+      html.Button(['Block'], id=f'{friend}-blockbtn')
+      ], style={
             'height':'10%',
             'width':'100%',
             'border-bottom':'1px solid black',
@@ -32,7 +36,20 @@ for friend in friends_list:
 app.layout = html.Div([
       html.Div([
         html.Div([
-          'Friends List'
+          dcc.Tabs(id="people-list", value='friends', 
+              style={
+                'background-color':'black'
+              },
+              children=[
+                dcc.Tab(label='Friends List', value='friends',
+                        style={
+                          'background-color':'lightgray'
+                          }),
+                dcc.Tab(label='Blocked List', value='blocked',
+                        style={
+                          'background-color':'red',
+                          }),
+            ]),
         ], style={
           'height':'15%',
           'width':'100%',
@@ -57,8 +74,8 @@ app.layout = html.Div([
     }),
   html.Div([
       html.Div([
-        'Messages'
-      ], style={
+        'Choose a recipient'
+      ], id='recipient', style={
         'height':'10%',
         'width':'100%',
         'border-bottom':'1px solid black',
@@ -68,19 +85,25 @@ app.layout = html.Div([
         'font-size':'30px',
       }),
       html.Div([
-        # Messages
-      ], style={
+        html.Div([
+          
+        ], id='messages',
+                 style={
+                   'overflow':'auto',
+                   'max-height':'80%'
+                 })
+      ], id='conversation',
+          style={
         'width':'100%',
         'height':'80%',
-        'border-bottom':'1px solid black'
+        'border-bottom':'1px solid black',
       }),
       html.Div([
         dcc.Input(
-          id='send_message_enter',
+          id='send_message_field',
           style={
           'height':'50%',
           'width':'80%',
-          'overflow':'wrap',
           'margin-left': '10px'
         }),
         html.Button(['Send'], 
@@ -104,7 +127,7 @@ app.layout = html.Div([
     }),
 ], style={
   'display':'grid',
-  'grid-template-columns':'auto auto',
+  'grid-template-columns':'1fr 1fr',
   'width':'95%',
   'height':'95vh',
   'margin':'auto'
@@ -138,6 +161,27 @@ def update_output(date_value, time):
           date_object = date.fromisoformat(date_value)
           date_string = date_object.strftime('%B %d, %Y')
           return string_prefix + date_string + ' at ' + time
+
+@app.callback(
+  Output('messages', 'children'),
+  Input('send_message_btn', 'n_clicks'),
+  Input('send_message_field', 'n_submit'),
+  State('send_message_field', 'value'),
+  prevent_initial_call=True
+)
+def send_message(messages, button, field_submit):
+    
+    return f'{messages}' + f'{field_submit}'
+
+@app.callback(
+  Output('recipient', 'children'),
+  [Input('{}-chatbtn'.format(friends), 'n_clicks') for friends in friends_list],
+  prevent_initial_call=True
+)
+def set_recipient(*args):
+    changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
+    return changed_id.split('-')[0]
+
 
 if __name__ == '__main__':
     app.run_server(host="0.0.0.0", port="8050", debug=True)
