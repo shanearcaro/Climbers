@@ -88,12 +88,15 @@ def join(userid):
 )
 def load(_, n_clicks, children, userid, chatid):
     response = None
+    blocks = None
     try:
         response = util.getMessagesRequest(userid, chatid)
+        blocks = util.getBlockedUsers(userid)
     except:
-        return html.Div('An error occurred while running the createMessage script')
+        return html.Div('An error occurred while running the startup script')
 
     data = response['data']
+    blocked_users = np.squeeze(blocks['data'])
 
     # Create new child structure with messages
     # Terribly inefficent
@@ -105,7 +108,9 @@ def load(_, n_clicks, children, userid, chatid):
         username = data[index + 3]
 
         classes = "message-container message-"
-        classes = classes + "right" if user == userid else classes + "left message-blocked"
+        classes = classes + "right" if user == userid else classes + "left"
+        if user in blocked_users:
+            classes += " message-blocked"
         newChildren.append(html.Tr(children=[
             html.Td(children=[
                 html.P(username, className='message-element message-username'),

@@ -54,5 +54,9 @@ def getMessagesRequest(userid='', chatid=''):
         return json.loads(
             run_php_script("getMessagesRequest.php", [userid, chatid]))
 
+def getBlockedUsers(userid=''):
+        return json.loads(
+            run_php_script("getBlockedUsers.php", [userid]))
+
 def scheduleRequest():
     return #run_php_script("../scheduleRequest.php", [])

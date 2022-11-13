@@ -33,3 +33,21 @@ CREATE TABLE ChatMessages(
     FOREIGN KEY (chatid) REFERENCES Chats(chatid),
     PRIMARY KEY(messageid)
 );
+
+CREATE TABLE UserFriends(
+    connectionid INT NOT NULL AUTO_INCREMENT,
+    userid INT NOT NULL,
+    friendid INT NOT NULL,
+    accepted BIT NOT NULL DEFAULT 0,
+    PRIMARY KEY (connectionid),
+    FOREIGN KEY(userid) REFERENCES Users(userid),
+    FOREIGN KEY(friendid) REFERENCES Users(userid)
+);
+
+CREATE TABLE UserBlocks(
+    userid INT NOT NULL,
+    blockid INT NOT NULL,
+    FOREIGN KEY(userid) REFERENCES Users(userid),
+    FOREIGN KEY(blockid) REFERENCES Users(userid),
+    PRIMARY KEY(userid, blockid)
+);

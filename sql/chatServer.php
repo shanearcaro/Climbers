@@ -139,6 +139,21 @@ function getMessages($userid, $chatid) {
   return array("returnCode" => '2', 'message' => "Message failed to load");
 }
 
+function getBlockedUsers($userid)
+{
+  global $mydb;
+
+  // Get all blocked users
+  $query = "SELECT blockid FROM UserBlocks 
+            WHERE userid='$userid'";
+  $response = $mydb->query($query);
+
+  if ($response)
+    return array("returnCode" => '1', 'message' => "Blocked Users retrieved.", 'data' => $response->fetch_all());
+  return array("returnCode" => '2', 'message' => "Blocked Users failed to load");
+}
+
+
 function requestProcessor($request)
 {
   global $mydb;
@@ -154,6 +169,8 @@ function requestProcessor($request)
       return doMessage($request['userid'], $request['chatid'], $request['message']);
     case "get_messages":
       return getMessages($request['userid'], $request['chatid']);
+    case "get_blocked":
+      return getBlockedUsers($request['userid']);
   }
   return array("returnCode" => '0', 'message' => "Server received request, but no valid type was specified");
 }
