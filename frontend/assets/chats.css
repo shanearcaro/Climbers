@@ -5,13 +5,15 @@
     border: 1px dashed black;
     margin: auto;
     margin-top: 5rem;
+    padding: 0rem;
 }
 
 #messages-area {
     font-size: 1rem;
-    font-weight: thin;
-
     text-align: center;
+    background-color: #ccc;
+    padding: 0px;
+    margin: 0px;
 }
 
 #messages-table {
@@ -24,8 +26,8 @@
 
 .message-row {
     display: flex;
-    margin-left: 3rem;
-    margin-right: 3rem;
+    margin-left: 0.75rem;
+    margin-right: 0.75rem;
 }
 
 .chat-message {
@@ -39,7 +41,7 @@
     border-radius: 14px;
     padding: 0.25rem 0.5rem;
     width: max-content;
-    max-width: 25rem;
+    max-width: 20rem;
     margin-bottom: 1rem;
 }
 
@@ -86,23 +88,14 @@
 }
 
 #message-input {
-    width: 100%;
+    width: 90%;
     height: 3rem;
     padding: 0rem;
     margin: 0rem;
-    border-radius: 0px;
-    
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
+    border: 1px solid black;
+    border-radius: 4px;
 }
 
 #send-message {
     border-radius: 0px;
-}
-
-input[type=text] {
-    word-wrap: break-word;
-    word-break: break-all;
-    height: 80px;
 }

@@ -2,6 +2,7 @@ import os
 import sys
 import pipes
 import math
+import numpy as np
 
 from datetime import datetime
 
@@ -156,15 +157,17 @@ def getTimestamp(timestamp):
 
     elapsed_time = int(now_seconds - message_seconds)
     # Format return
-    time_units = ['second', 'minute', 'hour', 'day', 'week']
+    time_units = {'second': 60, 'minute' : 60, 'hour': 24, 'day': 7, 'week': 52, 'year': 10}
 
-    for i, unit in enumerate(time_units):
-        # Length of current and previous time unit in seconds
-        unit_length = math.pow(60, i + 1)
-        previous_length = math.pow(60, i)
-        elapsed_unit = int(elapsed_time / previous_length)
+    for i, unit in enumerate(list(time_units.keys())):
+        # Length of unit and previous unit in seconds
+        unit_len = np.prod(list(time_units.values())[0: i + 1])
+        punit_len = unit_len / time_units[unit]
 
-        if elapsed_time < unit_length:
+        # Elapsed time in unit format
+        elapsed_unit = math.floor(elapsed_time / punit_len)
+
+        if elapsed_time < unit_len:
             postfix = ' ago' if elapsed_unit == 1 else 's ago'
             return f'{elapsed_unit} {unit}{postfix}'
 
