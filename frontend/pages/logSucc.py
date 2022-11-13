@@ -23,9 +23,11 @@ dash.register_page(
 success = html.Div(id='main-content', children=[
     html.Div(id='userid-text', style={'display': 'none'}),
     html.Button('Create Chat', id='create-chat', className='create-button'),
-    html.Div(id='chat-table'),
-    html.Div(id='error-text'),
-    html.Div(id='chat-id', style={'display': 'none'}),
+    html.Div(id='content-area', className='hidden', children=[
+        html.Div(id='chat-table'),
+        html.Div(id='error-text'),
+        html.Div(id='chat-id', style={'display': 'none'})
+    ]),
     dcc.Interval(
         id='interval',
         interval=1*1000, # in milliseconds
@@ -36,12 +38,14 @@ success = html.Div(id='main-content', children=[
 # Pull the userid session
 @dash.callback(
     Output('userid-text', 'value'),
+    Output('content-area', 'className'),
     Input('create-chat', 'n_clicks'),
     State('session-userid', 'data'),
+    State('content-area', 'className'),
     prevent_initial_call=True
 )
-def setid(_, data):
-    return data
+def setid(_, data, className):
+    return data, ''
 
 # Join a chat
 @dash.callback(
@@ -66,22 +70,23 @@ def join(userid):
         return html.Div(response['message'], style={'color': 'red'}), {'display': 'none'}, '-1'
     return [
         html.Div(children=[
-            html.H1(response['area']),
-            html.P(response['time'])
-        ], id='messages-area', className='label'),
-        html.Table(children=[], id='messages-table'),
+            html.H1(response['area'], id='area-title'),
+            html.P(response['time'], id='area-time')
+        ], id='messages-area'),
+        html.Table(children=[html.Tbody(children=[], id='table-body')], id='messages-table'),
         html.Div(id='input-area', 
         children=[
+            
             dcc.Input('', className='input', id='message-input', debounce=True, type='text'),
         ])
     ], {'display': 'none'}, response['chatid']
 
 # Populate Chat
 @dash.callback(
-    Output('messages-table', 'children'),
+    Output('table-body', 'children'),
     Input('interval', 'n_intervals'),
     Input('message-input', 'value'),
-    State('messages-table', 'children'),
+    State('table-body', 'children'),
     Input('userid-text', 'value'),
     State('chat-id', 'value'),
     prevent_initial_call=True
