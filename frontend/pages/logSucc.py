@@ -146,27 +146,27 @@ def send_message(message, userid, groupid):
     return html.Div('[System] Message failed to send'), ''
 
 def getTimestamp(timestamp):
+    # Calculate elapsed time for message sent to now
     format = "%Y-%m-%d %H:%M:%S"
-
     now = datetime.now()
     message_time = datetime.strptime(timestamp, format)
 
     now_seconds = now.timestamp()
     message_seconds = message_time.timestamp()
 
-    elapsed_time = now_seconds - message_seconds
-    elapsed_timestamp = ''
+    elapsed_time = int(now_seconds - message_seconds)
+    # Format return
+    time_units = ['second', 'minute', 'hour', 'day', 'week']
 
-    if elapsed_time < math.pow(60, 1):
-        return str(int(elapsed_time)) + " seconds ago"
-    elif elapsed_time < math.pow(60, 2):
-        return str(int(elapsed_time / math.pow(60, 1))) + " minutes ago"
-    elif elapsed_time < math.pow(60, 3):
-        return str(int(elapsed_time / math.pow(60, 2))) + " hours ago"
-    elif elapsed_time < math.pow(60, 4):
-        return str(int(elapsed_time / math.pow(60, 3))) + " days ago"
-    elif elapsed_time < math.pow(60, 5):
-        return str(int(elapsed_time / math.pow(60, 4))) + " weeks ago"
+    for i, unit in enumerate(time_units):
+        # Length of current and previous time unit in seconds
+        unit_length = math.pow(60, i + 1)
+        previous_length = math.pow(60, i)
+        elapsed_unit = int(elapsed_time / previous_length)
+
+        if elapsed_time < unit_length:
+            postfix = ' ago' if elapsed_unit == 1 else 's ago'
+            return f'{elapsed_unit} {unit}{postfix}'
 
 # Display users
 
