@@ -1,5 +1,5 @@
 import dash
-from dash import Dash, html, dcc, callback, Input, Output, State
+from dash import Dash, html, dcc, callback, Input, Output, State, no_update
 import pandas as pd
 import plotly.figure_factory as ff
 import plotly.express as px
@@ -15,61 +15,43 @@ app = Dash(__name__, update_title='', suppress_callback_exceptions=True)
 # Get raw data for graph (formatted raw dictionaries)
 
 friends_list = ['John', 'Frank', 'Eric', 'Bob', 'Dylan', 'Shawn', 'Shane', 'Kobe Bryant', 'Hi', 'Hello', 'Hola', 'Shalom']
-friends_div_list = []
+blocked_list = ['Sonjay']
+people_div_list = []
 
-for friend in friends_list:
-  friends_div_list.append(
-    html.Div([
-      friend,
-      html.Button(['Chat'], id=f'{friend}-chatbtn'),
-      html.Button(['Block'], id=f'{friend}-blockbtn')
-      ], style={
-            'height':'10%',
-            'width':'100%',
-            'border-bottom':'1px solid black',
-            'display':'block',
-            'align-items':'center'
-          }),
-  )
+
 
 # App layout
 app.layout = html.Div([
       html.Div([
-        html.Div([
           dcc.Tabs(id="people-list", value='friends', 
               style={
-                'background-color':'black'
+                'background-color':'black',
+                'border-bottom':'1px solid black',
               },
               children=[
                 dcc.Tab(label='Friends List', value='friends',
                         style={
-                          'background-color':'lightgray'
+                          'background-color':'white',
                           }),
                 dcc.Tab(label='Blocked List', value='blocked',
                         style={
-                          'background-color':'red',
+                          'background-color':'white',
+                          'color':'red',
                           }),
             ]),
-        ], style={
-          'height':'15%',
-          'width':'100%',
-          'border-bottom':'1px solid black',
-          'background-color':'#2f4f04',
-          'color':'white',
-          'font-weight':'bold',
-          'font-size':'30px',
-          'text-align':'center',
-        }),
-        html.Div(friends_div_list, 
+        html.Div(people_div_list,
+          id='list-type', 
           style={
-            'height':'85%',
+            'height':'90%',
             'width':'100%',
             'overflow':'scroll'
           }),
       ], style={
       'margin':'auto',
-      'width':'90%',
-      'height':'90%',
+      'max-width':'90%',
+      'min-width':'90%',
+      'max-height':'90%',
+      'min-height':'90%',
       'border':'1px solid black',
     }),
   html.Div([
@@ -162,6 +144,7 @@ def update_output(date_value, time):
           date_string = date_object.strftime('%B %d, %Y')
           return string_prefix + date_string + ' at ' + time
 
+# Early stages of sending message
 @app.callback(
   Output('messages', 'children'),
   Input('send_message_btn', 'n_clicks'),
@@ -173,6 +156,7 @@ def send_message(messages, button, field_submit):
     
     return f'{messages}' + f'{field_submit}'
 
+# Chat button callback
 @app.callback(
   Output('recipient', 'children'),
   [Input('{}-chatbtn'.format(friends), 'n_clicks') for friends in friends_list],
@@ -182,6 +166,47 @@ def set_recipient(*args):
     changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
     return changed_id.split('-')[0]
 
+# Blocking
+@app.callback(
+  Output('people-list', 'children'), #random id
+  [Input('{}-blockbtn'.format(friends), 'n_clicks') for friends in friends_list],
+  prevent_initial_call=True
+)
+def set_recipient(*args):
+    changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
+    name = changed_id.split('-')[0]
+    friends_list.remove(name)
+    blocked_list.append(name)
+    return friends_list
+  
+# Switching to blocked list
+@app.callback(
+  Output('list-type', 'children'),
+  Input('people-list', 'value')
+)
+def change_list(listtype):
+    if listtype == 'friends':
+        return create_people_div_list(friends_list)
+    return create_people_div_list(blocked_list)
+
+# Generate people list (friends/blocked)
+def create_people_div_list(people_list):
+    people_div_list.clear()
+    for person in people_list:
+        people_div_list.append(
+          html.Div([
+            person,
+            html.Button(['Chat'], id=f'{person}-chatbtn'),
+            html.Button(['Block'], id=f'{person}-blockbtn')
+            ], style={
+                  'height':'10%',
+                  'width':'100%',
+                  'border-bottom':'1px solid black',
+                  'display':'block',
+                  'align-items':'center'
+                }),
+    )
+    return people_div_list
 
 if __name__ == '__main__':
     app.run_server(host="0.0.0.0", port="8050", debug=True)
