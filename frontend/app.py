@@ -1,14 +1,16 @@
 import dash
 from dash import Dash, html, dcc
+from dash_extensions.enrich import DashProxy, MultiplexerTransform
 
 #from pages import login, signup
 
 # Initialize Dash app
-app = Dash(__name__, 
-          update_title='', 
-          suppress_callback_exceptions=True,
-          use_pages=True
-        )
+app = DashProxy(__name__,
+                update_title='', 
+                suppress_callback_exceptions=True,
+                use_pages=True,
+                transforms=[MultiplexerTransform()]
+)
 
 app.layout = html.Div(children=[
     dash.page_container, 
