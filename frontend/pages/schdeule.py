@@ -15,6 +15,12 @@ from dash import Dash, Input, Output, State, callback, dcc, html, no_update
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from util import *
 
+Dash.register_page(
+    __name__,
+    title='Schedule',
+    path='/schedule'
+)
+
 ## This is where we call to the DMZ for data
 lowest_areas_formatted = None
 
