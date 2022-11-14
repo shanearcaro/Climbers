@@ -194,10 +194,10 @@ def getTimestamp(timestamp):
 )
 def load_chatgroups(userid):
     response = None
-    # try:
-    response = util.getChatrooms(userid)
-    # except:
-        # return html.Div('An error occurred while running the startup script')
+    try:
+        response = util.getChatrooms(userid)
+    except:
+        return html.Div('An error occurred while running the startup script')
 
     chatrooms = response['data']
     children = []
