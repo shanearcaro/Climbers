@@ -26,8 +26,6 @@ function doChatGroup($area, $time, $userid)
   $row = $id_query->fetch_assoc();
   $chatid = $row['chatid'];
 
-  echo "CHAT ID: " . $chatid . PHP_EOL;
-
   // If chat not found
   if ($id_query->num_rows == 0) {
     // Chat doesn't exist, create
@@ -38,7 +36,7 @@ function doChatGroup($area, $time, $userid)
     // Check to see if chat was created
     if (!$response)
       return array("returnCode" => '3', 'message' => "Failed creating chat group");
-
+    
     // Get chatid
     $query = "SELECT chatid, area, time FROM Chats 
               ORDER BY chatid 
@@ -72,11 +70,12 @@ function doChatGroup($area, $time, $userid)
             WHERE cm.userid='$userid' AND cm.chatid='$chatid'";
   $response = $mydb->query($query);
   $row = $response->fetch_assoc();
-  $area = $row['area'];
-  $time = $row['time'];
 
   // If user not in chatroom
   if ($response->num_rows == 0) {
+    $area = $row['area'];
+    $time = $row['time'];
+
     // Add user
     $query = "INSERT INTO ChatMembers(userid, chatid) 
               VALUES('$userid', '$chatid')";
@@ -153,6 +152,21 @@ function getBlockedUsers($userid)
   return array("returnCode" => '2', 'message' => "Blocked Users failed to load");
 }
 
+function getChatrooms($userid)
+{
+  global $mydb;
+
+  // Get all chats user is in
+  $query = "SELECT cm.userid, cm.chatid, c.area, c.time FROM ChatMembers AS cm
+            INNER JOIN Chats AS c ON cm.chatid=c.chatid 
+            WHERE cm.userid='$userid'";
+  $response = $mydb->query($query);
+
+  if ($response)
+    return array("returnCode" => '1', 'message' => "Chats retrieved.", 'data' => $response->fetch_all());
+  return array("returnCode" => '2', 'message' => "Chats failed to load");
+}
+
 
 function requestProcessor($request)
 {
@@ -171,6 +185,8 @@ function requestProcessor($request)
       return getMessages($request['userid'], $request['chatid']);
     case "get_blocked":
       return getBlockedUsers($request['userid']);
+    case "get_chatrooms":
+      return getChatrooms($request['userid']);
   }
   return array("returnCode" => '0', 'message' => "Server received request, but no valid type was specified");
 }

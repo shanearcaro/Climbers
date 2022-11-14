@@ -58,5 +58,9 @@ def getBlockedUsers(userid=''):
         return json.loads(
             run_php_script("getBlockedUsers.php", [userid]))
 
+def getChatrooms(userid=''):
+        return json.loads(
+            run_php_script("getChatrooms.php", [userid]))
+
 def scheduleRequest():
     return #run_php_script("../scheduleRequest.php", [])

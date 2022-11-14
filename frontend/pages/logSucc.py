@@ -23,9 +23,11 @@ dash.register_page(
 success = html.Div(id='main-content', children=[
     html.Div(id='userid-text', style={'display': 'none'}),
     html.Button('Create Chat', id='create-chat', className='create-button'),
-    html.Div(id='content-area', className='hidden', children=[
-        html.Div(id='chat-table'),
-        html.Div(id='error-text'),
+    html.Div(id='content-area', children=[
+        html.Div(id='chatroom-table', className='hidden'),
+        html.Div(id='chat-table', className='hidden'),
+        # html.Div(id='error-text'),
+        html.Div(id='friends-table', className='hidden'),
         html.Div(id='chat-id', style={'display': 'none'})
     ]),
     dcc.Interval(
@@ -38,14 +40,16 @@ success = html.Div(id='main-content', children=[
 # Pull the userid session
 @dash.callback(
     Output('userid-text', 'value'),
-    Output('content-area', 'className'),
+    Output('chatroom-table', 'className'),
+    Output('chat-table', 'className'),
+    Output('friends-table', 'className'),
     Input('create-chat', 'n_clicks'),
     State('session-userid', 'data'),
     State('content-area', 'className'),
     prevent_initial_call=True
 )
 def setid(_, data, className):
-    return data, ''
+    return data, '', '', ''
 
 # Join a chat
 @dash.callback(
@@ -57,12 +61,12 @@ def setid(_, data, className):
 )
 def join(userid):
     response = None
-    try:
+    # try:
         # TODO: Implement dynamic area and time elements with the graph area gui
         # Need to fix input, both inputs will be broken with certain characters and spaces
-        response = util.createChatRequest("Mountains", "9AM", userid)
-    except:
-        return html.Div('An error occurred while running the createGroup script')
+    response = util.createChatRequest("Mountains", "9AM", userid)
+    # except:
+        # return html.Div('An error occurred while running the createGroup1 script')
     r_c = response['returnCode']
 
     # 3 - 5 are failure errors
@@ -86,12 +90,12 @@ def join(userid):
     Output('table-body', 'children'),
     Input('interval', 'n_intervals'),
     Input('message-input', 'value'),
-    State('table-body', 'children'),
     Input('userid-text', 'value'),
+    State('table-body', 'children'),
     State('chat-id', 'value'),
     prevent_initial_call=True
 )
-def load(_, n_clicks, children, userid, chatid):
+def load(_, n_clicks, userid, children, chatid):
     response = None
     blocks = None
     try:
@@ -128,7 +132,7 @@ def load(_, n_clicks, children, userid, chatid):
 
 # Send a message
 @dash.callback(
-    Output('error-text', 'children'),
+    # Output('error-text', 'children'),
     Output('message-input', 'value'),
     Input('message-input', 'value'),
     State('userid-text', 'value'),
@@ -136,10 +140,11 @@ def load(_, n_clicks, children, userid, chatid):
     prevent_initial_call=True
 )
 def send_message(message, userid, groupid):
-    # # Fixes userid update bug
     if message == '':
-        return no_update, no_update
+        # return no_update, no_update
+        return no_update
     message = pipes.quote(message)
+
     # If server fails to send message, retry
     response = None
     retryLimit = 10
@@ -153,8 +158,8 @@ def send_message(message, userid, groupid):
             continue
         break
     if response:
-        return html.Div(response['message']), ''
-    return html.Div('[System] Message failed to send'), ''
+        return ''
+    return '[System] Message failed to send'
 
 def getTimestamp(timestamp):
     # Calculate elapsed time for message sent to now
@@ -182,7 +187,28 @@ def getTimestamp(timestamp):
             return f'{elapsed_unit} {unit}{postfix}'
 
 # Display users
+@dash.callback(
+    Output('chatroom-table', 'children'),
+    Input('userid-text', 'value'),
+    prevent_initial_call=True
+)
+def load_chatgroups(userid):
+    response = None
+    # try:
+    response = util.getChatrooms(userid)
+    # except:
+        # return html.Div('An error occurred while running the startup script')
 
+    chatrooms = response['data']
+    children = []
+    for room in chatrooms:
+        children.append(html.Div(className='chatroom', 
+        children=[
+            html.P(room[-2]),
+            html.P(room[-1])
+        ]))
+
+    return children;
 
 # Set page layout
 def layout():
