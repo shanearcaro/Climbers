@@ -88,7 +88,7 @@ function doSchedule($userid,$areauuid,$goaldate){
   global $mydb;
 
   //Check if user already has a schedule for this area
-  $query = "SELECT id FROM Schedules WHERE id=$userid AND areauuid='$areauuid';";
+  $query = "SELECT scheduleid FROM Schedules WHERE userid=$userid AND areauuid='$areauuid';";
   $response = $mydb->query($query);
   if($response->num_rows > 0){
     //return error if user already has a schedule for this area
@@ -127,7 +127,7 @@ function requestProcessor($request)
       $succ = doLogin($request['username'],$request['hash']);
       if($succ){
         //Return success with userid
-        $query = "SELECT id FROM Users WHERE username='".$request['username']."';";
+        $query = "SELECT userid FROM Users WHERE username='".$request['username']."';";
         $response = $mydb->query($query);
         
         $row = $response->fetch_assoc();
