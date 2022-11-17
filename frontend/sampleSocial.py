@@ -16,6 +16,7 @@ app = Dash(__name__, update_title='', suppress_callback_exceptions=True)
 
 friends_list = ['John', 'Frank', 'Eric', 'Bob', 'Dylan', 'Shawn', 'Shane', 'Kobe Bryant', 'Hi', 'Hello', 'Hola', 'Shalom']
 blocked_list = ['Sonjay']
+current_list = friends_list
 people_div_list = []
 
 
@@ -39,7 +40,7 @@ app.layout = html.Div([
                           'color':'red',
                           }),
             ]),
-        html.Div(people_div_list,
+        html.Div(
           id='list-type', 
           style={
             'height':'90%',
@@ -159,35 +160,41 @@ def send_message(messages, button, field_submit):
 # Chat button callback
 @app.callback(
   Output('recipient', 'children'),
-  [Input('{}-chatbtn'.format(friends), 'n_clicks') for friends in friends_list],
+  [Input('{}-chatbtn'.format(people), 'n_clicks') for people in current_list],
   prevent_initial_call=True
 )
 def set_recipient(*args):
     changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
     return changed_id.split('-')[0]
-
+ 
 # Blocking
 @app.callback(
   Output('people-list', 'children'), #random id
-  [Input('{}-blockbtn'.format(friends), 'n_clicks') for friends in friends_list],
+  [Input('{}-blockbtn'.format(people), 'n_clicks') for people in current_list],
   prevent_initial_call=True
 )
 def set_recipient(*args):
+    print(current_list)
     changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
     name = changed_id.split('-')[0]
     friends_list.remove(name)
     blocked_list.append(name)
+    print(friends_list)
+    print(blocked_list)
     return friends_list
   
-# Switching to blocked list
+# Switching lists
 @app.callback(
   Output('list-type', 'children'),
   Input('people-list', 'value')
 )
 def change_list(listtype):
     if listtype == 'friends':
-        return create_people_div_list(friends_list)
-    return create_people_div_list(blocked_list)
+      current_list = friends_list
+    else:
+      current_list = blocked_list
+    print(current_list)
+    return create_people_div_list(current_list)
 
 # Generate people list (friends/blocked)
 def create_people_div_list(people_list):
