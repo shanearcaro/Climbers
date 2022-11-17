@@ -169,11 +169,11 @@ def set_recipient(*args):
  
 # Blocking
 @app.callback(
-  Output('people-list', 'children'), #random id
+  Output('people-list', 'value'), #random id
   [Input('{}-blockbtn'.format(people), 'n_clicks') for people in current_list],
   prevent_initial_call=True
 )
-def set_recipient(*args):
+def block(*args):
     print(current_list)
     changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
     name = changed_id.split('-')[0]
@@ -181,12 +181,12 @@ def set_recipient(*args):
     blocked_list.append(name)
     print(friends_list)
     print(blocked_list)
-    return friends_list
-  
+    return 'friends'
+
 # Switching lists
 @app.callback(
   Output('list-type', 'children'),
-  Input('people-list', 'value')
+  Input('people-list', 'value'),
 )
 def change_list(listtype):
     if listtype == 'friends':
@@ -195,6 +195,7 @@ def change_list(listtype):
       current_list = blocked_list
     print(current_list)
     return create_people_div_list(current_list)
+
 
 # Generate people list (friends/blocked)
 def create_people_div_list(people_list):
