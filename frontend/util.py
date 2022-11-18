@@ -28,6 +28,11 @@ def run_php_script(path, args):
 
 #The following functions are wrappers for the PHP scripts
 
+def getLowestAreas():
+    #This has no arguments because it's just a request for the lowest areas
+    #in NJ hard coded into the PHP script
+    return json.loads(run_php_script("apiRequest.php", []))
+
 def createLog(message=''):
     '''Sends a log request to the rabbitmq server which gets sent to 
     all other clients through a fanout exchange. Each client's then 
