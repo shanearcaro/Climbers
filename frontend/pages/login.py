@@ -26,6 +26,11 @@ loginform = [
     dcc.Input('', className='input', id='user'),
     html.Div('Password', className='label'),
     dcc.Input('', className='input', id='pw', type='password'),
+    #Empty Div for logic reasons
+    html.Div(id='hidden-login-div', style={
+        'color':'red',
+        'padding-bottom':'10px'
+    }),
 
     #Button to toggle between login and signup
     html.Div(
@@ -45,9 +50,6 @@ loginform = [
 loginpage = html.Div(id='layout', className='layout', children=[
     #Entire signup form, with logo, inputs, and buttons
     html.Div(children=loginform, id='form-area', className='form-area'),
-
-    #Empty Div for logic reasons
-    html.Div(id='hidden-login-div')
 ])
 
 # Spinner element for loading (WIP)
@@ -62,12 +64,15 @@ spinner = html.Div([html.Div(), html.Div(), html.Div(), html.Div()],
     [Output('hidden-login-div', 'children'), 
     Output('session-userid', 'data'),],
     Input('submit-val', 'n_clicks'),
+    Input('user', 'n_submit'),
+    Input('pw', 'n_submit'),
     State('user', 'value'),
     State('pw', 'value'),
     prevent_initial_call=True
 )
-def authenticate(_, username, password):
+def authenticate(_, _user, _pw, username, password):
     # Guard against empty inputs
+
     if username == '' and password == '':
         return html.Div('Enter a username and password'), -1
     elif username == '':
