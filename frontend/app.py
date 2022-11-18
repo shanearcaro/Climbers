@@ -1,17 +1,21 @@
 import dash
-from dash import Dash, html
+from dash import Dash, html, dcc
+from dash_extensions.enrich import DashProxy, MultiplexerTransform
 
 #from pages import login, signup
 
 # Initialize Dash app
-app = Dash(__name__, 
-          update_title='', 
-          suppress_callback_exceptions=True,
-          use_pages=True
-        )
+app = DashProxy(__name__,
+                update_title='', 
+                suppress_callback_exceptions=True,
+                use_pages=True,
+                transforms=[MultiplexerTransform()]
+)
 
-app.layout = html.Div(
-    dash.page_container
+app.layout = html.Div(children=[
+    dash.page_container, 
+    dcc.Store(id='session-userid', storage_type='session')
+    ]
 )
 
 # This was provided by the Dash documentation

@@ -2,6 +2,7 @@
 <?php
 require_once('../djmagic/rabbitMQLib.inc');
 
+echo "Starting api server..." . PHP_EOL;
 function runPythonScript($path){
     $cmd = escapeshellcmd("python3 $path");
     $output = shell_exec($cmd);
@@ -10,11 +11,11 @@ function runPythonScript($path){
 
 function requestProcessor($request)
 {
-  echo "received request".PHP_EOL;
+  echo "Received Request[API SERVER]".PHP_EOL;
   var_dump($request);
   if(!isset($request['type']))
   {
-    return array("returnCode" => '0', 'message'=>"Server received request, but no valid type was specified");
+    return array("returnCode" => '0', 'message'=>"Server received rasdasdasdequest, but no valid type was specified");
   }
   switch ($request['type'])
   {

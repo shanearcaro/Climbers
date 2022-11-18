@@ -3,14 +3,14 @@
 require_once('../djmagic/rabbitMQLib.inc');
 
 //This is localhost for testing
-$client = new rabbitMQClient("../config/loginConfig.ini","testServer");
+$client = new rabbitMQClient("../config/loginConfig.ini", "testServer");
 
 //This is for cross VM communication
 //$client = new rabbitMQClient("../config/newConfig.ini","testServer");
 
 //There should always be 3 arguments, the script name, username, and password
-if($argc != 3){
-	echo "Incorrect number of arguments!".PHP_EOL."Usage: loginRequest.php <username> <hash>".PHP_EOL;
+if ($argc != 3) {
+	echo "Incorrect number of arguments!" . PHP_EOL . "Usage: loginRequest.php <username> <hash>" . PHP_EOL;
 	exit();
 }
 

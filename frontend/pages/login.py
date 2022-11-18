@@ -26,6 +26,11 @@ loginform = [
     dcc.Input('', className='input', id='user'),
     html.Div('Password', className='label'),
     dcc.Input('', className='input', id='pw', type='password'),
+    #Empty Div for logic reasons
+    html.Div(id='hidden-login-div', style={
+        'color':'red',
+        'padding-bottom':'10px'
+    }),
 
     #Button to toggle between login and signup
     html.Div(
@@ -38,16 +43,13 @@ loginform = [
     ),
 
     #Submit button
-    html.Button('Continue', id='submit', className='loginbutton'),
+    html.Button('Continue', id='submit-val', className='loginbutton'),
 ]
 
 # Layout: Login page
 loginpage = html.Div(id='layout', className='layout', children=[
     #Entire signup form, with logo, inputs, and buttons
     html.Div(children=loginform, id='form-area', className='form-area'),
-
-    #Empty Div for logic reasons
-    html.Div(id='hidden-login-div', style={'display': 'none'})
 ])
 
 # Spinner element for loading (WIP)
@@ -59,25 +61,25 @@ spinner = html.Div([html.Div(), html.Div(), html.Div(), html.Div()],
 #(copilot wrote the spaghetti part lmao) 
 
 @dash.callback(
-    Output('hidden-login-div', 'children'),
-    Input('submit', 'n_clicks'),
+    [Output('hidden-login-div', 'children'), 
+    Output('session-userid', 'data'),],
+    Input('submit-val', 'n_clicks'),
+    Input('user', 'n_submit'),
+    Input('pw', 'n_submit'),
     State('user', 'value'),
     State('pw', 'value'),
     prevent_initial_call=True
 )
-def authenticate(_, username, password):
+def authenticate(_, _user, _pw, username, password):
     # Guard against empty inputs
-    if ((username == '') and (password == '')):
-        return html.Div('Enter a username and password')
-    elif (username == ''):
-        return html.Div('Username is empty, try again')
-    elif (password == ''):
-        return html.Div('Password is empty, try again')
 
-    # Try to run the auth script, and return the result
-    # We do a try-except block because the script may
-    # throw some error and we want to be able to handle that
-    # without breaking the webpage
+    if username == '' and password == '':
+        return html.Div('Enter a username and password'), -1
+    elif username == '':
+        return html.Div('Username is empty, try again'), -1
+    elif password == '':
+        return html.Div('Password is empty, try again'), -1
+
     auth_response = None
     try:
         auth_response = util.loginRequest(username, password)
@@ -94,8 +96,7 @@ def authenticate(_, username, password):
         return html.Div('Invalid login, try again',
                          style={'color': 'red'})
     else:
-        return html.Div('Unhandled error',
-                         style={'color': 'red'})
-                         
+        return html.Div('Unhandled error', style={'color': 'red'}), -1
+
 def layout():
     return loginpage

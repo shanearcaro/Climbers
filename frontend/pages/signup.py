@@ -40,7 +40,7 @@ signupform = [
     ),
 
     #Submit button
-    html.Button('Continue', id='submit', className='loginbutton'),
+    html.Button('Continue', id='submit-val', className='loginbutton'),
 ]
 
 # Layout: Signup page
@@ -49,13 +49,12 @@ signuppage = html.Div(id='layout', className='layout', children=[
         html.Div(children=signupform, id='form-area', className='form-area'),
 
         #Empty Div for logic reasons
-        html.Div(id='hidden-signin-div', style={'display': 'none'})
+        html.Div(id='hidden-signin-div')
     ]
 )
-
 @dash.callback(
     Output('hidden-signin-div', 'children'),
-    Input('submit', 'n_clicks'),
+    Input('submit-val', 'n_clicks'),
     State('user', 'value'),
     State('email', 'value'),
     State('pw', 'value'),
@@ -63,20 +62,24 @@ signuppage = html.Div(id='layout', className='layout', children=[
 )
 def register(_, username, email, password):
     # Guard against empty inputs
-    if (username == ''):
+    if username == '' and email == '' and password == '':
+        return html.Div('Enter a username, email, and password')
+    elif username == '' and password == '':
+        return html.Div('Enter a username and password')
+    elif email == '' and password == '':
+        return html.Div('Enter a email and password')
+    elif username == '' and email == '':
+        return html.Div('Enter a username and email')
+    elif username == '':
         return html.Div('Username is empty, try again')
-    elif (email == ''):
+    elif email == '':
         return html.Div('Email is empty, try again')
-    elif (password == ''):
+    elif password == '':
         return html.Div('Password is empty, try again')
 
-    # Try to run the useradd script, and return the result
-    # We do a try-except block because the script may
-    # throw some error and we want to be able to handle that
-    # without breaking the webpage
-    add_response = ''
+    auth_response = None
     try:
-        add_response = util.signupRequest(username, email, password)
+        auth_response = util.signupRequest(username, email, password)
     except:
         return html.Div('An error occurred while running the useradd script')
    
@@ -90,8 +93,7 @@ def register(_, username, email, password):
         return html.Div('Invalid login, try again',
                          style={'color': 'red'})
     else:
-        return html.Div('Unhandled error',
-                         style={'color': 'red'})
+        return html.Div('Unhandled error', style={'color': 'red'})
 
 def layout():
     return signuppage
