@@ -23,7 +23,7 @@ register_page(
 
 ## This is where we call to the DMZ for data
 lowest_areas_formatted = getLowestAreas()
-
+      
 hours = [(dt.time(i).strftime('%I %p')) for i in range(24)]     
 # Get pandas dataframe for figure
 df = pd.DataFrame(lowest_areas_formatted)
@@ -43,8 +43,8 @@ fig.update_traces(
     selector=dict(mode="markers"),
 )
 
-# Page layout
-Dash.layout = html.Div([
+# App layout
+layout = html.Div([
     dcc.Graph(figure=fig, id='map',
             config={
         'displayModeBar': False
