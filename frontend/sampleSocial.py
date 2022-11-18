@@ -16,25 +16,32 @@ app = Dash(__name__, update_title='', suppress_callback_exceptions=True)
 
 friends_list = ['John', 'Frank', 'Eric', 'Bob', 'Dylan', 'Shawn', 'Shane', 'Kobe Bryant', 'Hi', 'Hello', 'Hola', 'Shalom']
 blocked_list = ['Sonjay']
-current_list = friends_list
 
 # Generate people list (friends/blocked)
 def create_people_div_list(people_list):
     people_div_list = []
-    for person in people_list:
-        people_div_list.append(
-          html.Div([
-            person,
-            html.Button(['Chat'], id=f'{person}-chatbtn'),
-            html.Button(['Block'], id=f'{person}-blockbtn')
-            ], style={
+    friend_item_style = {
                   'height':'10%',
                   'width':'100%',
                   'border-bottom':'1px solid black',
                   'display':'block',
-                  'align-items':'center'
-                }),
-    )
+                  'align-items':'center'}
+    for person in people_list:
+        if people_list == friends_list:
+          people_div_list.append(
+            html.Div([
+              person,
+              html.Button(['Chat'], id=f'{person}-chatbtn'),
+              html.Button(['Block'], id=f'{person}-blockbtn')
+              ], style=friend_item_style),
+          )
+        else:
+          people_div_list.append(
+            html.Div([
+              person,
+              html.Button(['Unblock'], id=f'{person}-blockbtn')
+              ], style=friend_item_style),
+          )
     return people_div_list
 
 # App layout
@@ -48,6 +55,7 @@ app.layout = html.Div([
           'color':'white'
       }),
       html.Div(create_people_div_list(friends_list),
+        id='friends-list',
         style={
           'overflow-y':'scroll',
           'width':'100%',
@@ -71,6 +79,7 @@ app.layout = html.Div([
           'color':'white'
       }),
       html.Div(create_people_div_list(blocked_list),
+        id='blocked-list',
         style={
           'overflow-y':'scroll',
           'width':'100%',
@@ -198,12 +207,39 @@ def send_message(messages, button, field_submit):
 # Chat button callback
 @app.callback(
   Output('recipient', 'children'),
-  [Input('{}-chatbtn'.format(people), 'n_clicks') for people in current_list],
+  [Input('{}-chatbtn'.format(people), 'n_clicks') for people in friends_list],
   prevent_initial_call=True
 )
 def set_recipient(*args):
     changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
     return changed_id.split('-')[0]
+
+@app.callback(
+  Output('friends-list', 'children'),
+  Output('blocked-list', 'children'),
+  [Input('{}-blockbtn'.format(people), 'n_clicks') for people in (friends_list + blocked_list)],
+  prevent_initial_call=True
+)
+def block_unblock(*args):
+  changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
+  button_id = changed_id.split('.')[0]
+  name = button_id.split('-')[0]
+
+  # Guard against empty input
+  if changed_id == 'x':
+    return no_update, no_update
+
+  if name in friends_list:
+    friends_list.remove(name) # SQL move to block
+    blocked_list.append(name) 
+  else:
+    blocked_list.remove(name) # SQL move to friends
+    friends_list.append(name)
+  print(f'Friends List: {friends_list}')
+  print(f'Blocked List: {blocked_list}')
+
+  # create_people_div_list(getFriends()/getBlocked())
+  return create_people_div_list(friends_list), create_people_div_list(blocked_list)
 
 #[Input('{}-blockbtn'.format(people), 'n_clicks') for people in current_list],
 
