@@ -39,7 +39,7 @@ def create_people_div_list(people_list):
           people_div_list.append(
             html.Div([
               person,
-              html.Button(['Chat'], id=f'{person}-chatbtn', style={'display':'none'}),
+              html.Button(id=f'{person}-chatbtn', style={'display':'none'}),
               html.Button(['Unblock'], id=f'{person}-blockbtn')
               ], style=friend_item_style),
           )
@@ -227,6 +227,7 @@ def block_unblock(*args):
   changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
   button_id = changed_id.split('.')[0]
   name = button_id.split('-')[0]
+  # Getting ID
 
   # Guard against empty input
   if changed_id == 'x':
@@ -238,8 +239,6 @@ def block_unblock(*args):
   else:
     blocked_list.remove(name) # SQL move to friends
     friends_list.append(name)
-  print(f'Friends List: {friends_list}')
-  print(f'Blocked List: {blocked_list}')
 
   # create_people_div_list(getFriends()/getBlocked())
   return create_people_div_list(friends_list), create_people_div_list(blocked_list)
