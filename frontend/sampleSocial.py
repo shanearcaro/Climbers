@@ -17,44 +17,82 @@ app = Dash(__name__, update_title='', suppress_callback_exceptions=True)
 friends_list = ['John', 'Frank', 'Eric', 'Bob', 'Dylan', 'Shawn', 'Shane', 'Kobe Bryant', 'Hi', 'Hello', 'Hola', 'Shalom']
 blocked_list = ['Sonjay']
 current_list = friends_list
-people_div_list = []
 
-
+# Generate people list (friends/blocked)
+def create_people_div_list(people_list):
+    people_div_list = []
+    for person in people_list:
+        people_div_list.append(
+          html.Div([
+            person,
+            html.Button(['Chat'], id=f'{person}-chatbtn'),
+            html.Button(['Block'], id=f'{person}-blockbtn')
+            ], style={
+                  'height':'10%',
+                  'width':'100%',
+                  'border-bottom':'1px solid black',
+                  'display':'block',
+                  'align-items':'center'
+                }),
+    )
+    return people_div_list
 
 # App layout
 app.layout = html.Div([
-      html.Div([
-          dcc.Tabs(id="people-list", value='friends', 
-              style={
-                'background-color':'black',
-                'border-bottom':'1px solid black',
-              },
-              children=[
-                dcc.Tab(label='Friends List', value='friends',
-                        style={
-                          'background-color':'white',
-                          }),
-                dcc.Tab(label='Blocked List', value='blocked',
-                        style={
-                          'background-color':'white',
-                          'color':'red',
-                          }),
-            ]),
-        html.Div(
-          id='list-type', 
-          style={
-            'height':'90%',
-            'width':'100%',
-            'overflow':'scroll'
-          }),
-      ], style={
-      'margin':'auto',
-      'max-width':'90%',
-      'min-width':'90%',
-      'max-height':'90%',
-      'min-height':'90%',
-      'border':'1px solid black',
+  html.Div([
+    html.Div([
+      html.Div('Friends List', 
+        style={
+          'background-color':'#2f4f04',
+          'height':'10%',
+          'color':'white'
+      }),
+      html.Div(create_people_div_list(friends_list),
+        style={
+          'overflow-y':'scroll',
+          'width':'100%',
+          'height':'90%',
+          'max-height':'90%'
+        }
+      )
+    ],
+      id='list-type', 
+      style={
+        'height':'50vh',
+        'max-height':'60%',
+        'width':'100%',
+        'border':'1px solid black',
     }),
+    html.Div([
+      html.Div('Blocked List', 
+        style={
+          'background-color':'#2f4f04',
+          'height':'10%',
+          'color':'white'
+      }),
+      html.Div(create_people_div_list(blocked_list),
+        style={
+          'overflow-y':'scroll',
+          'width':'100%',
+          'height':'90%',
+          'max-height':'90%'
+        }
+      )
+    ], 
+      style={
+        'margin-top':'20px',
+        'height':'30vh',
+        'max-height':'30%',
+        'width':'100%',
+        'border':'1px solid black',
+    }),
+  ], style={
+    'margin':'auto',
+    'max-width':'90%',
+    'min-width':'90%',
+    'max-height':'90%',
+    'min-height':'90%',
+  }),
   html.Div([
       html.Div([
         'Choose a recipient'
@@ -166,57 +204,10 @@ def send_message(messages, button, field_submit):
 def set_recipient(*args):
     changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
     return changed_id.split('-')[0]
- 
-# Blocking
-@app.callback(
-  Output('people-list', 'value'),
-  [Input('{}-blockbtn'.format(people), 'n_clicks') for people in current_list],
-  prevent_initial_call=True
-)
-def block(*args):
-    changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
-    print(changed_id)
-    name = changed_id.split('-')[0]
-    friends_list.remove(name)
-    blocked_list.append(name)
-    print(friends_list)
-    print(blocked_list)
-    return 'friends'
 
-# Switching lists
-@app.callback(
-  Output('list-type', 'children'),
-  Input('people-list', 'value'),
-)
-def change_list(listtype):
-    if listtype == 'friends':
-      current_list = friends_list
-    else:
-      current_list = blocked_list
-
-    
-
-    return create_people_div_list(current_list)
+#[Input('{}-blockbtn'.format(people), 'n_clicks') for people in current_list],
 
 
-# Generate people list (friends/blocked)
-def create_people_div_list(people_list):
-    people_div_list.clear()
-    for person in people_list:
-        people_div_list.append(
-          html.Div([
-            person,
-            html.Button(['Chat'], id=f'{person}-chatbtn'),
-            html.Button(['Block'], id=f'{person}-blockbtn')
-            ], style={
-                  'height':'10%',
-                  'width':'100%',
-                  'border-bottom':'1px solid black',
-                  'display':'block',
-                  'align-items':'center'
-                }),
-    )
-    return people_div_list
 
 if __name__ == '__main__':
     app.run_server(host="0.0.0.0", port="8050", debug=True)
