@@ -15,7 +15,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 import util
 
 # Didn't want to use this but I just need to get this done now
-global_chats = []
+# global_chats = []
 
 dash.register_page(
     __name__, 
@@ -205,37 +205,43 @@ def load_chatgroups(userid):
 
     chatrooms = response['data']
     children = []
-    global_chats = []
+    # global_chats = []
     for room in chatrooms:
-        global_chats.append(room[-2], room[-1])
-        children.append(html.Div(className='chatroom-element', 
-        children=[
-            html.Div(className="chatroom-element-text", children=[
-                html.P(children=[
-                    html.Span("Area", id='chatroom-area-text'),
-                    html.Span(": " + room[-2])
-                ], className='chatroom-element-area chatroom-element-text'),
-                html.P(children=[
-                    html.Span("Time", id='chatroom-time-text'),
-                    html.Span(": " + room[-1])
-                ], className='chatroom-element-time chatroom-element-text')
-            ]),
-            html.Div(id='chatroom-button-div', children=[
-                html.Button("View", id=f'chatroom-${room[-2]}:${room[-1]}', className="chatroom-view-button")
-            ])
+        # global_chats.append(room[-2], room[-1])
+        # children.append(html.Div(className='chatroom-element', 
+        # children=[
+        #     html.Div(className="chatroom-element-text", children=[
+        #         html.P(children=[
+        #             html.Span("Area", id='chatroom-area-text'),
+        #             html.Span(": " + room[-2])
+        #         ], className='chatroom-element-area chatroom-element-text'),
+        #         html.P(children=[
+        #             html.Span("Time", id='chatroom-time-text'),
+        #             html.Span(": " + room[-1])
+        #         ], className='chatroom-element-time chatroom-element-text')
+        #     ]),
+        #     html.Div(id='chatroom-button-div', children=[
+        #         html.Button("View", id=f'chatroom-${room[-2]}:${room[-1]}', className="chatroom-view-button")
+        #     ])
             
+        # ]))
+
+        children.append(html.Div(className='chatroom', 
+        children=[
+            html.P(room[-2]),
+            html.P(room[-1])
         ]))
 
     return children;
 
 # Join group
-@dash.callback(
-    Output('chat-id', 'value'),
-    [Input(f'chatroom-${value[0]}:${value[1]}', 'value') for _, value in enumerate(global_chats)],
-    prevent_initial_call=True
-)
-def join_new_room(id, *args):
-    return id
+# @dash.callback(
+#     Output('chat-id', 'value'),
+#     [Input(f'chatroom-${value[0]}:${value[1]}', 'value') for _, value in enumerate(global_chats)],
+#     prevent_initial_call=True
+# )
+# def join_new_room(id, *args):
+#     return id
 
 # Set page layout
 def layout():
