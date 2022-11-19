@@ -77,9 +77,9 @@ def register(_, username, email, password):
     elif password == '':
         return html.Div('Password is empty, try again')
 
-    auth_response = None
+    add_response = None
     try:
-        auth_response = util.signupRequest(username, email, password)
+        add_response = util.signupRequest(username, email, password)
     except:
         return html.Div('An error occurred while running the useradd script')
    
