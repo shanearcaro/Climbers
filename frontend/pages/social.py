@@ -19,8 +19,8 @@ global_chats = []
 
 dash.register_page(
     __name__, 
-    title='Success!', 
-    path='/logSucc'
+    title='Social', 
+    path='/social'
 )
 
 # Layout: Success (Temporary)
