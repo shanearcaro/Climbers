@@ -56,16 +56,20 @@ def createMessageRequest(userid='', chatid='', message=''):
         run_php_script("createMessageRequest.php", [userid, chatid, message]))
 
 def getMessagesRequest(userid='', chatid=''):
-        return json.loads(
-            run_php_script("getMessagesRequest.php", [userid, chatid]))
+    return json.loads(
+        run_php_script("getMessagesRequest.php", [userid, chatid]))
 
 def getBlockedUsers(userid=''):
-        return json.loads(
-            run_php_script("getBlockedUsers.php", [userid]))
+    return json.loads(
+        run_php_script("getBlockedUsers.php", [userid]))
 
 def getChatrooms(userid=''):
-        return json.loads(
-            run_php_script("getChatrooms.php", [userid]))
+    return json.loads(
+        run_php_script("getChatrooms.php", [userid]))
+
+def getUserStats(userid=''):
+    return json.loads(
+        run_php_script("getUserStats.php", [userid]))
 
 def scheduleRequest():
     return #run_php_script("../scheduleRequest.php", [])

@@ -3,4 +3,5 @@
 cd ../logging/
 ./logListen.php &
 cd ../sql/
-./loginServer.php
+./loginServer.php &
+./statsServer.php 
