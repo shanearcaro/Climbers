@@ -1,3 +1,4 @@
+import sys, os
 from stat import FILE_ATTRIBUTE_NO_SCRUB_DATA
 import dash
 from dash import Dash, html, dcc, callback, Input, Output, State, no_update
@@ -10,6 +11,10 @@ import json
 import datetime as dt
 from datetime import date
 
+#Relative path import for util.py
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+import util
+
 #------This-is-to-be-replaced-by-api/dmz-functionality-------\
 app = Dash(__name__, update_title='', suppress_callback_exceptions=True)
 
@@ -18,33 +23,80 @@ app = Dash(__name__, update_title='', suppress_callback_exceptions=True)
 friends_list = ['John', 'Frank', 'Eric', 'Bob', 'Dylan', 'Shawn', 'Shane', 'Kobe Bryant', 'Hi', 'Hello', 'Hola', 'Shalom']
 blocked_list = ['Sonjay']
 
+def makeIdDict(names=[]):
+  return {f'{i}':j for i,j in enumerate(names)}
+
 # Generate people list (friends/blocked)
 def create_people_div_list(people_list):
-    people_div_list = []
-    friend_item_style = {
+    block_style = {
                   'height':'10%',
                   'width':'100%',
                   'border-bottom':'1px solid black',
                   'display':'block',
                   'align-items':'center'}
-    for person in people_list:
-        if person in friends_list:
-          people_div_list.append(
-            html.Div([
-              person,
-              html.Button(['Chat'], id=f'{person}-chatbtn'),
-              html.Button(['Block'], id=f'{person}-blockbtn')
-              ], style=friend_item_style),
-          )
-        else:
-          people_div_list.append(
-            html.Div([
-              person,
-              html.Button(id=f'{person}-chatbtn', style={'display':'none'}),
-              html.Button(['Unblock'], id=f'{person}-blockbtn')
-              ], style=friend_item_style),
-          )
-    return people_div_list
+
+    div_list = []
+   
+    for id, person in people_list:
+      if person in friends_list:
+        div_list.append(
+          
+        )
+      else:
+        div_list.append(
+          html.Div([
+            person,
+            html.Button(id=f'{person}-chatbtn', style={'display':'none'}),
+            html.Button(['Unblock'], id=f'{person}-blockbtn')
+            ], style=block_style),
+        )
+    return div_list
+
+def create_usercard(userid=''):
+  '''Given a userid, create a usercard for the friends list that 
+  has stats and the chat/block buttons'''
+
+  #for testing purposes
+  username='chi'
+
+  return html.Div(
+        id=f'{username}-user-card',
+        className='user-card',
+        children=[
+            
+            #Left side of user card with personal info
+            html.Div(
+                id=f'{username}-user-card-left',
+                className='user-card-left',
+                children=[
+                html.Img(src=util.format_img('usericon.png'), 
+                        className='user-icon',),
+                html.H2(f"{username}", className='user-name'),
+                html.Button(['Chat'], id=f'{username}-chat-button',
+                            className='chat-button'),
+                ],
+            ),
+
+            #Right side of user card with stats
+            html.Div(
+                id=f'{username}-user-card-right',
+                className='user-card-right',
+                children=[
+                    html.P('Total Ascents:'),
+                    html.P('Highest Grade:'),
+                    html.P('Most Recent Ascent:'),
+                ],
+            ),
+
+            #Block button
+            html.Button(
+                children=[],
+                id=f'{username}-blockbtn',
+                className='block-button'
+            ),
+        ],
+    )
+
 
 # App layout
 app.layout = html.Div([
