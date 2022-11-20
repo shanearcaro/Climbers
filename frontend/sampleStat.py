@@ -16,7 +16,8 @@ app.layout = html.Div([
         id=f'{username}-user-card',
         className='user-card',
         children=[
-        
+            
+            #Left side of user card with personal info
             html.Div(
                 id=f'{username}-user-card-left',
                 className='user-card-left',
@@ -29,6 +30,7 @@ app.layout = html.Div([
                 ],
             ),
 
+            #Right side of user card with stats
             html.Div(
                 id=f'{username}-user-card-right',
                 className='user-card-right',
@@ -39,6 +41,7 @@ app.layout = html.Div([
                 ],
             ),
 
+            #Block button
             html.Button(
                 children=[],
                 id=f'{username}-blockbtn',
