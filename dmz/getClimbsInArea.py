@@ -16,7 +16,7 @@ fragment climbData on Area{
   }
 }
 
-query SingleArea{
+query ClimbsInArea{
   area(uuid: ""){
     ...climbData
   }
