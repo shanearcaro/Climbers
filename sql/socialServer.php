@@ -1,21 +1,20 @@
-
-//-------------------------------------------------------------------
-//LEGACY! This functionality has been merged into socialServer.php!!!
-//-------------------------------------------------------------------
-
+#!/usr/bin/php
 <?php
 require_once('../djmagic/rabbitMQLib.inc');
+require_once('../logging/logPublish.php');
 
 //Create database connection
-$mydb = new mysqli('127.0.0.1', 'it490user', 'it490pass', 'IT490');
+$mydb = new mysqli('127.0.0.1', 'root', 'toor1029', 'IT490');
 
 //Check connection
 if ($mydb->errno != 0) {
-  echo "failed to connect to database: " . $mydb->error . PHP_EOL;
-  exit(0);
-}
-echo "Connected to database [Chat server]" . PHP_EOL;
+    echo "failed to connect to database: " . $mydb->error . PHP_EOL;
+    exit(0);
+  }
+echo "Connected to database [Social server]" . PHP_EOL;
 
+
+#-----------Begin-Chat-Requests---------------------------------------
 function doChatGroup($area, $time, $userid)
 {
   global $mydb;
@@ -170,32 +169,88 @@ function getChatrooms($userid)
     return array("returnCode" => '1', 'message' => "Chats retrieved.", 'data' => $response->fetch_all());
   return array("returnCode" => '2', 'message' => "Chats failed to load");
 }
+#-------------End-Chat-Requests---------------------------------------
 
+#---------Begin-Social-Requests---------------------------------------
+function getFriends($userid){
+    global $mydb;
+    
+    #Query to retrieve all rows with $userid in either column
+    $query = "";
+    $response = $mydb->query($query);
 
-function requestProcessor($request)
-{
-  global $mydb;
+    if ($response)
+        #Should return a list of all of this users friend's ids
+        #Some processing will have to be done here
+        return array("returnCode" => '1', 'data' => '');
+    return array("returnCode" => '2', 'message' => '');
 
-  // echo "Received Request[CHAT SERVER]" . PHP_EOL;
-  if (!isset($request['type'])) {
-    return array("returnCode" => '0', 'message' => "Server received request, but no valid type was specified");
-  }
-  switch ($request['type']) {
-    case "create_chat":
-      return doChatGroup($request['area'], $request['time'], $request['userid']);
-    case "create_message":
-      return doMessage($request['userid'], $request['chatid'], $request['message']);
-    case "get_messages":
-      return getMessages($request['userid'], $request['chatid']);
-    case "get_blocked":
-      return getBlockedUsers($request['userid']);
-    case "get_chatrooms":
-      return getChatrooms($request['userid']);
-  }
-  return array("returnCode" => '0', 'message' => "Server received request, but no valid type was specified");
 }
 
-$server = new rabbitMQServer("../config/chatConfig.ini", "testServer");
+fucntion getStats($userid){
+    global $mydb;
+
+    #Query to retrieve all stat entries for this user
+    $query = "";
+    $response = $mydb->query($query);
+
+    if ($response)
+        #Should return a json object containing all the stat entries
+        #for this user
+        return array("returnCode" => '1', 'data' => '');
+    return array("returnCode" => '2', 'message' => '');
+
+}
+#-----------End-Social-Requests---------------------------------------
+
+#Request Processor is the heart of the server script, all other 
+#functions are called from here
+function requestProcessor($request){
+    global $mydb;
+
+    echo "Recieved Request [Social Server]".PHP_EOL;
+    var_dump($request)
+    
+    #Guard against unset type
+    if(!isset($request['type'])){
+        processLog("Request received with invalid type ".$request['type']);
+        return array(
+            "returnCode" => '0', 
+            'message'=>"[Stats Server] Received request, but no valid type was specified"
+        );
+    }
+
+    #Check what the request is for and do that thing
+    switch ($request['type']) {
+        #Chat Request Types
+        case "create_chat":
+          return doChatGroup($request['area'], $request['time'], $request['userid']);
+        case "create_message":
+          return doMessage($request['userid'], $request['chatid'], $request['message']);
+        case "get_messages":
+          return getMessages($request['userid'], $request['chatid']);
+        case "get_blocked":
+          return getBlockedUsers($request['userid']);
+        case "get_chatrooms":
+          return getChatrooms($request['userid']);
+
+        #Social Page Requests
+        case "get_friends":
+            return 
+        case "get_stats":
+            return
+      }
+
+      #If none of the switch options are executed, the set type was
+      #invalid/unsupported 
+      return array("returnCode" => '0', 'message' => "Server received request, but no valid type was specified");
+
+}
+
+
+// $server = new rabbitMQServer("../config/newConfig.ini","testServer");
+$server = new rabbitMQServer("../config/loginConfig.ini", "statServer");
+echo "Social service started..." . PHP_EOL;
 
 $server->process_requests('requestProcessor');
 exit();
