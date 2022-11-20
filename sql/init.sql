@@ -27,7 +27,7 @@ CREATE TABLE ChatMessages(
     messageid INT NOT NULL AUTO_INCREMENT,
     userid INT NOT NULL,
     chatid INT NOT NULL,
-    message VARCHAR(2000) NOT NULL,
+    message TEXT NOT NULL,
     timestamp DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (userid) REFERENCES Users(userid),
     FOREIGN KEY (chatid) REFERENCES Chats(chatid),
@@ -50,4 +50,14 @@ CREATE TABLE UserBlocks(
     FOREIGN KEY(userid) REFERENCES Users(userid),
     FOREIGN KEY(blockid) REFERENCES Users(userid),
     PRIMARY KEY(userid, blockid)
+);
+
+CREATE TABLE UserStats(
+    statid INT NOT NULL,
+    userid INT NOT NULL,
+    climbname VARCHAR(100),
+    climbgrade VARCHAR(8),
+    timestamp DATETIME
+    FOREIGN KEY(userid) REFERENCES Users(userid),
+    PRIMARY KEY(statid, userid)
 );
