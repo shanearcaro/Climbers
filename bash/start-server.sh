@@ -6,7 +6,7 @@ nohup ./logListen.php >> ./logs/report.out &
 
 # Start login server
 cd ../sql/
-nohup ./sqlServer.php >> ../logging/logs/report.out &
+nohup ./loginServer.php >> ../logging/logs/report.out &
 
 # Start chat server
 nohup ./chatServer.php >> ../logging/logs/report.out &
