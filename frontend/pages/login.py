@@ -91,7 +91,7 @@ def authenticate(_, _user, _pw, username, password):
         dcc.Store(id='stored-userid', 
                 data=auth_response.get("userid"), 
                 storage_type='session')
-        return dcc.Location(pathname='/logSucc', id='redirect')
+        return dcc.Location(pathname='/social', id='redirect')
     if auth_response.get("returnCode") == "2":
         return html.Div('Invalid login, try again',
                          style={'color': 'red'})
