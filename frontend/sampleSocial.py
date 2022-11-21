@@ -214,7 +214,7 @@ def send_message(messages, button, field_submit):
 def set_recipient(*args):
     changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
     # Output chat (current session, session clicked)
-    
+    print(changed_id)
     return changed_id.split('-')[0]
 
 @app.callback(
