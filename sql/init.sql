@@ -57,7 +57,7 @@ CREATE TABLE UserStats(
     userid INT NOT NULL,
     climbname VARCHAR(100),
     climbgrade VARCHAR(8),
-    timestamp DATETIME
+    timestamp DATETIME,
     FOREIGN KEY(userid) REFERENCES Users(userid),
     PRIMARY KEY(statid, userid)
 );
