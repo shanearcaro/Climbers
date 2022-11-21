@@ -17,7 +17,7 @@ function requestProcessor($request){
     global $mydb;
 
     echo "Recieved Request [Stats Server]".PHP_EOL;
-    var_dump($request)
+    var_dump($request);
     
     if(!isset($request['type'])){
         processLog("Request received with invalid type ".$request['type']);
