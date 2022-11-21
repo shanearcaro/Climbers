@@ -80,6 +80,8 @@ def authenticate(_, _user, _pw, username, password):
     elif password == '':
         return html.Div('Password is empty, try again'), -1
 
+    return dcc.Location(pathname='/social', id='redirect'), -1
+
     auth_response = None
     try:
         auth_response = util.loginRequest(username, password)
