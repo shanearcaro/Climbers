@@ -179,15 +179,18 @@ function getFriends($userid){
     $query = "";
     $response = $mydb->query($query);
 
+    #Should return a list of all of this users friend's ids
+    #Some processing will have to be done here
     if ($response)
-        #Should return a list of all of this users friend's ids
-        #Some processing will have to be done here
-        return array("returnCode" => '1', 'data' => '');
+      return array("returnCode" => '1', 'data' => '');
+     
+      
+   
     return array("returnCode" => '2', 'message' => '');
-
 }
 
-fucntion getStats($userid){
+fucntion getStats($userid)
+{
     global $mydb;
 
     #Query to retrieve all stat entries for this user
@@ -209,7 +212,7 @@ function requestProcessor($request){
     global $mydb;
 
     echo "Recieved Request [Social Server]".PHP_EOL;
-    var_dump($request)
+    var_dump($request);
     
     #Guard against unset type
     if(!isset($request['type'])){
