@@ -80,9 +80,6 @@ function doChatGroup($area, $time, $userid)
     $query = "INSERT INTO ChatMembers(userid, chatid) 
               VALUES('$userid', '$chatid')";
     $response = $mydb->query($query);
-    $row = $response->fetch_assoc();
-    $area = $row['area'];
-    $time = $row['time'];
 
     // Check if user was added, exit
     if ($response)
