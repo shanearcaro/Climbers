@@ -85,7 +85,7 @@ def authenticate(_, _user, _pw, username, password):
     try:
         auth_response = util.loginRequest(username, password)
     except:
-        return html.Div('An error occurred while running the login script'), 1
+        return html.Div('An error occurred while running the login script'), -1
     
     # Prints for debugging
     print('1')
@@ -95,7 +95,7 @@ def authenticate(_, _user, _pw, username, password):
         dcc.Store(id='stored-userid', 
                 data=auth_response.get("userid"), 
                 storage_type='session')
-        return dcc.Location(pathname='/social', id='redirect'), 1
+        return dcc.Location(pathname='/social', id='redirect'), -1
     if auth_response.get("returnCode") == "2":
         print('3')
         return html.Div('Invalid login, try again',
