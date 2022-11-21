@@ -5,3 +5,4 @@ __pycache__/
 .vscode/
 logging/logs/*.txt
 logging/userConfig.ini
+*.out

@@ -1,3 +1,4 @@
+from stat import FILE_ATTRIBUTE_NO_SCRUB_DATA
 import dash
 from dash import Dash, html, dcc, callback, Input, Output, State, no_update
 import pandas as pd
@@ -27,7 +28,7 @@ def create_people_div_list(people_list):
                   'display':'block',
                   'align-items':'center'}
     for person in people_list:
-        if people_list == friends_list:
+        if person in friends_list:
           people_div_list.append(
             html.Div([
               person,

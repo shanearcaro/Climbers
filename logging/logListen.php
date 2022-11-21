@@ -3,6 +3,7 @@
 require_once('../djmagic/rabbitMQLib.inc');
 
 $config = parse_ini_file("userConfig.ini");
+echo "Log service started..." . PHP_EOL;
 
 function logProcessor($request)
 {

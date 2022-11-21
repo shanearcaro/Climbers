@@ -3,24 +3,23 @@
 require_once('../djmagic/rabbitMQLib.inc');
 
 //This is localhost for testing
-$client = new rabbitMQClient("../config/loginConfig.ini","testServer");
+$client = new rabbitMQClient("../config/chatConfig.ini", "testServer");
 
 //This is for cross VM communication
 //$client = new rabbitMQClient("../config/newConfig.ini","testServer");
 
-//There should always be 5 arguments: 
-//the script name, username, email, password
-if ($argc != 4) {
+//There should always be 4 arguments: 
+//the script name, userid, chatid, message
+if ($argc != 3) {
 	echo "Incorrect number of arguments!" . PHP_EOL
-		. "Usage: userAddRequesst.php <username> <email> <password>" . PHP_EOL;
+		. "Usage: createMessageRequest.php <userid> <chatid>" . PHP_EOL;
 	exit();
 }
 
 //Build the request
-$request['type'] = "useradd";
-$request['username'] = $argv[1];
-$request['email'] = $argv[2];
-$request['hash'] = $argv[3];
+$request['type'] = "get_messages";
+$request['userid'] = $argv[1];
+$request['chatid'] = $argv[2];
 
 //Send the request
 $response = $client->send_request($request);

@@ -1,0 +1,49 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&display=swap');
+
+html, body {margin: 0; height: 100%;}
+
+.user-card{
+    margin: 30px;
+    width: 375px;
+    height: 175px;
+    position: relative;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.170);
+    background-color: #e4f2fd;
+    display: flex;
+}
+.user-card-left{
+    text-align: center;
+    align-items: center;
+    padding: 15px;
+
+}
+.user-icon{
+    width: 60px;
+    height: 60px;
+    
+    /* border-radius: 50%;
+    object-position: center; */
+    object-fit: cover;
+}
+.user-name{
+    margin-block-start: 0.1em;
+    font-size: 1.2rem;
+}
+.chat-button{
+    font-size: 0.8rem;
+}
+.block-button{
+    position: absolute;
+    right:0;
+    height: 25px;
+    width: 25px;
+    margin: 5px;
+    border-width: 2px;
+    border-color: rgb(80, 15, 15);
+    background-image: url('blockicon.png');
+    background-size: cover;
+}
+.block-button:hover{
+    border-width: 3px;
+    border-color: rgb(210, 40, 40);
+}

@@ -47,5 +47,29 @@ def signupRequest(username='', email='', password=''):
     return json.loads(
         run_php_script("userAddRequest.php", [username, email, password]))
 
+def createChatRequest(area='', time='', userid=''):
+    return json.loads(
+        run_php_script("createChatRequest.php", [area, time, userid]))
+
+def createMessageRequest(userid='', chatid='', message=''):
+    return json.loads(
+        run_php_script("createMessageRequest.php", [userid, chatid, message]))
+
+def getMessagesRequest(userid='', chatid=''):
+    return json.loads(
+        run_php_script("getMessagesRequest.php", [userid, chatid]))
+
+def getBlockedUsers(userid=''):
+    return json.loads(
+        run_php_script("getBlockedUsers.php", [userid]))
+
+def getChatrooms(userid=''):
+    return json.loads(
+        run_php_script("getChatrooms.php", [userid]))
+
+def getUserStats(userid=''):
+    return json.loads(
+        run_php_script("getUserStats.php", [userid]))
+
 def scheduleRequest():
     return #run_php_script("../scheduleRequest.php", [])
