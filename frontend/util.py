@@ -71,5 +71,10 @@ def getUserStats(userid=''):
     return json.loads(
         run_php_script("getUserStats.php", [userid]))
 
+def getFriendIds(userid=''):
+    '''Given a userid, return a list of all of that user's friends'''
+    return json.loads(
+        run_php_script("getFriends.php", [userid]))
+
 def scheduleRequest():
     return #run_php_script("../scheduleRequest.php", [])
