@@ -80,6 +80,7 @@ def authenticate(_, _user, _pw, username, password):
     elif password == '':
         return html.Div('Password is empty, try again'), -1
 
+    print(username, password)
     auth_response = None
     try:
         auth_response = util.loginRequest(username, password)
