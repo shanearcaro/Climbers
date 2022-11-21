@@ -85,7 +85,7 @@ def authenticate(_, _user, _pw, username, password):
     try:
         auth_response = util.loginRequest(username, password)
     except:
-        return html.Div('An error occurred while running the login script')
+        return html.Div('An error occurred while running the login script'), 1
     
     # Prints for debugging
     print('1')
