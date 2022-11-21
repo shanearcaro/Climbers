@@ -4,7 +4,7 @@ require_once('../djmagic/rabbitMQLib.inc');
 require_once('../logging/logPublish.php');
 
 //Create database connection
-$mydb = new mysqli('127.0.0.1', 'it490user', 'it490pass', 'IT490');
+$mydb = new mysqli('127.0.0.1', 'root', 'toor1029', 'IT490');
 
 //Check connection
 if ($mydb->errno != 0) {
