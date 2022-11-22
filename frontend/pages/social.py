@@ -69,8 +69,9 @@ def join(userid):
     # try:
         # TODO: Implement dynamic area and time elements with the graph area gui
         # Need to fix input, both inputs will be broken with certain characters and spaces
+    print('pre chat request')
     response = util.createChatRequest("Mountains", "9AM", userid)
-    print('hi')
+    print('post c r')
     # except:
         # return html.Div('An error occurred while running the createGroup1 script')
     r_c = response['returnCode']
