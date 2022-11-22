@@ -43,7 +43,7 @@ success = html.Div(id='main-content', children=[
 
 # Pull the userid session
 @dash.callback(
-    Output('userid-text', 'value'),
+    Output('userid-text', 'children'),
     Output('chatroom-table', 'className'),
     Output('chat-table', 'className'),
     Output('friends-table', 'className'),
@@ -61,7 +61,7 @@ def setid(_, data, className):
     Output('chat-table', 'children'),
     Output('create-chat', 'style'),
     Output('chat-id', 'value'),
-    Input('userid-text', 'value'),
+    Input('userid-text', 'children'),
     prevent_initial_call=True
 )
 def join(userid):
