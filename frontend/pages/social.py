@@ -53,6 +53,7 @@ success = html.Div(id='main-content', children=[
     prevent_initial_call=True
 )
 def setid(_, data, className):
+    print(data)
     return data, '', '', ''
 
 # Join a chat
