@@ -189,7 +189,7 @@ function getFriends($userid){
     return array("returnCode" => '2', 'message' => '');
 }
 
-fucntion getStats($userid)
+function getStats($userid)
 {
     global $mydb;
 

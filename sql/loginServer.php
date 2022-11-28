@@ -4,7 +4,7 @@ require_once('../djmagic/rabbitMQLib.inc');
 require_once('../logging/logPublish.php');
 
 //Create database connection
-$mydb = new mysqli('127.0.0.1', 'root', 'toor1029', 'IT490');
+$mydb = new mysqli('127.0.0.1', 'it490user', 'it490pass', 'IT490');
 
 //Check connection
 if ($mydb->errno != 0) {
@@ -34,7 +34,7 @@ function doLogin($username, $hash)
     $row = $response->fetch_assoc();
     $hash_db = $row['hash'];
     if (strcmp($hash_db, $hash) == 0) {
-      return $row['userid'];
+      return true;
     } else {
       return false;
     }
@@ -132,7 +132,7 @@ function requestProcessor($request)
         $response = $mydb->query($query);
 
         $row = $response->fetch_assoc();
-        return array("returnCode" => '1', 'message'=>"Login successful!", 'userid'=>$row['id']);
+        return array("returnCode" => '1', 'message'=>"Login successful!", 'userid'=>$row['userid']);
       }
       else{
         processLog("Failed login attempt for user ".$request['username']);

@@ -80,23 +80,31 @@ def authenticate(_, _user, _pw, username, password):
     elif password == '':
         return html.Div('Password is empty, try again'), -1
 
-    auth_response = None
-    try:
-        auth_response = util.loginRequest(username, password)
-    except:
-        return html.Div('An error occurred while running the login script')
-   
-    # Return the response in HTML
-    if auth_response.get("returnCode") == "1":
-        dcc.Store(id='stored-userid', 
-                data=auth_response.get("userid"), 
-                storage_type='session')
-        return (dcc.Location(pathname='/social', id='redirect'))
-    if auth_response.get("returnCode") == "2":
-        return html.Div('Invalid login, try again',
-                         style={'color': 'red'})
-    else:
-        return html.Div('Unhandled error', style={'color': 'red'}), -1
+    return dcc.Location(pathname='/social', id='redirect'), -1
+
+# Uncomment after fixing loginRequest
+    # auth_response = None
+    # try:
+    #     auth_response = util.loginRequest(username, password)
+    # except:
+    #     print('hi')
+    #     return html.Div('An error occurred while running the login script'), -1
+    
+    # # Prints for debugging
+    # print('1')
+    # # Return the response in HTML
+    # if auth_response.get("returnCode") == "1":
+    #     print('2')
+    #     dcc.Store(id='stored-userid', 
+    #             data=auth_response.get("userid"), 
+    #             storage_type='session')
+    #     return dcc.Location(pathname='/social', id='redirect'), -1
+    # if auth_response.get("returnCode") == "2":
+    #     print('3')
+    #     return html.Div('Invalid login, try again',
+    #                      style={'color': 'red'})
+    # else:
+    #     return html.Div('Unhandled error', style={'color': 'red'}), -1
 
 def layout():
     return loginpage

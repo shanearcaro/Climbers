@@ -43,7 +43,7 @@ success = html.Div(id='main-content', children=[
 
 # Pull the userid session
 @dash.callback(
-    Output('userid-text', 'value'),
+    Output('userid-text', 'children'),
     Output('chatroom-table', 'className'),
     Output('chat-table', 'className'),
     Output('friends-table', 'className'),
@@ -53,6 +53,7 @@ success = html.Div(id='main-content', children=[
     prevent_initial_call=True
 )
 def setid(_, data, className):
+    print(data)
     return data, '', '', ''
 
 # Join a chat
@@ -60,7 +61,7 @@ def setid(_, data, className):
     Output('chat-table', 'children'),
     Output('create-chat', 'style'),
     Output('chat-id', 'value'),
-    Input('userid-text', 'value'),
+    Input('userid-text', 'children'),
     prevent_initial_call=True
 )
 def join(userid):
@@ -68,7 +69,9 @@ def join(userid):
     # try:
         # TODO: Implement dynamic area and time elements with the graph area gui
         # Need to fix input, both inputs will be broken with certain characters and spaces
+    print('pre chat request')
     response = util.createChatRequest("Mountains", "9AM", userid)
+    print('post c r')
     # except:
         # return html.Div('An error occurred while running the createGroup1 script')
     r_c = response['returnCode']
