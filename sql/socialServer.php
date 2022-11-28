@@ -181,11 +181,9 @@ function getFriends($userid){
 
     #Should return a list of all of this users friend's ids
     #Some processing will have to be done here
-    if ($response)
+    if ($response){
       return array("returnCode" => '1', 'data' => '');
-     
-      
-   
+    } 
     return array("returnCode" => '2', 'message' => '');
 }
 
@@ -252,7 +250,7 @@ function requestProcessor($request){
 
 
 // $server = new rabbitMQServer("../config/newConfig.ini","testServer");
-$server = new rabbitMQServer("../config/loginConfig.ini", "statServer");
+$server = new rabbitMQServer("../config/dbconfig.ini", "social");
 echo "Social service started..." . PHP_EOL;
 
 $server->process_requests('requestProcessor');
