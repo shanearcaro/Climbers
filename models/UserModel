@@ -5,7 +5,7 @@ namespace IT490\models\ModelController;
 class UserModel extends ModelController
 {
     /**
-     * Database to connect and interact wtih
+     * Database to connect and interact wtih, set up to only work with PDO
      */
     protected $db;
 
@@ -15,20 +15,6 @@ class UserModel extends ModelController
     public function __construct(PDO $db)
     {
         $this->db = $db;
-    }
-
-    /**
-     * Get all available users
-     * Returns array of all users within the database
-     */
-    public function getAllUsers(): array
-    {
-        $query = $db->prepare(
-            "SELECT * 
-            FROM Users
-        ");
-        $query->execute();
-        return $query->fetchAll();
     }
 
     /**
@@ -43,7 +29,32 @@ class UserModel extends ModelController
             WHERE userid = ?   
         ");
         $query->execute([$userid]);
-        return $query->fetchAll();
+        return $query->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getUserId(string $username): array
+    {
+        $query = $db->prepare(
+            "SELECT userid
+            FROM Users
+            WHERE username = ?
+        ");
+        $query->execute([$username]);
+        return $query->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Get all available users
+     * Returns array of all users within the database
+     */
+    public function getAllUsers(): array
+    {
+        $query = $db->prepare(
+            "SELECT * 
+            FROM Users
+        ");
+        $query->execute();
+        return $query->fetchAll(PDO::FETCH_ASSOC);
     }
 
     /**
