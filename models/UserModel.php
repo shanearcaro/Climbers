@@ -1,8 +1,6 @@
 <?php
 
-namespace IT490\models\ModelController;
-
-class UserModel extends ModelController
+class UserModel
 {
     /**
      * Database to connect and interact wtih, set up to only work with PDO
@@ -19,37 +17,56 @@ class UserModel extends ModelController
 
     /**
      * Get a user's information based on their userid number
-     * Returns a single user's information
+     * 
+     * @param int $userid the id number of the user
+     * 
+     * @return 
+     * Returns a single user's information if the id exists, false otherwise
      */
-    public function getUser(int $userid): array
+    public function getUser(int $userid): mixed
     {
-        $query = $db->prepare(
+        $query = $this->db->prepare(
             "SELECT *
             FROM Users
             WHERE userid = ?   
         ");
         $query->execute([$userid]);
-        return $query->fetchAll(PDO::FETCH_ASSOC);
+        return $query->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function getUserId(string $username): array
+    /**
+     * Get the id number of a user from their username
+     * 
+     * @param string $username the username of the user
+     * 
+     * @return int | bool
+     * The id of the user if it exists, false otherwise
+     */
+    public function getUserId(string $username): int | bool
     {
-        $query = $db->prepare(
+        $query = $this->db->prepare(
             "SELECT userid
             FROM Users
             WHERE username = ?
         ");
         $query->execute([$username]);
-        return $query->fetchAll(PDO::FETCH_ASSOC);
+        $row = $query->fetch(PDO::FETCH_ASSOC);
+
+        if (!$row)
+            return false;
+        return $row->{"userid"};
     }
 
     /**
      * Get all available users
      * Returns array of all users within the database
+     * 
+     * @return array
+     * Entire users array
      */
     public function getAllUsers(): array
     {
-        $query = $db->prepare(
+        $query = $this->db->prepare(
             "SELECT * 
             FROM Users
         ");
@@ -59,14 +76,20 @@ class UserModel extends ModelController
 
     /**
      * Updates the password of a user based on the userid of a user
-     * Returns true on success, false on failure
+     * 
+     * @param int $userid the id number of the user
+     * @param string $password the new password to be set
+     * @param array $options list of all supplied password hash options
+     * 
+     * @return bool
+     * True on successful update, false otherwise
      */
     public function updatePassword(int $userid, string $password, array $options = []): bool
     {
         // Generate password
         $hash = password_hash($password, PASSWORD_DEFAULT, $options);
 
-        $query = $db->prepare(
+        $query = $this->db->prepare(
             "UPDATE Users
             SET hash = ?
             WHERE userid = ?
@@ -76,11 +99,16 @@ class UserModel extends ModelController
 
     /**
      * Updates the email address of a user based on the userid of a user
-     * Returns true on success, false on failure
+     * 
+     * @param int $userid the id number of the user
+     * @param string $email the new email address of the user
+     * 
+     * @return bool
+     * True on successful update, false otherwise
      */
     public function updateEmail(int $userid, string $email): bool
     {
-        $query = $db->prepare(
+        $query = $this->db->prepare(
             "UPDATE Users
             SET email = ?
             WHERE userid = ?
@@ -90,11 +118,15 @@ class UserModel extends ModelController
 
     /**
      * Authenticate a user in the database based on their username and password
-     * Return true on successful authentication, false otherwise
+     * 
+     * @param string $username the username of the user
+     * @param string $password the password of the user
+     * @return bool
+     * true on successful authentication, false otherwise
      */
     public function authenticateUser(string $username, string $password): bool
     {
-        $query = $dp->prepare(
+        $query = $this->db->prepare(
             "SELECT hash
             FROM Users
             WHERE username = ?
