@@ -28,6 +28,20 @@ def run_php_script(path, args):
 
 #The following functions are wrappers for the PHP scripts
 
+def sendRequest(requestType, parameters=[]):
+    return json.loads(run_php_script(""), parameters)
+
+def loadRequestType(requestType):
+    typeChecker = {
+        "loadAreas": "bottomareas",
+        "logPublish": "",
+        "loginRequest": "login",
+        "addUser": "useradd",
+        "createChat": "createchat",
+        "createMessage": "message"
+
+    }
+
 def getLowestAreas():
     #This has no arguments because it's just a request for the lowest areas
     #in NJ hard coded into the PHP script
