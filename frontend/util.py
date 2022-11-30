@@ -31,6 +31,7 @@ def run_php_script(path, args):
 def sendRequest(requestType, parameters=[]):
     return json.loads(run_php_script(""), parameters)
 
+# TEMP: Going to change implementation instead
 def loadRequestType(requestType):
     typeChecker = {
         "loadAreas": "bottomareas",
@@ -41,6 +42,8 @@ def loadRequestType(requestType):
         "createMessage": "message"
 
     }
+
+
 
 def getLowestAreas():
     #This has no arguments because it's just a request for the lowest areas

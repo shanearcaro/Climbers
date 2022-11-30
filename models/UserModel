@@ -1,0 +1,34 @@
+<?php
+
+class UserModel
+{
+    /**
+     * Database to connect and interact wtih
+     */
+    protected $db;
+
+    /**
+     * Set the database
+     */
+    public function __construct(PDO $db)
+    {
+        $this->db = $db;
+    }
+
+    /**
+     * Get all available users
+     */
+    public function getAllUsers()
+    {
+        return $this->db->query("SELECT * FROM Users");
+    }
+
+    /**
+     * Get a user's information based on their userid number
+     */
+    public function getUser($userid)
+    {
+        // Temp change to PDO
+        return $this->db->query("SELECT * FROM Users WHERE ");
+    }
+}
