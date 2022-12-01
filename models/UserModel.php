@@ -1,6 +1,6 @@
 <?php
 
-class UserModel
+class User
 {
     /**
      * Database to connect and interact wtih, set up to only work with PDO
@@ -20,10 +20,10 @@ class UserModel
      * 
      * @param int $userid the id number of the user
      * 
-     * @return 
+     * @return array | bool
      * Returns a single user's information if the id exists, false otherwise
      */
-    public function getUser(int $userid): mixed
+    public function getUser(int $userid): array | bool
     {
         $query = $this->db->prepare(
             "SELECT *
@@ -143,5 +143,41 @@ class UserModel
 
         // Return verified password hash
         return password_verify($password, $hash);
+    }
+
+    /**
+     * Get all blocked user ids
+     * 
+     * @param int $userid the id number of the user to be searched
+     * 
+     * @return array
+     * List of blocked user ids
+     */
+    public function getBlockedUsersId(int $userid): array
+    {
+        $query = $this->db->prepare(
+            "SELECT blockid FROM UserBlocks
+            WHERE userid = ?
+        ");
+        $query->execute([$userid]);
+        return $query->fetchAll();
+    }
+
+    /**
+     * Get all friends of a user
+     * 
+     * @param int $userid the id number of a user
+     * 
+     * @return array
+     * List of friends a user has
+     */
+    public function getFriends(int $userid): array
+    {
+        $query = $this->db->prepare(
+            "SELECT * FROM UserFriends
+            WHERE userid = ?
+        ");
+        $query->execute([$userid]);
+        return $query->fetchAll(PDO::FETCH_ASSOC);
     }
 }
