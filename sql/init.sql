@@ -3,7 +3,6 @@ CREATE TABLE Users (
     username varchar(50) NOT NULL,
     email varchar(50) NOT NULL,
     hash varchar(100) NOT NULL,
-    salt varchar(50) NOT NULL,
     PRIMARY KEY(userid)
 );
 
@@ -23,7 +22,7 @@ CREATE TABLE ChatMembers (
 );
 
 -- Shouldn't be set to GroupMembers to avoid foregin key join duplication
-CREATE TABLE ChatMessages(
+CREATE TABLE ChatMessages (
     messageid INT NOT NULL AUTO_INCREMENT,
     userid INT NOT NULL,
     chatid INT NOT NULL,
@@ -34,7 +33,7 @@ CREATE TABLE ChatMessages(
     PRIMARY KEY(messageid)
 );
 
-CREATE TABLE UserFriends(
+CREATE TABLE UserFriends (
     connectionid INT NOT NULL AUTO_INCREMENT,
     userid INT NOT NULL,
     friendid INT NOT NULL,
@@ -44,7 +43,7 @@ CREATE TABLE UserFriends(
     FOREIGN KEY(friendid) REFERENCES Users(userid)
 );
 
-CREATE TABLE UserBlocks(
+CREATE TABLE UserBlocks (
     userid INT NOT NULL,
     blockid INT NOT NULL,
     FOREIGN KEY(userid) REFERENCES Users(userid),
@@ -52,7 +51,7 @@ CREATE TABLE UserBlocks(
     PRIMARY KEY(userid, blockid)
 );
 
-CREATE TABLE UserStats(
+CREATE TABLE UserStats (
     statid INT NOT NULL,
     userid INT NOT NULL,
     climbname VARCHAR(100),
