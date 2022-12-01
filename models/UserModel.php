@@ -1,6 +1,6 @@
 <?php
 
-class User
+class UserModel
 {
     /**
      * Database to connect and interact wtih, set up to only work with PDO

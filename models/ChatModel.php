@@ -1,6 +1,6 @@
 <?php
 
-class Chat
+class ChatModel
 {
     /**
      * Database to connect and interact with, set up to only work with PDO
@@ -10,7 +10,7 @@ class Chat
     /**
      * Set the database
      */
-    public function _construct(PDO $db)
+    public function __construct(PDO $db)
     {
         $this->db = $db;
     }
