@@ -14,7 +14,7 @@ function logProcessor($request)
     echo PHP_EOL.$request['message'].PHP_EOL;
 }
 
-$server = new rabbitMQServer("../config/".$config['name']."_logConfig.ini","testServer");
+$client = new rabbitMQClient("../config/LogConfig.ini", $config['name']);
 
 $server->process_requests('logProcessor');
 exit();

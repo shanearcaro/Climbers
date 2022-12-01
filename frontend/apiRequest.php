@@ -6,7 +6,7 @@ require_once('../djmagic/rabbitMQLib.inc');
 //$client = new rabbitMQClient("../config/rabbitConf.ini","testServer");
 
 //This is for cross VM communication
-$client = new rabbitMQClient("../config/dataConfig.ini","testServer");
+$client = new rabbitMQClient("../config/ApiDataConfig.ini","api");
 
 //This request is hard coded for getting NJ results, so no arguments are needed
 
