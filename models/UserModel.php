@@ -16,14 +16,37 @@ class UserModel
     }
 
     /**
+     * Creates and inserts a new user
+     * 
+     * @param string $username the username of the new account, this must be unique
+     * @param string $email the email to contact for the new account
+     * @param string $password the password for the new account
+     * @param array $options list of all supplied password hash options
+     * 
+     * @return bool
+     * True on successful creation and insertion, false otherwise
+     */
+    public function insertUser(string $username, string $email, string $password, array $options = []): bool
+    {
+        // Generate password
+        $hash = password_hash($password, PASSWORD_DEFAULT, $options);
+
+        $query = $this->db->prepare(
+            "INSERT INTO Users (userid, username, email, `hash`)
+            VALUES (?, ?, ?, ?)
+        ");
+        return $query->execute([null, $username, $email, $hash]);
+    }
+
+    /**
      * Get a user's information based on their userid number
      * 
      * @param int $userid the id number of the user
      * 
-     * @return array | bool
+     * @return array|bool
      * Returns a single user's information if the id exists, false otherwise
      */
-    public function getUser(int $userid): array | bool
+    public function getUser(int $userid): array|bool
     {
         $query = $this->db->prepare(
             "SELECT *
@@ -31,7 +54,7 @@ class UserModel
             WHERE userid = ?   
         ");
         $query->execute([$userid]);
-        return $query->fetch(PDO::FETCH_ASSOC);
+        return $query->fetch();
     }
 
     /**
@@ -39,10 +62,10 @@ class UserModel
      * 
      * @param string $username the username of the user
      * 
-     * @return int | bool
+     * @return int|bool
      * The id of the user if it exists, false otherwise
      */
-    public function getUserId(string $username): int | bool
+    public function getUserId(string $username): int|bool
     {
         $query = $this->db->prepare(
             "SELECT userid
@@ -50,11 +73,11 @@ class UserModel
             WHERE username = ?
         ");
         $query->execute([$username]);
-        $row = $query->fetch(PDO::FETCH_ASSOC);
+        $row = $query->fetch();
 
         if (!$row)
             return false;
-        return $row->{"userid"};
+        return $row["userid"];
     }
 
     /**
@@ -71,7 +94,7 @@ class UserModel
             FROM Users
         ");
         $query->execute();
-        return $query->fetchAll(PDO::FETCH_ASSOC);
+        return $query->fetchAll();
     }
 
     /**
@@ -139,7 +162,7 @@ class UserModel
         // If username not found return false
         if (count($row) == 0)
             return false;
-        $hash = $row->{"hash"};
+        $hash = $row["hash"];
 
         // Return verified password hash
         return password_verify($password, $hash);
@@ -178,6 +201,24 @@ class UserModel
             WHERE userid = ?
         ");
         $query->execute([$userid]);
-        return $query->fetchAll(PDO::FETCH_ASSOC);
+        return $query->fetchAll();
+    }
+
+    /**
+     * Delete a user's account
+     */
+    public function deleteUser(int $userid): bool
+    {
+
+    }
+
+    public function deleteFriend(int $userid): bool
+    {
+
+    }
+
+    public function deleteBlockedUser(int $userid): bool
+    {
+
     }
 }

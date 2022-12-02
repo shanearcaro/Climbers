@@ -21,10 +21,10 @@ class ChatModel
      * @param string $area the area of climbing for the chat group
      * @param string $time the time the climb is supposed to be taking place
      * 
-     * @return int | bool
+     * @return int|bool
      * The id of the chat group if the chat exists, false otherwise
      */
-    public function getChatId(string $area, string $time): int | bool
+    public function getChatId(string $area, string $time): int|bool
     {
         $query = $this->db->prepare(
             "SELECT chatid
@@ -32,7 +32,7 @@ class ChatModel
             WHERE area = ? AND time = ?
         ");
         $query->execute([$area, $time]);
-        return $query->fetch(PDO::FETCH_ASSOC)->{"chatid"};
+        return $query->fetch()["chatid"];
     }
 
     /**
@@ -46,9 +46,14 @@ class ChatModel
      */
     public function insertChat(string $area, string $time): bool
     {
+        // Check to see if chat is already created
+        // Don't create duplicate chats
+        $chat = $this->getChatId($area, $time);
+        if (!$chat)
+            return false;
         $query = $this->db->prepare(
-            "INSERT INTO Chats (area, `time`)
-            WHERE area = ? AND `time` = ?
+            "INSERT INTO Chats (area, time)
+            VALUES (?, ?)
         ");
         return $query->execute([$area, $time]);
     }
@@ -56,10 +61,10 @@ class ChatModel
     /**
      * Get the last created chat
      * 
-     * @return array | bool
+     * @return array|bool
      * The last created chat, false if no chats exist
      */
-    public function getLatestChat(): array | bool
+    public function getLatestChat(): array|bool
     {
         $query = $this->db->prepare(
             "SELECT *
@@ -68,7 +73,7 @@ class ChatModel
             DESC LIMIT 1
         ");
         $query->execute([]);
-        return $query->fetch(PDO::FETCH_ASSOC);
+        return $query->fetch();
     }
 
     /**
@@ -83,7 +88,7 @@ class ChatModel
     public function insertUserIntoChat(int $userid, int $chatid): bool
     {
         $query = $this->db->prepare(
-            "INSERT INTO ChatMembers (userid, cahtid)
+            "INSERT INTO ChatMembers (userid, chatid)
             VALUES (?, ?)
         ");
         return $query->execute([$userid, $chatid]);
@@ -108,7 +113,7 @@ class ChatModel
         $query->execute([$userid, $chatid]);
 
         // Doesn't matter what the values are
-        if (!$query->fetch(PDO::FETCH_ASSOC))
+        if (!$query->fetch())
             return false;
         return true;
     }
@@ -148,7 +153,7 @@ class ChatModel
             WHERE userid = ? AND chatid = ?
         ");
         $query->execute([$userid, $chatid]);
-        return $query->fetchAll(PDO::FETCH_ASSOC);
+        return $query->fetchAll();
     }
 
     /**
@@ -168,6 +173,25 @@ class ChatModel
             WHERE cm.userid = ?
         ");
         $query->execute([$userid]);
-        return $query->fetchAll(PDO::FETCH_ASSOC);
+        return $query->fetchAll();
+    }
+
+        /**
+     * Get all the chat groups that a user is in
+     * 
+     * @param int $userid the id number of the user to search
+     * 
+     * @return array
+     * List of all chats a user is apart of
+     */
+    public function getAllChats(): array
+    {
+        $query = $this->db->prepare(
+            "SELECT cm.userid, cm.chatid, c.area, c.time
+            FROM ChatMembers AS cm
+            INNER JOIN Chats AS c on cm.chatid = c.chatid
+        ");
+        $query->execute([]);
+        return $query->fetchAll();
     }
 }
