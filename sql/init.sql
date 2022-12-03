@@ -1,6 +1,6 @@
 CREATE TABLE Users (
     userid INT NOT NULL AUTO_INCREMENT,
-    username varchar(50) NOT NULL,
+    username varchar(50) NOT NULL UNIQUE,
     email varchar(50) NOT NULL,
     hash varchar(100) NOT NULL,
     PRIMARY KEY(userid)
@@ -12,6 +12,9 @@ CREATE TABLE Chats (
     time varchar(100) NOT NULL,
     PRIMARY KEY(chatid)
 );
+
+ALTER TABLE Chats
+    ADD CONSTRAINT uq_chats UNIQUE(area, time);
 
 CREATE TABLE ChatMembers (
     userid INT NOT NULL,

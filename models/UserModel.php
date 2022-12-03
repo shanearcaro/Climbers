@@ -15,175 +15,76 @@ class UserModel
         $this->db = $db;
     }
 
+
+
+
+
     /**
-     * Creates and inserts a new user
+     * Create a friendship between two users
      * 
-     * @param string $username the username of the new account, this must be unique
-     * @param string $email the email to contact for the new account
-     * @param string $password the password for the new account
-     * @param array $options list of all supplied password hash options
+     * @param int $userid The id number of the user that is creating a friend request
+     * @param int $userid The id number of the user that is receiving the friend request
      * 
      * @return bool
-     * True on successful creation and insertion, false otherwise
+     * Return **true** on success, **false** on failure
      */
-    public function insertUser(string $username, string $email, string $password, array $options = []): bool
+    public function createFriendship(int $userid, int $friendid): bool
     {
-        // Generate password
-        $hash = password_hash($password, PASSWORD_DEFAULT, $options);
-
-        $query = $this->db->prepare(
-            "INSERT INTO Users (userid, username, email, `hash`)
-            VALUES (?, ?, ?, ?)
-        ");
-        return $query->execute([null, $username, $email, $hash]);
-    }
-
-    /**
-     * Get a user's information based on their userid number
-     * 
-     * @param int $userid the id number of the user
-     * 
-     * @return array|bool
-     * Returns a single user's information if the id exists, false otherwise
-     */
-    public function getUser(int $userid): array|bool
-    {
-        $query = $this->db->prepare(
-            "SELECT *
-            FROM Users
-            WHERE userid = ?   
-        ");
-        $query->execute([$userid]);
-        return $query->fetch();
-    }
-
-    /**
-     * Get the id number of a user from their username
-     * 
-     * @param string $username the username of the user
-     * 
-     * @return int|bool
-     * The id of the user if it exists, false otherwise
-     */
-    public function getUserId(string $username): int|bool
-    {
-        $query = $this->db->prepare(
-            "SELECT userid
-            FROM Users
-            WHERE username = ?
-        ");
-        $query->execute([$username]);
-        $row = $query->fetch();
-
-        if (!$row)
+        // If the friendship between these two users already exists return false
+        if ($this->getConnectionId($userid, $friendid))
             return false;
-        return $row["userid"];
-    }
 
-    /**
-     * Get all available users
-     * Returns array of all users within the database
-     * 
-     * @return array
-     * Entire users array
-     */
-    public function getAllUsers(): array
-    {
-        $query = $this->db->prepare(
-            "SELECT * 
-            FROM Users
-        ");
-        $query->execute();
-        return $query->fetchAll();
-    }
-
-    /**
-     * Updates the password of a user based on the userid of a user
-     * 
-     * @param int $userid the id number of the user
-     * @param string $password the new password to be set
-     * @param array $options list of all supplied password hash options
-     * 
-     * @return bool
-     * True on successful update, false otherwise
-     */
-    public function updatePassword(int $userid, string $password, array $options = []): bool
-    {
-        // Generate password
-        $hash = password_hash($password, PASSWORD_DEFAULT, $options);
-
-        $query = $this->db->prepare(
-            "UPDATE Users
-            SET hash = ?
-            WHERE userid = ?
-        ");
-        return $query->execute([$hash, $userid]);
-    }
-
-    /**
-     * Updates the email address of a user based on the userid of a user
-     * 
-     * @param int $userid the id number of the user
-     * @param string $email the new email address of the user
-     * 
-     * @return bool
-     * True on successful update, false otherwise
-     */
-    public function updateEmail(int $userid, string $email): bool
-    {
-        $query = $this->db->prepare(
-            "UPDATE Users
-            SET email = ?
-            WHERE userid = ?
-        ");
-        return $query->execute([$email, $userid]);
-    }
-
-    /**
-     * Authenticate a user in the database based on their username and password
-     * 
-     * @param string $username the username of the user
-     * @param string $password the password of the user
-     * @return bool
-     * true on successful authentication, false otherwise
-     */
-    public function authenticateUser(string $username, string $password): bool
-    {
-        $query = $this->db->prepare(
-            "SELECT hash
-            FROM Users
-            WHERE username = ?
-        ");
-        $query->execute([$username]);
-        
-        // Get query results as associative array
-        $row = $query->fetch(PDO::FETCH_ASSOC);
-
-        // If username not found return false
-        if (count($row) == 0)
+        // if the users are blocked do not create a friendship
+        if ($this->isUserBlocked($userid, $friendid))
             return false;
-        $hash = $row["hash"];
-
-        // Return verified password hash
-        return password_verify($password, $hash);
+        $query = $this->db->prepare(
+            "INSERT INTO UserFriends (userid, friendid)
+            VALUES (?, ?)
+        ");
+        // Return false if user doesn't exist
+        try {
+            $query->execute([$userid, $friendid]);
+        } catch (PDOException $e) {
+            return false;
+        }
+        return true;
     }
 
     /**
-     * Get all blocked user ids
+     * Accept a friend request between two users
      * 
-     * @param int $userid the id number of the user to be searched
+     * @param int $userid The id number of the user that sent the request
+     * @param int $friendid The id number of the user that received the request
      * 
-     * @return array
-     * List of blocked user ids
+     * @return bool
+     * Return **true** on success, **false** on failure
      */
-    public function getBlockedUsersId(int $userid): array
+    public function acceptFriendRequest(int $userid, int $friendid): bool
     {
         $query = $this->db->prepare(
-            "SELECT blockid FROM UserBlocks
-            WHERE userid = ?
+            "UPDATE UserFriends
+            SET accepted = b'1'
+            WHERE userid = ? AND friendid = ?
         ");
-        $query->execute([$userid]);
-        return $query->fetchAll();
+        return $query->execute([$userid, $friendid]);
+    }
+
+    /**
+     * Accept a friend request between two users with the connection id
+     * 
+     * @param int $connectionid The id number of the connection request
+     * 
+     * @return bool
+     * Return **true** on success, **false** on failure
+     */
+    public function acceptFriendRequestWithId(int $connectionid): bool
+    {
+        $query = $this->db->prepare(
+            "UPDATE UserFriends
+            SET accepted = b'1'
+            WHERE connectionid = ?  
+        ");
+        return $query->execute([$connectionid]);
     }
 
     /**
@@ -192,33 +93,152 @@ class UserModel
      * @param int $userid the id number of a user
      * 
      * @return array
-     * List of friends a user has
+     * Returns the **list of friends** a user has
      */
     public function getFriends(int $userid): array
     {
         $query = $this->db->prepare(
             "SELECT * FROM UserFriends
-            WHERE userid = ?
+            WHERE userid = ? OR friendid = ?
         ");
-        $query->execute([$userid]);
+        $query->execute([$userid, $userid]);
         return $query->fetchAll();
     }
 
     /**
-     * Delete a user's account
+     * Get the connection id between two friends
+     * 
+     * @param int $userid The id of the first friend
+     * @param int $friendid The id of the second friend
+     * 
+     * @return int|bool
+     * Returns **connectionid** if exists, **false** otherwise
      */
-    public function deleteUser(int $userid): bool
+    public function getConnectionId(int $userid, int $friendid): int|bool
     {
+        $query = $this->db->prepare(
+            "SELECT *
+            FROM UserFriends
+            WHERE (userid = ? AND friendid = ?) OR (userid = ? AND friendid = ?)
+        ");
+        $query->execute([$userid, $friendid, $friendid, $userid]);
 
+        // Return false if no connection exists
+        if ($query->rowCount() == 0)
+            return false;
+        return $query->fetch()["connectionid"];
     }
 
-    public function deleteFriend(int $userid): bool
+    /**
+     * Block a user
+     * 
+     * *NOTE* Blocking a user will also delete the friend connection between
+     * these users, if it exists
+     * 
+     * @param int $userid The id number of the user creating the block
+     * @param int $blockid The id number of the user being blocked
+     * 
+     * @return bool
+     * Returns **true** on success, **false** otherwise
+     */
+    public function blockUser(int $userid, int $blockid): bool
     {
+        // Delete a friend connection with a user if the user is now being blocked
+        $connectionid = $this->getConnectionId($userid, $blockid);
+        if ($connectionid)
+            $this->deleteFriend($connectionid);
 
+        // If user is already blocked return true
+        if ($this->isUserBlocked($userid, $blockid))
+            return true;
+
+        $query = $this->db->prepare(
+            "INSERT INTO UserBlocks (userid, blockid)
+            VALUES (?, ?)
+        "); 
+        // Catch exception if user doesn't exist
+        try {
+            $query->execute([$userid, $blockid]);
+        } catch (PDOException $e) {
+            return false;
+        }    
+        return true;
     }
 
-    public function deleteBlockedUser(int $userid): bool
+    /**
+     * Get all blocked user ids
+     * 
+     * @param int $userid the id number of the user to be searched
+     * 
+     * @return array
+     * Returns the **list of blocked user ids**
+     */
+    public function getBlockedUsers(int $userid): array
     {
+        $query = $this->db->prepare(
+            "SELECT * FROM UserBlocks
+            WHERE userid = ? OR blockid = ?
+        ");
+        $query->execute([$userid, $userid]);
+        return $query->fetchAll();
+    }
 
+    /**
+     * Determine whether a user is blocked or not
+     * 
+     * @param int $userid The id number of the first user
+     * @param int $blockid The id number of the second user
+     * 
+     * @return bool
+     * Returns **true** if the user is blocked, **false** otherwise
+     */
+    public function isUserBlocked(int $userid, int $blockid): bool
+    {
+        $query = $this->db->prepare(
+            "SELECT *
+            FROM UserBlocks
+            WHERE (userid = ? AND blockid = ?) OR (userid = ? AND blockid = ?)
+        ");
+        $query->execute([$userid, $blockid, $blockid, $userid]);
+
+        // Return whether user is blocked
+        return !$query->rowCount() == 0;
+    }
+
+
+    /**
+     * Delete a friendship using a connection id
+     * 
+     * @param int $connectionid The id number of the connection between two users
+     * 
+     * @return bool
+     * Returns **true** on success, **false** otherwise
+     */
+    public function deleteFriend(int $connectionid): bool
+    {
+        $query = $this->db->prepare(
+            "DELETE
+            FROM UserFriends
+            WHERE connectionid = ?
+        ");
+        return $query->execute([$connectionid]);
+    }
+
+    /**
+     * Deletes a blocked user
+     * 
+     * @param int $userid The id of the first user
+     * @param int $blockid The id of the second user
+     * 
+     * @return bool
+     * Returns **true** on success, **false** otherwise
+     */
+    public function deleteBlockedUser(int $userid, int $blockid): bool
+    {
+        $query = $this->db->prepare(
+            "DELETE FROM UserBlocks
+            WHERE (userid = ? AND blockid = ?) OR (userid = ? AND blockid = ?)
+        ");
+        return $query->execute([$userid, $blockid, $blockid, $userid]);
     }
 }
