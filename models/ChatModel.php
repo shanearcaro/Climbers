@@ -22,7 +22,7 @@ class ChatModel
      * @param string $time the time the climb is supposed to be taking place
      * 
      * @return int|bool
-     * The id of the chat group if the chat exists, false otherwise
+     * The **id** of the chat group if the chat exists, **false** otherwise
      */
     public function getChatId(string $area, string $time): int|bool
     {
@@ -32,6 +32,11 @@ class ChatModel
             WHERE area = ? AND time = ?
         ");
         $query->execute([$area, $time]);
+
+        // If no rows retrieved return false
+        if ($query->rowCount() == 0)
+            return false;
+        // Return chatid if found
         return $query->fetch()["chatid"];
     }
 
@@ -42,14 +47,14 @@ class ChatModel
      * @param string $time the time when the climb will happen
      * 
      * @return bool
-     * True on successful creation, false otherwise
+     * Returns **true** on success, **false** otherwise
      */
-    public function insertChat(string $area, string $time): bool
+    public function createChat(string $area, string $time): bool
     {
         // Check to see if chat is already created
         // Don't create duplicate chats
         $chat = $this->getChatId($area, $time);
-        if (!$chat)
+        if ($chat)
             return false;
         $query = $this->db->prepare(
             "INSERT INTO Chats (area, time)
@@ -62,7 +67,7 @@ class ChatModel
      * Get the last created chat
      * 
      * @return array|bool
-     * The last created chat, false if no chats exist
+     * Returns the last created **chat**, **false** if no chats exist
      */
     public function getLatestChat(): array|bool
     {
@@ -73,7 +78,21 @@ class ChatModel
             DESC LIMIT 1
         ");
         $query->execute([]);
+        // If no rows retrieved return false
+        if ($query->rowCount() == 0)
+            return false;
         return $query->fetch();
+    }
+
+    /**
+     * Get the last created chat id
+     * 
+     * @return int|bool
+     * Returns the last created chat **id**, **false** if no chats exist
+     */
+    public function getLatestChatId(): int|bool
+    {
+        return $this->getLatestChat()["chatid"];
     }
 
     /**
@@ -83,7 +102,7 @@ class ChatModel
      * @param int $chatid the id number of the chat
      * 
      * @return
-     * True on successful insertion, false otherwise
+     * Returns **true** on success, **false** otherwise
      */
     public function insertUserIntoChat(int $userid, int $chatid): bool
     {
@@ -91,7 +110,12 @@ class ChatModel
             "INSERT INTO ChatMembers (userid, chatid)
             VALUES (?, ?)
         ");
-        return $query->execute([$userid, $chatid]);
+        try {
+            $query->execute([$userid, $chatid]);
+        } catch (PDOException $e) {
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -101,9 +125,9 @@ class ChatModel
      * @param int $chatid the id number of the chat
      * 
      * @return bool
-     * True if the user belongs to the chat group, false otherwise
+     * Returns **true** if the user belongs to the chat group, **false** otherwise
      */
-    public function getUserInChat(int $userid, int $chatid): bool
+    public function isUserInChat(int $userid, int $chatid): bool
     {
         $query = $this->db->prepare(
             "SELECT *
@@ -121,20 +145,41 @@ class ChatModel
     /**
      * Insert a chat message
      * 
+     * @param string $message the new text to be inserted
      * @param int $userid the id number of the user that created a message
      * @param int $chatid the id number of the chat to have the message inserted into
-     * @param string $message the new text to be inserted
      * 
      * @return bool
-     * True on successful insertion, false otherwise
+     * Returns **true** on success, **false** otherwise
      */
-    public function insertMessage(int $userid, int $chatid, string $message): bool
+    public function insertMessage(string $message, int $userid, int $chatid, ): bool
     {
+        // Return false if user is not in chat
+        if (!$this->isUserInChat($userid, $chatid))
+            return false;
         $query = $this->db->prepare(
             "INSERT INTO ChatMessages (userid, chatid, `message`)
             VALUES (?, ?, ?)"
         );
         return $query->execute([$userid, $chatid, $message]);
+    }
+
+    /**
+     * Get message based on its message id
+     * 
+     * @param int $messageid the id number of the message
+     * 
+     * @return array
+     * Returns the **list of chat messages** sent by this user in a specific chat, **false** if the messageid isn't valid
+     */
+    public function getChatMessage(int $messageid): array|bool
+    {
+        $query = $this->db->prepare(
+            "SELECT * FROM ChatMessages
+            WHERE messageid = ?
+        ");
+        $query->execute([$messageid]);
+        return $query->fetch();
     }
 
     /**
@@ -144,7 +189,7 @@ class ChatModel
      * @param int $chatid the id number of the chat
      * 
      * @return array
-     * The list of chat messages sent by this user
+     * Returns the **list of chat messages** sent by this user in a specific chat
      */
     public function getChatMessages(int $userid, $chatid): array
     {
@@ -157,41 +202,186 @@ class ChatModel
     }
 
     /**
+     * Get a users entire chat message history for a specific chat
+     * 
+     * @param int $userid the id number of the user
+     * 
+     * @return array
+     * Returns the **list of chat messages** sent by this user
+     */
+    public function getAllUserChatMessages(int $userid): array
+    {
+        $query = $this->db->prepare(
+            "SELECT * FROM ChatMessages
+            WHERE userid = ?
+        ");
+        $query->execute([$userid]);
+        return $query->fetchAll();
+    }
+
+    /**
      * Get all the chat groups that a user is in
      * 
      * @param int $userid the id number of the user to search
      * 
      * @return array
-     * List of all chats a user is apart of
+     * Returns the **list of all chats** a user is apart of
      */
-    public function getChats(int $userid): array
+    public function getAllUserChats(int $userid): array
     {
         $query = $this->db->prepare(
-            "SELECT cm.userid, cm.chatid, c.area, c.time
-            FROM ChatMembers AS cm
-            INNER JOIN Chats AS c on cm.chatid = c.chatid
+            "SELECT *
+            FROM Chats AS c
+            INNER JOIN ChatMembers AS cm on c.chatid = cm.chatid
             WHERE cm.userid = ?
         ");
         $query->execute([$userid]);
         return $query->fetchAll();
     }
 
-        /**
-     * Get all the chat groups that a user is in
-     * 
-     * @param int $userid the id number of the user to search
+    /**
+     * Get all chats
      * 
      * @return array
-     * List of all chats a user is apart of
+     * Returns the **list of all chats**
      */
     public function getAllChats(): array
     {
         $query = $this->db->prepare(
-            "SELECT cm.userid, cm.chatid, c.area, c.time
-            FROM ChatMembers AS cm
-            INNER JOIN Chats AS c on cm.chatid = c.chatid
+            "SELECT *
+            FROM Chats
         ");
         $query->execute([]);
         return $query->fetchAll();
+    }
+
+    /**
+     * Delete a chat based on a chat id.
+     * *NOTE* This will also delete all chat messages belonging to that chat
+     * 
+     * @return bool
+     * Returns **true** on success, **false** on failure
+     */
+    public function deleteChat(int $chatid): bool
+    {
+        $query = $this->db->prepare(
+            "DELETE FROM Chats
+            WHERE chatid = ?
+        ");
+
+        // Return false if the chat messages cannot be deleted
+        if (!$this->deleteAllChatMessages($chatid))
+            return false;
+
+        // Return false if the chat members cannot be deleted
+        if (!$this->deleteAllChatMembers($chatid))
+            return false;
+
+        // Return whether the chat was deleted successfully or not
+        return $query->execute([$chatid]);
+    }
+
+    /**
+     * Delete a chat based on its message id
+     * 
+     * @param int $messageid The id number of the message to be deleted
+     * 
+     * @return bool
+     * Returns **true** on success, **false** on failure
+     */
+    public function deleteChatMessage(int $messageid): bool
+    {
+        $query = $this->db->prepare(
+            "DELETE FROM ChatMessages
+            WHERE messageid = ?
+        ");
+        return $query->execute([$messageid]);
+    }
+
+    /**
+     * Delete all messages belonging to a chat
+     * 
+     * @param int $chatid The id number of the chat where messages should be deleted
+     * 
+     * @return bool
+     * Returns **true** on success, **false** on failure
+     */
+    public function deleteAllChatMessages(int $chatid): bool
+    {
+        $query = $this->db->prepare(
+            "DELETE FROM ChatMessages
+            WHERE chatid = ?
+        ");
+        return $query->execute([$chatid]);
+    }
+
+    /**
+     * Delete all messages belonging to a user in a chat
+     * 
+     * @param int $userid The id number of the user to getting messages deleted
+     * @param int $chatid The id number of the chat where messages should be deleted
+     * 
+     * @return bool
+     * Returns **true** on success, **false** on failure
+     */
+    public function deleteUserChatMessages(int $userid, int $chatid): bool
+    {
+        $query = $this->db->prepare(
+            "DELETE FROM ChatMessages
+            WHERE userid = ? AND chatid = ?
+        ");
+        return $query->execute([$userid, $chatid]);
+    }
+
+    /**
+     * Delete all messages belonging to a user
+     * 
+     * @param int $userid The id number of the user to getting messages deleted
+     * 
+     * @return bool
+     * Returns **true** on success, **false** on failure
+     */
+    public function deleteAllUserChatMessages(int $userid): bool
+    {
+        $query = $this->db->prepare(
+            "DELETE FROM ChatMessages
+            WHERE userid = ?
+        ");
+        return $query->execute([$userid]);
+    }
+
+    /**
+     * Delete a user from a chat
+     * 
+     * @param int $userid The id number of the user getting removed
+     * @param int $chatid The id number of the chat where a member is being removed
+     * 
+     * @return bool
+     * Returns **true** on success, **false** on failure
+     */
+    public function deleteChatMember(int $userid, int $chatid): bool
+    {
+        $query = $this->db->prepare(
+            "DELETE FROM ChatMembers
+            WHERE userid = ? AND chatid = ?
+        ");
+        return $query->execute([$userid, $chatid]);
+    }
+
+    /**
+     * Delete a user from a chat
+     * 
+     * @param int $chatid The id number of the chat where all members are being removed
+     * 
+     * @return bool
+     * Returns **true** on success, **false** on failure
+     */
+    public function deleteAllChatMembers(int $chatid): bool
+    {
+        $query = $this->db->prepare(
+            "DELETE FROM ChatMembers
+            WHERE chatid = ?
+        ");
+        return $query->execute([$chatid]);
     }
 }
