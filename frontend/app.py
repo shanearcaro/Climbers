@@ -29,7 +29,7 @@ app.layout = html.Div(children=[
 #         return '404'
 
 if __name__ == "__main__":
-    app.run_server()
+    app.run_server(debug=True)
 
 
 # Initial app layout

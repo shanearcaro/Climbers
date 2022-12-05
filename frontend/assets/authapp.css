@@ -124,3 +124,12 @@ html, body {margin: 0; height: 100%;}
             0% {transform: translate(0, 0);}
             100% {transform: translate(24px, 0);}
         }
+
+.navbar {
+    height: 60px;
+    max-height: 60px;
+    width: 100%;
+    max-width: 100%;
+    border-bottom: 1px solid darkgray;
+    padding: 5px;
+}
