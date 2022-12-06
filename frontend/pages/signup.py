@@ -79,10 +79,10 @@ def register(_, username, email, password):
 
     add_response = None
     try:
-        add_response = util.signupRequest(username, email, password)
+        add_response = util.sendRequest(parameters=["create_user", username, email, password])
+        print(add_response)
     except:
         return html.Div('An error occurred while running the useradd script')
-   
     # Return the response in HTML
     if add_response.get("returnCode") == "1":
         dcc.Store(id='stored-userid', 

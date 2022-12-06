@@ -70,7 +70,7 @@ def join(userid):
         # TODO: Implement dynamic area and time elements with the graph area gui
         # Need to fix input, both inputs will be broken with certain characters and spaces
     print('pre chat request')
-    response = util.createChatRequest("Mountains", "9AM", userid)
+    response = util.sendRequest("join_group", "Mountains", "9AM", userid)
     print('post c r')
     # except:
         # return html.Div('An error occurred while running the createGroup1 script')
@@ -106,8 +106,8 @@ def load(_, n_clicks, userid, children, chatid):
     response = None
     blocks = None
     try:
-        response = util.getMessagesRequest(userid, chatid)
-        blocks = util.getBlockedUsers(userid)
+        response = util.sendRequest("get_room_messages", userid, chatid)
+        blocks = util.sendRequest("get_blocked_users", userid)
     except:
         return html.Div('An error occurred while running the startup script')
 
@@ -159,7 +159,7 @@ def send_message(message, userid, groupid):
 
     while trys < retryLimit:
         try:
-            response = util.createMessageRequest(userid, groupid, message)
+            response = util.sendRequest("create_message", userid, groupid, message)
         except:
             trys += 1
             continue
@@ -202,7 +202,7 @@ def getTimestamp(timestamp):
 def load_chatgroups(userid):
     response = None
     try:
-        response = util.getChatrooms(userid)
+        response = util.sendRequest("get_user_rooms", userid)
     except:
         return html.Div('An error occurred while running the startup script')
 
