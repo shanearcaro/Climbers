@@ -622,6 +622,24 @@ class Database
     }
 
     /**
+     * Get a chats entire chat message history
+     * 
+     * @param int $chatid the id number of the chat
+     * 
+     * @return array
+     * Returns the **list of chat messages** in this chat
+     */
+    public function getAllChatMessages(int $chatid): array
+    {
+        $query = $this->db->prepare(
+            "SELECT * FROM ChatMessages
+            WHERE chatid = ?
+        ");
+        $query->execute([$chatid]);
+        return $query->fetchAll();
+    }
+
+    /**
      * Get all the chat groups that a user is in
      * 
      * @param int $userid the id number of the user to search
