@@ -10,7 +10,7 @@ foreach($argv as $arg) {
 }
 
 // Get the type of request from the data sent
-$request_code = $data[0];
+$request_code = $data[1];
 
 // Determine which server to use
 switch ($request_code)
@@ -26,12 +26,12 @@ switch ($request_code)
 		$data[0] = "chat";
 		break;
 	default:
-		echo json_encode("Failed");
+		// Quit if request is not recognized
+		echo json_encode("Unknown request: " . $request_code);
 		exit();
 }
-
 // Create the client dynamically based on the request type
-$client = new rabbitMQClient("../config/config.ini", $data[0]);
+$client = new rabbitMQClient("../config/" . $data[0] . "-config.ini", $data[0]);
 
 // Send the request
 $response = $client->send_request($data);
