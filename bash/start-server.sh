@@ -17,8 +17,11 @@ nohup ./logListen.php >> ./logs/report.out &
 
 # Starting server
 cd ../sql/
-nohup ./server.php >> ../logging/logs/report.out &
+# nohup ./server.php >> ../logging/logs/report.out &
+
+nohup ./login-server.php >> ../logging/logs/report.out &
+nohup ./chat-server.php >> ../logging/logs/report.out &
 
 # Start app
 cd ../frontend/
-python3 app.py
+nohup python3 app.py >> ../logging/logs/report.out &    
