@@ -34,6 +34,22 @@ class rabbitMQServer
 		$this->queue = $this->machine[$server]["QUEUE"];
 	}
 
+	function getAttributes() {
+		return array(
+			$this->machine,
+			$this->BROKER_HOST,
+			$this->BROKER_PORT,
+			$this->USER,
+			$this->PASSWORD,
+			$this->VHOST,
+			$this->exchange,
+			$this->queue,
+			$this->routing_key,
+			$this->exchange_type,
+			$this->auto_delete
+		);
+	}
+
 	function process_message($msg)
 	{
 		// send the ack to clear the item from the queue
@@ -151,6 +167,21 @@ class rabbitMQClient
 		}
 		$this->exchange = $this->machine[$server]["EXCHANGE"];
 		$this->queue = $this->machine[$server]["QUEUE"];
+	}
+
+	function getAttributes() {
+		return array(
+			"HOST" 				=>	$this->BROKER_HOST,
+			"PORT" 				=>	$this->BROKER_PORT,
+			"USER" 				=>	$this->USER,
+			"PASSWORD" 			=> 	$this->PASSWORD,
+			"VHOST" 			=>	$this->VHOST,
+			"EXCHANGE"			=>	$this->exchange,
+			"QUEUE"			 	=>	$this->queue,
+			"ROUTING KEY" 	 	=>	$this->routing_key,
+			"RESPONSE QUEUE" 	=>	$this->response_queue,
+			"EXCHANGE TYPE"  	=>  $this->exchange_type
+		);
 	}
 
 	function process_response($response)
