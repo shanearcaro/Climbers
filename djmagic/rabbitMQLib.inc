@@ -15,6 +15,8 @@ class rabbitMQServer
 	private $routing_key = '*';
 	private $exchange_type = "topic";
 	private $auto_delete = false;
+	private $callback;
+	private $conn_queue;
 
 	function __construct($machine, $server = "rabbitMQ")
 	{
@@ -150,6 +152,8 @@ class rabbitMQClient
 	private $routing_key = '*';
 	private $response_queue = array();
 	private $exchange_type = "topic";
+	private $auto_delete;
+	private $conn_queue;
 
 	function __construct($machine, $server = "rabbitMQ")
 	{
@@ -201,12 +205,20 @@ class rabbitMQClient
 		return false;
 	}
 
+	/**
+	 * Send a request to the server. This interaction is not auto-acknowledged,
+	 * the server will be responding to the message sent.
+	 * @param mixed $message The body of the request, this must make sense to the server
+	 * @return mixed|string
+	 */
 	function send_request($message)
 	{
 		$uid = uniqid();
 
+		// Encode the message so it is in a format that can be sent
 		$json_message = json_encode($message);
 		try {
+			// Fill array with all send request information
 			$params = array();
 			$params['host'] = $this->BROKER_HOST;
 			$params['port'] = $this->BROKER_PORT;
@@ -214,20 +226,31 @@ class rabbitMQClient
 			$params['password'] = $this->PASSWORD;
 			$params['vhost'] = $this->VHOST;
 
+			// Create a new connection based on the request information and connect
 			$conn = new AMQPConnection($params);
 			$conn->connect();
 
+			// Create the channel and exchange, set the names as well
 			$channel = new AMQPChannel($conn);
-
 			$exchange = new AMQPExchange($channel);
 			$exchange->setName($this->exchange);
 			$exchange->setType($this->exchange_type);
 
+			/**
+			 * @var mixed $callback_queue The queue for the response to be sent
+			 * The callback queue is what the server will use to respond to the client.
+			 * When the servers are started before the client has been run the response queue will
+			 * not exist and will generate an error. This error can be ignored as once the client is
+			 * run and sends a message the response queue will have been created. The error message 
+			 * is only generated because the server is complaining but at that time it can't be sent
+			 * messages anyway.
+			 */
 			$callback_queue = new AMQPQueue($channel);
 			$callback_queue->setName($this->queue . "_response");
 			$callback_queue->declare();
 			$callback_queue->bind($exchange->getName(), $this->routing_key . ".response");
 
+			// Create the queue and bind it to the exchange
 			$this->conn_queue = new AMQPQueue($channel);
 			$this->conn_queue->setName($this->queue);
 			$this->conn_queue->bind($exchange->getName(), $this->routing_key);
@@ -236,8 +259,11 @@ class rabbitMQClient
 			$this->response_queue[$uid] = "waiting";
 			$callback_queue->consume(array($this, 'process_response'));
 
+			// Get the response and destroy the response queue
 			$response = $this->response_queue[$uid];
 			unset($this->response_queue[$uid]);
+
+			// Return the response
 			return $response;
 		} catch (Exception $e) {
 			die("failed to send message to exchange: " . $e->getMessage() . "\n");
@@ -245,34 +271,42 @@ class rabbitMQClient
 	}
 
 	/**
-	 @brief send a one-way message to the server.  These are
-	 auto-acknowledged and give no response.
-	 @param message the body of the request.  This must make sense to the
-	 server
+	 * Send a one-way message to the server. These are auto-acknowleged and give no response
+	 * @param mixed $message The body of the request, this must make sense to the server
+	 * @return mixed
 	 */
 	function publish($message)
 	{
+		// Encode the message so it is in a format that can be sent
 		$json_message = json_encode($message);
 		try {
+			// Fill array with all send request information
 			$params = array();
 			$params['host'] = $this->BROKER_HOST;
 			$params['port'] = $this->BROKER_PORT;
 			$params['login'] = $this->USER;
 			$params['password'] = $this->PASSWORD;
 			$params['vhost'] = $this->VHOST;
+
+			// Create a new connection based on the request information and connect
 			$conn = new AMQPConnection($params);
 			$conn->connect();
+
+			// Create the channel and exchange, set the names as well
 			$channel = new AMQPChannel($conn);
 			$exchange = new AMQPExchange($channel);
 			$exchange->setName($this->exchange);
 			$exchange->setType($this->exchange_type);
+
+			// Create the queue and bind it to the exchange
 			$this->conn_queue = new AMQPQueue($channel);
 			$this->conn_queue->setName($this->queue);
 			$this->conn_queue->bind($exchange->getName(), $this->routing_key);
+
+			// Publish the message
 			return $exchange->publish($json_message, $this->routing_key);
 		} catch (Exception $e) {
 			die("failed to send message to exchange: " . $e->getMessage() . "\n");
 		}
 	}
 }
-?>
