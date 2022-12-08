@@ -418,13 +418,13 @@ class Database
     }
 
     /**
-     * Get the id of a chat group based on its area and time
+     * Get the id of a chat room based on its area and time
      * 
-     * @param string $area the area of climbing for the chat group
+     * @param string $area the area of climbing for the chat room
      * @param string $time the time the climb is supposed to be taking place
      * 
      * @return int|bool
-     * The **id** of the chat group if the chat exists, **false** otherwise
+     * The **id** of the chat room if the chat exists, **false** otherwise
      */
     public function getChatId(string $area, string $time): int|bool
     {
@@ -438,12 +438,38 @@ class Database
         // If no rows retrieved return false
         if ($query->rowCount() == 0)
             return false;
+
         // Return chatid if found
         return $query->fetch()["chatid"];
     }
 
     /**
-     * Create a new chat group based on area and time
+     * Get the area and time of a chat room based on its chatid
+     * 
+     * @param int $chatid the chat id of the chat room being searched
+     * 
+     * @return array|bool
+     * The **area** and **time** of the chat room if the chat exists, **false** otherwise
+     */
+    public function getChatInfo(int $chatid): array|bool
+    {
+        $query = $this->db->prepare(
+            "SELECT area, time
+            FROM Chats
+            WHERE chatid = ?
+        ");
+        $query->execute([$chatid]);
+
+        // If no rows retrieved return false
+        if ($query->rowCount() == 0)
+            return false;
+
+        // Return area and time if chat exists
+        return $query->fetch();
+    }
+
+    /**
+     * Create a new chat room based on area and time
      * 
      * @param string $area the place where the climb will happen
      * @param string $time the time when the climb will happen
@@ -521,13 +547,13 @@ class Database
     }
 
     /**
-     * Check whether a user belongs to a chat group or not
+     * Check whether a user belongs to a chat room or not
      * 
      * @param int $userid the id number of the user to be checked
      * @param int $chatid the id number of the chat
      * 
      * @return bool
-     * Returns **true** if the user belongs to the chat group, **false** otherwise
+     * Returns **true** if the user belongs to the chat room, **false** otherwise
      */
     public function isUserInChat(int $userid, int $chatid): bool
     {
@@ -640,7 +666,7 @@ class Database
     }
 
     /**
-     * Get all the chat groups that a user is in
+     * Get all the chat rooms that a user is in
      * 
      * @param int $userid the id number of the user to search
      * 
