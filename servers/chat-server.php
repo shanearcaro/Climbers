@@ -32,22 +32,21 @@ foreach($argv as $arg) {
 function joinGroup($data): array
 {
 	global $db;
-
 	// Check if the correct number of variables are given
-	if (count($data) != 5) {
+	if (count($data) != 3) {
 		return array(
 			"returnCode" => -1,
-			"message" => "Failed to join group: required 5 arguments, " . count($data) . " were supplied."
+			"message" => "Failed to join group: required 3 arguments, " . count($data) . " were supplied."
 		);
 	}
 
 	// Attempt to join group: area, time, userid
 	// Chatid will be a number if the chat is found, false if it doesn't exist
-	$chatid = $db->getChatId($data[3], $data[4]);
+	$chatid = $db->getChatId($data[0], $data[1]);
 
 	// If the chat doesn't exist attempt to create it
 	if (!$chatid) {
-		if (!createChat($data)) {
+		if (!createChat(array_slice($data, 0, 2))) {
 			// If the chat could not be created return the error
 			return array(
 				"returnCode" => -2,
@@ -57,9 +56,9 @@ function joinGroup($data): array
 	}
 
 	// Check to see if the user is already in the chat room
-	if (!$db->isUserInChat($data[4], $chatid)) {
+	if (!$db->isUserInChat($data[2], $chatid)) {
 		// If user is not in chat room, insert
-		if ($db->insertUserIntoChat($data[4], $chatid)) {
+		if ($db->insertUserIntoChat($data[2], $chatid)) {
 			// User succesfully added to chat
 			return array(
 				"returnCode" => 3,
@@ -79,7 +78,8 @@ function joinGroup($data): array
 	// User already in chat
 	return array(
 		"returnCode" => -4,
-		"message" => "User already in chat"
+		"message" => "User already in chat",
+		"chatid" => $chatid
 	);
 }
 
@@ -92,13 +92,12 @@ function joinGroup($data): array
 function createChat($data): bool
 {
 	global $db;
-
 	// Check if the correct number of variables are given
-	if (count($data) != 5)
+	if (count($data) != 2)
 		return false;
 
 	// Check to see if chat was created successfully
-	if ($db->createChat($data[3], $data[4]))
+	if ($db->createChat($data[0], $data[1]))
 		return true;
 
 	// If this point is reached that's because the chat was not created successfully
@@ -117,10 +116,10 @@ function getRoomMessages($data): array
 	global $db;
 
 	// Check if the correct number of variables are given
-	if (count($data) != 5) {
+	if (count($data) != 1) {
 		return array(
 			"returnCode" => -1,
-			"message" => "Failed to get messages: required 5 arguments, " . count($data) . " were supplied."
+			"message" => "Failed to get messages: required 3 arguments, " . count($data) . " were supplied."
 		);
 	}
 
@@ -128,8 +127,8 @@ function getRoomMessages($data): array
 	// Messages array can be empty if no messages were sent yet or the chat doesn't exist
 	return array(
 		"returnCode" => 2,
-		"message" => "All chat messages based on chat id: " . $data[4],
-		"chatmessages" => $db->getAllChatMessages($data[4])
+		"message" => "All chat messages based on chat id: " . $data[0],
+		"chatmessages" => $db->getAllChatMessages($data[0])
 	);
 }
 
@@ -143,12 +142,11 @@ function getRoomMessages($data): array
 function getBlockedUsers($data): array
 {
 	global $db;
-
 	// Check if the correct number of variables are given
-	if (count($data) != 4) {
+	if (count($data) != 1) {
 		return array(
 			"returnCode" => -1,
-			"message" => "Failed to get blocked users: required 4 arguments, " . count($data) . " were supplied."
+			"message" => "Failed to get blocked users: required 1 arguments, " . count($data) . " were supplied."
 		);
 	}
 
@@ -156,8 +154,8 @@ function getBlockedUsers($data): array
 	// Blocked users array can be empty if the user in question has no one blocked or the user doesn't exist
 	return array(
 		"returnCode" => 2,
-		"message" => "All blocked users based on user id: " . $data[3],
-		"blocked" => $db->getBlockedUsers($data[3])
+		"message" => "All blocked users based on user id: " . $data[0],
+		"blockedusers" => $db->getBlockedUsers($data[0])
 	);
 }
 
@@ -167,20 +165,19 @@ function getBlockedUsers($data): array
  * @return array
  * Always returns a returnCode and message. 
  */
-function createMessages($data): array
+function createMessage($data): array
 {
 	global $db;
-
 	// Check if the correct number of variables are given
-	if (count($data) != 6) {
+	if (count($data) != 3) {
 		return array(
 			"returnCode" => -1,
-			"message" => "Failed to get messages: required 6 arguments, " . count($data) . " were supplied."
+			"message" => "Failed to get messages: required 3 arguments, " . count($data) . " were supplied."
 		);
 	}
 
 	// Attempt to insert a message into the chat room
-	if ($db->insertMessage($data[2], $data[3]. $data[4], $data[5])) {
+	if ($db->insertMessage($data[0], $data[1], $data[2])) {
 		// Message was successfully inserted
 		return array(
 			"returnCode" => 2,
@@ -197,19 +194,21 @@ function createMessages($data): array
 }
 
 /**
- * Summary of getUserRooms
- * @param mixed $data
+ * Get all the chat rooms that a user is currently a member of
+ * @param mixed $data Array that contains only the userid
  * @return array
+ * Always returns a returnCode and message. Chats array is also returned but it may
+ * be empty if the user is not in any chats or the user doesn't exist
  */
 function getUserRooms($data): array
 {
 	global $db;
 
 	// Check if the correct number of variables are given
-	if (count($data) != 4) {
+	if (count($data) != 1) {
 		return array(
 			"returnCode" => -1,
-			"message" => "Failed to get messages: required 4 arguments, " . count($data) . " were supplied."
+			"message" => "Failed to get messages: required 1 argument, " . count($data) . " were supplied."
 		);
 	}
 
@@ -217,20 +216,63 @@ function getUserRooms($data): array
 	// Chats array may be empty if the user is not in any chats or the user doesn't exist
 	return array(
 		"returnCode" => 2,
-		"message" => "All chat rooms based on user id: " . $data[3],
-		"chats" => $db->getAllUserChats($data[3])
+		"message" => "All chat rooms based on user id: " . $data[0],
+		"chats" => $db->getAllUserChats($data[0])
 	);
 }
 
 /**
- * Summary of requestProcessor
- * @param mixed $data
+ * Get the area and time of a chat room based on the chat room id
+ * @param mixed $data Array that contains only the chatid
  * @return array
+ * Always returns a returnCode and message. Area and time are also returned if
+ * the chat room with the supplied chat id exists
  */
-function requestProcessor($data): array
+function getRoomInfo($data): array
+{
+	global $db;
+	// Check if the correct number of variables are given
+	if (count($data) != 1) {
+		return array(
+			"returnCode" => -1,
+			"message" => "Failed to get room info: required 1 argument, " . count($data) . " were supplied."
+		);
+	}
+
+	// Attempt to find the area and time of a chat
+	$roomInfo = $db->getChatInfo($data[0]);
+
+	// If the chat exists
+	if ($roomInfo) {
+		// Return the area and time of the chat
+		return array(
+			"returnCode" => 2,
+			"message" => "Area and time for chat room with id: " . $data[0],
+			"area" => $roomInfo["area"],
+			"time" => $roomInfo["time"]
+		);
+	}
+	else {
+		// Return the area and time of the chat
+		return array(
+			"returnCode" => -2,
+			"message" => "Chat room with id: " . $data[0] . " does not exist."
+		);	
+	}
+
+}
+
+/**
+ * Given a request type and information to accompany the request, perform
+ * a series of steps to honor whatever the client requested.
+ * @param mixed $requestData request information + chat information
+ * @return array
+ * Respond to the client appropriately
+ */
+function requestProcessor($requestData): array
 {
 	// Check to see if the request type exists
-	if (!isset($data[0])) {
+	if (!isset($requestData[0])) {
 		return array(
 			"returnCode" => -1,
 			"message" => "[Chat Server] received request but not valid type was provided."
@@ -238,19 +280,22 @@ function requestProcessor($data): array
 	}
 
 	// Get the request	
-	$request = $data[1];
+	$request = $requestData[1];
+	$sendData = array_slice($requestData, 2);
 
 	switch ($request) {
 		case "join_group":
-			return joinGroup($data);
+			return joinGroup($sendData);
 		case "get_room_messages":
-			return getRoomMessages($data);
+			return getRoomMessages($sendData);
 		case "get_blocked_users":
-			return getBlockedUsers($data);
+			return getBlockedUsers($sendData);
 		case "create_message":
-			return createMessages($data);
+			return createMessage($sendData);
 		case "get_user_rooms":
-			return getUserRooms($data);
+			return getUserRooms($sendData);
+		case "get_room_info":
+			return getRoomInfo($sendData);
 		default:
 			// If the request type doesn't match any set case
 			return array(
@@ -261,7 +306,7 @@ function requestProcessor($data): array
 }
 
 // Start the server
-$server = new rabbitMQServer("../config/chat-config.ini", "chat");
+$server = new rabbitMQServer("../config/config.ini", "chat");
 echo "Chat service started..." . PHP_EOL;
 
 // Wait for messages to be sent to the server and handle the request appropriately

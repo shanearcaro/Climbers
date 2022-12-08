@@ -35,22 +35,22 @@ function createUser($data): array
 	global $db;
 
 	// Check if the correct number of variables are given
-	if (count($data) != 5) {
+	if (count($data) != 3) {
 		return array(
 			"returnCode" => -1,
-			"message" => "User failed to add: required 5 arguments, " . count($data) . " were supplied."
+			"message" => "User failed to add: required 3 arguments, " . count($data) . " were supplied."
 		);
 	}
 
 	// Attempt to create a new user: username, email, password
-	$success = $db->insertUser($data[2], $data[3], $data[4]);
+	$success = $db->insertUser($data[0], $data[1], $data[2]);
 
 	// Respond to user insert success or failure
 	if ($success) {
 		return array(
 			"returnCode" => 1,
 			"message" => "User added successfully.",
-			"userid" => $db->getUserId($data[2])
+			"userid" => $db->getUserId($data[0])
 		);
 	}
 
@@ -61,10 +61,44 @@ function createUser($data): array
 	);
 }
 
-function requestProcessor($data)
+/**
+ * Authenticate a user based on a supplied username and password.
+ * @param mixed $data request information + user information
+ * @return array
+ * Always returns a returnCode and message. UserId is also returned if the
+ * user is successfully authenticated
+ */
+function authenticateUser($data): array
+{
+	global $db;
+	// Check if the correct number of variables are given
+	if (count($data) != 2) {
+		return array(
+			"returnCode" => -1,
+			"message" => "User failed to add: required 2 arguments, " . count($data) . " were supplied."
+		);
+	}
+
+	// Authenticate user with username and password
+	if ($db->authenticateUser($data[0], $data[1])) {
+		return array(
+			"returnCode" => 2,
+			"message" => "User authenticated.",
+			"userid" => $db->getUserId($data[0])
+		);
+	}
+	else {
+		return array(
+			"returnCode" => -2,
+			"message" => "User failed to authenticate.",
+		);
+	}
+}
+
+function requestProcessor($requestData)
 {
 	// Check to see if the request type exists
-	if (!isset($data[0])) {
+	if (!isset($requestData[0])) {
 		return array(
 			"returnCode" => -1,
 			"message" => "[Login Server] received request but not valid type was provided."
@@ -72,11 +106,14 @@ function requestProcessor($data)
 	}
 
 	// Get the request	
-	$request = $data[1];
+	$request = $requestData[1];
+	$sendData = array_slice($requestData, 2);
 
 	switch ($request) {
 		case "create_user":
-			return createUser($data);
+			return createUser($sendData);
+		case "authenticate_user":
+			return authenticateUser($sendData);
 		default:
 			// If the request type doesn't match any set case
 			return array(
@@ -87,7 +124,7 @@ function requestProcessor($data)
 }
 
 // Start the server
-$server = new rabbitMQServer("../config/login-config.ini", "login");
+$server = new rabbitMQServer("../config/config.ini", "login");
 echo "Login service started..." . PHP_EOL;
 
 // Wait for messages to be sent to the server and handle the request appropriately
