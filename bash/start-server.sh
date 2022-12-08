@@ -16,7 +16,7 @@ nohup ./logListen.php >> ./logs/report.out &
 # nohup ./apiServer.php >> ../logging/logs/report.out &
 
 # Starting server
-cd ../sql/
+cd ../servers/
 # nohup ./server.php >> ../logging/logs/report.out &
 
 nohup ./login-server.php >> ../logging/logs/report.out &

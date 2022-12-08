@@ -28,4 +28,4 @@ def run_php_script(path, args):
 
 # Generate the request to the rabbitserver
 def sendRequest(parameters=[]):
-    return json.loads(run_php_script(path="query.php", args=parameters))
+    return json.loads(run_php_script(path="../controller/query.php", args=parameters))
