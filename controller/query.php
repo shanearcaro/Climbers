@@ -16,6 +16,7 @@ $request_code = $data[1];
 switch ($request_code)
 {
 	case "create_user":
+	case "authenticate_user":
 		$data[0] = "login";
 		break;
 	case "join_group":
@@ -23,6 +24,7 @@ switch ($request_code)
 	case "get_blocked_users":
 	case "create_message":
 	case "get_user_rooms":
+	case "get_room_info":
 		$data[0] = "chat";
 		break;
 	default:
@@ -31,7 +33,7 @@ switch ($request_code)
 		exit();
 }
 // Create the client dynamically based on the request type
-$client = new rabbitMQClient("../config/" . $data[0] . "-config.ini", $data[0]);
+$client = new rabbitMQClient("../config/config.ini", $data[0]);
 
 // Send the request
 $response = $client->send_request($data);
