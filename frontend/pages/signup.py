@@ -21,6 +21,8 @@ signupform = [
     html.Img(src=util.format_img('logo.png'), 
             style={'margin': '30px auto', 'display': 'block'}),
 
+    html.H1("Sign Up", className='page-title'),
+
     #Actual form area
     html.Div('Username', className='label'),
     dcc.Input('', className='input', id='user'),
