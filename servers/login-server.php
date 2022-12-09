@@ -5,9 +5,13 @@ require_once('../logging/logPublish.php');
 
 require_once('../models/Database.php');
 
+// Used to load the dotenv file
+require_once('../djmagic/readEnv.php');
+$env = new ReadEnv();
+
 // Check to see if the database connection was successful$db = new Database("127.0.0.1", "IT490", "it490user", "it490pass");
 try {
-	$db = new Database("127.0.0.1", "IT490", "it490user", "it490pass");
+	$db = new Database($env->read("DB_HOST"), $env->read("DB_NAME"), $env->read("DB_USERNAME"), $env->read("DB_PASSWORD"));
 } catch (PDOException $e) {
 	return array(
 		"returnCode" => 0,
@@ -75,7 +79,7 @@ function authenticateUser($data): array
 	if (count($data) != 2) {
 		return array(
 			"returnCode" => -1,
-			"message" => "User failed to add: required 2 arguments, " . count($data) . " were supplied."
+			"message" => "User failed to authenticate: required 2 arguments, " . count($data) . " were supplied."
 		);
 	}
 

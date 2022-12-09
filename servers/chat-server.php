@@ -5,9 +5,13 @@ require_once('../logging/logPublish.php');
 
 require_once('../models/Database.php');
 
-// Check to see if the database connection was successful$db = new Database("127.0.0.1", "IT490", "it490user", "it490pass");
+// Used to load the dotenv file
+require_once('../djmagic/readEnv.php');
+$env = new ReadEnv();
+
+// Check to see if the database connection was successful
 try {
-	$db = new Database("127.0.0.1", "IT490", "it490user", "it490pass");
+	$db = new Database($env->read("DB_HOST"), $env->read("DB_NAME"), $env->read("DB_USERNAME"), $env->read("DB_PASSWORD"));
 } catch (PDOException $e) {
 	return array(
 		"returnCode" => 0,
