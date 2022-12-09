@@ -17,6 +17,7 @@ switch ($request_code)
 {
 	case "create_user":
 	case "authenticate_user":
+	case "reset_password":
 		$data[0] = "login";
 		break;
 	case "join_group":
