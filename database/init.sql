@@ -61,8 +61,7 @@ CREATE TABLE UserBlocks (
 CREATE TABLE UserStats (
     statid INT NOT NULL,
     userid INT NOT NULL,
-    climbname VARCHAR(100),
-    climbgrade VARCHAR(8),
+    climbuuid VARCHAR(40),
     timestamp DATETIME,
     FOREIGN KEY(userid) REFERENCES Users(userid),
     PRIMARY KEY(statid, userid)
