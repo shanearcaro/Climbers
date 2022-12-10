@@ -63,9 +63,13 @@ class Post
 
     private function generateResetPasswordEmail(string $username, string $hash): string
     {
+        $date = new DateTime('+15 minutes');
+        $date = $date->format('H:i');
+
         return '<h2 style="fontFamily: courier new;">Hello ' . $username . ',</h2>' .
         '<h3>Your temporary password is: <span style="color: red;">' . $hash . '</span></h3>' .
-        '<h4>Please use this temporary password to log into your account. From there you will be prompted to update your password.</h4>';
+        '<h4>Please use this temporary password to log into your account. From there you will be prompted to update your password.</h4>' .
+        '<h4>The temporary password will expire at <span style="cholor: red;">' . $date . '</span></h4>';
     }
 }
 

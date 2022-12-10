@@ -54,11 +54,11 @@ class Database
         $hash = password_hash($password, PASSWORD_DEFAULT, $options);
 
         $query = $this->db->prepare(
-            "INSERT INTO Users (userid, username, email, `hash`)
-            VALUES (?, ?, ?, ?)
+            "INSERT INTO Users (userid, username, email, `hash`, temp, `timestamp`)
+            VALUES (?, ?, ?, ?, ?, ?)
         ");
         try {
-            $query->execute([null, $username, $email, $hash]);
+            $query->execute([null, $username, $email, $hash, $hash, null]);
         } catch (PDOException $e) {
             return false;
         }
@@ -77,6 +77,23 @@ class Database
     {
         $query = $this->db->prepare(
             "SELECT username, email
+            FROM Users
+            WHERE userid = ?   
+        ");
+        $query->execute([$userid]);
+        return $query->fetch();
+    }
+
+    /**
+     * Fetch the timestamp from a user
+     * @param int $userid the id of the user to be searched
+     * @return array|bool
+     * Returns the **timestamp** of a user, **false** if the user doesn't exist
+     */
+    public function getTimestamp(int $userid): array|bool
+    {
+        $query = $this->db->prepare(
+            "SELECT `timestamp`
             FROM Users
             WHERE userid = ?   
         ");
@@ -195,10 +212,15 @@ class Database
 
         $query = $this->db->prepare(
             "UPDATE Users
-            SET temp = ?
+            SET temp = ?, timestamp = ?
             WHERE userid = ?
         ");
-        return $query->execute([$hash, $userid]);
+
+        // Get current date
+        $date = new DateTime();
+        $date = $date->format('Y-m-d H:i:s');
+
+        return $query->execute([$hash, $date, $userid]);
     }
 
     /**
@@ -215,10 +237,10 @@ class Database
 
         $query = $this->db->prepare(
             "UPDATE Users
-            SET temp = NULL
+            SET temp = ?
             WHERE userid = ?
         ");
-        return $query->execute([$userid]);
+        return $query->execute([null, $userid]);
     }
 
     /**

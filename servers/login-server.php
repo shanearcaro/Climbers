@@ -81,6 +81,26 @@ function authenticateUser($data): array
 
 	// Authenticate user with username and temp password
 	if ($db->authenticateTempUser($data[0], $data[1])) {
+		// Get the current time
+		$date = new DateTime();
+
+		// Get the time the reset password request was made
+		$authTime = new DateTime($db->getTimestamp($db->getUserId($data[0]))["timestamp"]);
+
+		// Temporary password lives for 15 minutes
+		$authTime->modify("+15 minutes");
+
+		// If current time is greater than max allowed time
+		if ($date > $authTime) {
+			// Temp password has expired
+			return array(
+				"returnCode" => -3,
+				"message" => "Temp password expired.",
+				"userid" => $db->getUserId($data[0])
+			);
+		}
+
+		// Password has not expired yet
 		return array(
 			"returnCode" => 3,
 			"message" => "User authenticated for password reset.",
