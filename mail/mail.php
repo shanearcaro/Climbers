@@ -6,37 +6,79 @@ use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 
 //Load Composer's autoloader
-require '../vendor/autoload.php';
+require_once '../vendor/autoload.php';
 
-// Used to load the dotenv file
-require_once('../djmagic/readEnv.php');
-$env = new ReadEnv();
 
-//Create an instance; passing `true` enables exceptions
-$mail = new PHPMailer(true);
+class Post
+{
+    //Create an instance; passing `true` enables exceptions
+    private $mail;
 
-try {
-    //Server settings
-    $mail->SMTPDebug = SMTP::DEBUG_SERVER;
-    $mail->isSMTP();
-    $mail->Host       = 'smtp.gmail.com';
-    $mail->SMTPAuth   = true;
-    $mail->Username   = 'rockclimbingit490@gmail.com';
-    $mail->Password   = $env->read("EMAIL_PASSWORD");
-    $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
-    $mail->Port       = 465;
+    public function __construct()
+    {
+        $this->mail = new PHPMailer(true);
+        try {
+            //Server settings
+            $this->mail->SMTPDebug = SMTP::DEBUG_SERVER;
+            $this->mail->isSMTP();
+            $this->mail->Host = 'smtp.gmail.com';
+            $this->mail->SMTPAuth = true;
+            $this->mail->Username = "rockclimbingit490@gmail.com";
+            $this->mail->Password = "***REMOVED***";
+            $this->mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+            $this->mail->Port = 465;
+            $this->mail->setFrom('rockclimbingit490@gmail.com', 'Rock Climbing');
+            $this->mail->isHTML(true);
+        } catch (Exception $e) {
+            echo "Mail could not be generated: {$this->mail->ErrorInfo}";
+        }
+    }
 
-    $mail->setFrom('rockclimbingit490@gmail.com', 'Rock Climbing');
-    $mail->addAddress('smarcaro@gmail.com', 'Shane Arcaro');
+    /**
+     * Set a reset password email to the specified email address
+     * @param string $emailAddress the emailAddress to send the email to
+     * @param string $username the username corresponding to the account
+     * @param string $hash a unique hash that will act as the temporary
+     * @return bool
+     * Returns **true** if email was sent, **false** otherwise
+     */
+    function sendResetPassword(string $emailAddress, string $username, string $hash):bool
+    {
+        //Content
+        try {
+            $this->mail->addAddress($emailAddress, $username);
+            $this->mail->Subject = 'Password Reset';
+            $this->mail->Body = $this->generateResetPasswordEmail($hash);
+            $this->mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
 
-    //Content
-    $mail->isHTML(true);
-    $mail->Subject = 'Password Reset';
-    $mail->Body    = 'This is the HTML message body <b>in bold!</b>';
-    $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
+            $this->mail->send();
+        } catch (Exception $e) {
+            // Email failed to send
+            return false;
+        }
 
-    $mail->send();
-    echo 'Message has been sent';
-} catch (Exception $e) {
-    echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+        // Email was sent
+        return true;
+    }
+
+    private function generateResetPasswordEmail(string $hash): string
+    {
+
+        // For testing
+        return '
+            <h1 style="color=red">Your temporary password is </h1><p>' . $hash . '</p>' .
+            '<p>Please use this password to log in where you will be prompted
+            to reset your password.</p>'
+            ;
+
+        // return "
+        //     <html>
+        //     <head><title>Title</title></head>
+        //     <body>
+        //         <a href='localhost:8050/" . uniqid() . "'>Google</a>
+        //     </body>
+        //     </html>
+        // ";
+    }
 }
+

@@ -54,7 +54,7 @@ def create_people_div_list(people_list):
     #           ], style=friend_item_style),
     #       )
     # return people_div_list
-    util.sendRequest(parameters=["get_user_rooms"])
+    # util.sendRequest(parameters=["get_user_rooms"])
     return html.Div("Testing")
 
 # App layout

@@ -3,8 +3,12 @@ CREATE TABLE Users (
     username varchar(50) NOT NULL UNIQUE,
     email varchar(50) NOT NULL,
     hash varchar(100) NOT NULL,
+    temp varchar(100) NOT NULL,
     PRIMARY KEY(userid)
 );
+
+ALTER TABLE Users
+    ADD CONSTRAINT uq_users UNIQUE(username, email);
 
 CREATE TABLE Chats (
     chatid INT NOT NULL AUTO_INCREMENT,

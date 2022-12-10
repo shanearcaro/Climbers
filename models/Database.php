@@ -22,19 +22,19 @@ class Database
         $dsn = "mysql:host=" . $host . ";dbname=" . $databaseName . ";charset=utf8mb4";
 
         // Set default options if none are specified
-        if (!$options)
+        if (!$options) {
             $options = [
-                PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-                PDO::ATTR_EMULATE_PREPARES   => false,
+                PDO::ATTR_EMULATE_PREPARES => false,
             ];
-        
-       // Try connection
+        }
+        // Try connection
         try {
             $this->db = new PDO($dsn, $username, $password, $options);
         } catch (\PDOException $e) {
-            throw new \PDOException($e->getMessage(), (int)$e->getCode());
-        } 
+            throw new \PDOException($e->getMessage(), (int) $e->getCode());
+        }
     }
 
     /**
@@ -76,7 +76,7 @@ class Database
     public function getUser(int $userid): array|bool
     {
         $query = $this->db->prepare(
-            "SELECT *
+            "SELECT username, email
             FROM Users
             WHERE userid = ?   
         ");
@@ -108,6 +108,29 @@ class Database
     }
 
     /**
+     * Get the id number of a user from their email
+     * 
+     * @param string $email the email of the user
+     * 
+     * @return int|bool
+     * Returns the **id** of the user if it exists, **false** otherwise
+     */
+    public function getUserIdFromEmail(string $email): int|bool
+    {
+        $query = $this->db->prepare(
+            "SELECT userid
+            FROM Users
+            WHERE email = ?
+        ");
+        $query->execute([$email]);
+        $row = $query->fetch();
+
+        if (!$row)
+            return false;
+        return $row["userid"];
+    }
+
+    /**
      * Get all available users
      * Returns **array of all users**
      * 
@@ -127,6 +150,11 @@ class Database
     /**
      * Updates the password of a user based on the userid of a user
      * 
+     * The temp password will always be sent to the users actual password hash.
+     * The password hash itself is secure so by default the temp hash is secure. The
+     * only time the temp is different from the actual password is when the user is
+     * trying to reset their password.
+     * 
      * @param int $userid the id number of the user
      * @param string $password the new password to be set
      * @param array $options list of all supplied password hash options
@@ -136,15 +164,61 @@ class Database
      */
     public function updatePassword(int $userid, string $password, array $options = []): bool
     {
+        // If user doesn't exist return false;
+        if (!$this->getUser($userid))
+            return false;
         // Generate password
         $hash = password_hash($password, PASSWORD_DEFAULT, $options);
 
         $query = $this->db->prepare(
             "UPDATE Users
-            SET hash = ?
+            SET hash = ?, temp = ?
+            WHERE userid = ?
+        ");
+        return $query->execute([$hash, $hash, $userid]);
+    }
+
+    /**
+     * Sets the temporary password of a user based on the userid of a user
+     * 
+     * @param int $userid the id number of the user
+     * @param string $password the new password to be set
+     * @param array $options list of all supplied password hash options
+     * 
+     * @return bool
+     * Returns **true** on success, **false** otherwise
+     */
+    public function setTempPassword(int $userid, string $password, array $options = []): bool
+    {
+        // Generate password
+        $hash = password_hash($password, PASSWORD_DEFAULT, $options);
+
+        $query = $this->db->prepare(
+            "UPDATE Users
+            SET temp = ?
             WHERE userid = ?
         ");
         return $query->execute([$hash, $userid]);
+    }
+
+    /**
+     * Resets the temporary password of a user based on the userid of a user
+     * 
+     * @param int $userid the id number of the user
+     * @param array $options list of all supplied password hash options
+     * 
+     * @return bool
+     * Returns **true** on success, **false** otherwise
+     */
+    public function resetTempPassword(int $userid, array $options = []): bool
+    {
+
+        $query = $this->db->prepare(
+            "UPDATE Users
+            SET temp = NULL
+            WHERE userid = ?
+        ");
+        return $query->execute([$userid]);
     }
 
     /**
@@ -190,6 +264,35 @@ class Database
         if ($query->rowCount() == 0)
             return false;
         $hash = $row["hash"];
+
+        // Return verified password hash
+        return password_verify($password, $hash);
+    }
+
+    /**
+     * Authenticate a user in the database based on their username and temp password
+     * 
+     * @param string $username the username of the user
+     * @param string $password the password of the user
+     * @return bool
+     * Returns **true** on success, **false** otherwise
+     */
+    public function authenticateTempUser(string $username, string $password): bool
+    {
+        $query = $this->db->prepare(
+            "SELECT temp
+            FROM Users
+            WHERE username = ?
+        ");
+        $query->execute([$username]);
+        
+        // Get query results as associative array
+        $row = $query->fetch(PDO::FETCH_ASSOC);
+
+        // If username not found return false
+        if ($query->rowCount() == 0)
+            return false;
+        $hash = $row["temp"];
 
         // Return verified password hash
         return password_verify($password, $hash);
