@@ -11,8 +11,8 @@ import util
 #Dash requires pages to be registered
 dash.register_page(
     __name__, 
-    title='Reset Password', 
-    path='/reset'
+    title='Update Password', 
+    path='/update-password'
 )
 
 # Layout: Reset Form
@@ -21,14 +21,17 @@ resetform = [
     html.Img(src=util.format_img('logo.png'), 
             style={'margin': '30px auto', 'display': 'block'}),
 
-    html.H1("Reset Password", className='page-title'),
+    html.H1("Update Password", className='page-title'),
 
     #Actual form area
-    html.Div('Username', className='label'),
-    dcc.Input('', className='input', id='user'),
+    html.Div('Password', className='label'),
+    dcc.Input('', className='input', id='pass'),
+
+    html.Div('Password', className='label'),
+    dcc.Input('', className='input', id='conf_pass'),
 
     #Empty Div for logic reasons
-    html.Div(id='hidden-reset-div', style={
+    html.Div(id='hidden-update-div', style={
         'color':'red',
         'padding-bottom':'10px'
     }),
@@ -43,16 +46,6 @@ resetform = [
         className='login-signup-toggle'
     ),
 
-    # Button to toggle between login and signup
-    html.Div(
-        dcc.Link(
-            "Don't Have an Account?", 
-            href='/signup'
-        ), 
-        id='login-toggle', 
-        className='login-signup-toggle'
-    ),
-
     #Submit button
     html.Button('Continue', id='submit-val', className='loginbutton'),
 ]
@@ -64,18 +57,26 @@ resetpage = html.Div(id='layout', className='layout', children=[
     ]
 )
 @dash.callback(
-    Output('hidden-reset-div', 'children'),
+    Output('hidden-update-div', 'children'),
     Input('submit-val', 'n_clicks'),
-    State('user', 'value'),
+    State('pass', 'value'),
+    State('conf_pass', 'value'),
+    State("session-userid", "data"),
     prevent_initial_call=True
 )
-def requestReset(_, username):
-    response = util.sendRequest(parameters=["send_reset_email", username])
+def requestReset(_, password, confirm_password, userid):
+    # Make sure both passwords match
+    if password != confirm_password:
+        return html.Div("Both fields must match to update your password.")
 
-    if response.get("returnCode") == -3:
-        return html.Div("Email failed to send. Please try again in a few minutes.")
+    # Attempt to reset the password
+    response = util.sendRequest(parameters=["reset_password", userid, password])
+
+    # If the request was successful
+    if response.get("returnCode") > 0:
+        return html.Div("Password successfully updated")
     else:
-        return html.Div("If there is an account associated with this username an email will be sent with instructons on how to reset the password.")
+        return html.Div("Password failed to update. Try again in a couple of minutes.")
 
 def layout():
     return resetpage

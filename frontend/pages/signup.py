@@ -80,6 +80,7 @@ def register(_, username, email, password):
         return html.Div('Password is empty, try again')
 
     add_response = util.sendRequest(parameters=["create_user", username, email, password])
+
     # Return the response in HTML
     if add_response.get("returnCode") == 1:
         dcc.Store(id='stored-userid', 
@@ -91,7 +92,6 @@ def register(_, username, email, password):
                          style={'color': 'red'})
     else:
         return html.Div('Unhandled error', style={'color': 'red'})
-    # return html.Div(add_response.get("returnCode"));
 
 def layout():
     return signuppage
