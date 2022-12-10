@@ -25,10 +25,10 @@ resetform = [
 
     #Actual form area
     html.Div('Password', className='label'),
-    dcc.Input('', className='input', id='pass'),
+    dcc.Input('', className='input', id='pass', type='password'),
 
     html.Div('Password', className='label'),
-    dcc.Input('', className='input', id='conf_pass'),
+    dcc.Input('', className='input', id='conf_pass', type='password'),
 
     #Empty Div for logic reasons
     html.Div(id='hidden-update-div', style={

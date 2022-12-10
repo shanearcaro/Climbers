@@ -48,7 +48,7 @@ class Post
         try {
             $this->mail->addAddress($emailAddress, $username);
             $this->mail->Subject = 'Password Reset';
-            $this->mail->Body = $this->generateResetPasswordEmail($hash);
+            $this->mail->Body = $this->generateResetPasswordEmail($username, $hash);
             $this->mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
 
             $this->mail->send();
@@ -61,24 +61,11 @@ class Post
         return true;
     }
 
-    private function generateResetPasswordEmail(string $hash): string
+    private function generateResetPasswordEmail(string $username, string $hash): string
     {
-
-        // For testing
-        return '
-            <h1 style="color=red">Your temporary password is </h1><p>' . $hash . '</p>' .
-            '<p>Please use this password to log in where you will be prompted
-            to reset your password.</p>'
-            ;
-
-        // return "
-        //     <html>
-        //     <head><title>Title</title></head>
-        //     <body>
-        //         <a href='localhost:8050/" . uniqid() . "'>Google</a>
-        //     </body>
-        //     </html>
-        // ";
+        return '<h2 style="fontFamily: courier new;">Hello ' . $username . ',</h2>' .
+        '<h3>Your temporary password is: <span style="color: red;">' . $hash . '</span></h3>' .
+        '<h4>Please use this temporary password to log into your account. From there you will be prompted to update your password.</h4>';
     }
 }
 
