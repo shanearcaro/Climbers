@@ -85,7 +85,7 @@ class Database
     }
 
     /**
-     * Fetch the timestamp from a user
+     * Fetch the timestamp from a userimage.png
      * @param int $userid the id of the user to be searched
      * @return array|bool
      * Returns the **timestamp** of a user, **false** if the user doesn't exist
@@ -280,7 +280,7 @@ class Database
         $query->execute([$username]);
         
         // Get query results as associative array
-        $row = $query->fetch(PDO::FETCH_ASSOC);
+        $row = $query->fetch();
 
         // If username not found return false
         if ($query->rowCount() == 0)
@@ -309,7 +309,7 @@ class Database
         $query->execute([$username]);
         
         // Get query results as associative array
-        $row = $query->fetch(PDO::FETCH_ASSOC);
+        $row = $query->fetch();
 
         // If username not found return false
         if ($query->rowCount() == 0)
