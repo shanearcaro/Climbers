@@ -24,6 +24,7 @@ sudo ufw deny http
 sudo ufw allow https
 sudo ufw allow 443
 
+sudo ufw allow 465
 sudo ufw allow 5762
 
 sudo ufw allow 7
