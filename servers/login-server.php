@@ -140,8 +140,18 @@ function sendResetEmail($data): array
 		);
 	}
 
-	// Get the user id of the user
+	// Get the user id of the user assuming a username is given
 	$userid = $db->getUserId($data[0]);
+
+	/**
+	 * Code below works and allows a user to reset their password using their email address instead
+	 * of their username. As of now we are not planning on allowing people to log in with their email
+	 * address instead of their username, so if you forgot your username and are trying to reset your
+	 * password with your email address you still would be unable to sign in.
+	 */
+	// // If username not found, attempt to get id from email instead
+	// if (!$userid)
+	// 	$userid = $db->getUserIdFromEmail($data[0]);
 
 	// If the user doesn't exist
 	if (!$userid) {
