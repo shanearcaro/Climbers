@@ -16,20 +16,11 @@ app.layout = html.Div(children=[
     ]
 )
 
-# This was provided by the Dash documentation
-#
-# @callback(Output('page-content', 'children'),
-#               Input('url', 'pathname'))
-# def display_page(pathname):
-#     if pathname == '/login':
-#         return login.layout
-#     elif pathname == '/signup':
-#         return signup.layout
-#     else:
-#         return '404'
+# Self signed certs
+context = ("../certificate/cert.pem", "../certificate/key.pem")
 
 if __name__ == "__main__":
-    app.run_server()
+    app.run(debug=True, ssl_context=context)
 
 
 # Initial app layout

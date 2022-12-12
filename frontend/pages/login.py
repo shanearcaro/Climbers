@@ -12,7 +12,7 @@ import util
 dash.register_page(
     __name__,
     title='Login',
-    path='/login'
+    path= '/'
 )
 
 # Layout: Login Form
