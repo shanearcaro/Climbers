@@ -37,7 +37,7 @@ resetform = [
     html.Div(
         dcc.Link(
             "Back to Login", 
-            href='/login'
+            href='/'
         ), 
         id='signin-toggle', 
         className='login-signup-toggle'

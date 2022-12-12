@@ -35,7 +35,7 @@ signupform = [
     html.Div(
         dcc.Link(
             "Already have an account?", 
-            href='/login'
+            href='/'
         ), 
         id='signin-toggle', 
         className='login-signup-toggle'
@@ -86,7 +86,7 @@ def register(_, username, email, password):
         dcc.Store(id='stored-userid', 
                 data=add_response.get("userid"), 
                 storage_type='session')
-        return dcc.Location(pathname='/login', id='redirect')
+        return dcc.Location(pathname='/', id='redirect')
     elif add_response.get("returnCode") == -1:
         return html.Div('Username or email is already in use. Please try again.',
                          style={'color': 'red'})
