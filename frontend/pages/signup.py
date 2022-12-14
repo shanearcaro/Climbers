@@ -21,6 +21,8 @@ signupform = [
     html.Img(src=util.format_img('logo.png'), 
             style={'margin': '30px auto', 'display': 'block'}),
 
+    html.H1("Sign Up", className='page-title'),
+
     #Actual form area
     html.Div('Username', className='label'),
     dcc.Input('', className='input', id='user'),
@@ -77,20 +79,16 @@ def register(_, username, email, password):
     elif password == '':
         return html.Div('Password is empty, try again')
 
-    add_response = None
-    try:
-        add_response = util.signupRequest(username, email, password)
-    except:
-        return html.Div('An error occurred while running the useradd script')
-   
+    add_response = util.sendRequest(parameters=["create_user", username, email, password])
+
     # Return the response in HTML
-    if add_response.get("returnCode") == "1":
+    if add_response.get("returnCode") == 1:
         dcc.Store(id='stored-userid', 
                 data=add_response.get("userid"), 
                 storage_type='session')
-        return dcc.Location(pathname='/logSucc', id='redirect')
-    if add_response.get("returnCode") == "2":
-        return html.Div('Invalid login, try again',
+        return dcc.Location(pathname='/login', id='redirect')
+    elif add_response.get("returnCode") == -1:
+        return html.Div('Username or email is already in use. Please try again.',
                          style={'color': 'red'})
     else:
         return html.Div('Unhandled error', style={'color': 'red'})
