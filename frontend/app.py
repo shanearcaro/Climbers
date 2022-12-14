@@ -11,8 +11,8 @@ app = Dash(__name__,
 )
 
 app.layout = html.Div(children=[
-    dash.page_container, 
-    dcc.Store(id='session-userid', storage_type='session')
+        dash.page_container, 
+        dcc.Store(id='session-userid', storage_type='session')
     ]
 )
 
