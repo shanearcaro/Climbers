@@ -10,15 +10,20 @@ import requests as r
 import datetime as dt
 from datetime import date
 import dash
-from dash import Input, Output, State, callback, dcc, html, no_update
-#from dash_extensions.enrich import MultiplexerTransform 
+from dash import Dash, html, dcc, callback, Input, Output, State, no_update
+import pandas as pd
+import plotly.figure_factory as ff
+import plotly.express as px
+import plotly.graph_objects as go
+import requests as r
+import json
+import datetime as dt
+from datetime import date
 
 #Relative path import for util.py
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 import util
 
-# Didn't want to use this but I just need to get this done now
-# global_chats = []
 
 dash.register_page(
     __name__, 
@@ -82,40 +87,40 @@ success = html.Div([
       id='list-type', 
       style={
         'height':'50vh',
-        'max-height':'60%',
+        'maxHeight':'60%',
         'width':'100%',
         'border':'1px solid black',
     }),
     html.Div([
       html.Div('Blocked List', 
         style={
-          'background-color':'#2f4f04',
+          'backgroundColor':'#2f4f04',
           'height':'10%',
           'color':'white'
       }),
       html.Div(create_people_div_list(blocked_list),
         id='blocked-list',
         style={
-          'overflow-y':'scroll',
+          'overflowY':'scroll',
           'width':'100%',
           'height':'90%',
-          'max-height':'90%'
+          'maxHeight':'90%'
         }
       )
     ], 
       style={
-        'margin-top':'20px',
+        'marginTop':'20px',
         'height':'30vh',
-        'max-height':'30%',
+        'maxHeight':'30%',
         'width':'100%',
         'border':'1px solid black',
     }),
   ], style={
     'margin':'auto',
-    'max-width':'90%',
-    'min-width':'90%',
-    'max-height':'90%',
-    'min-height':'90%',
+    'maxWidth':'90%',
+    'minWidth':'90%',
+    'maxHeight':'90%',
+    'minHeight':'90%',
   }),
   html.Div([
       html.Div([
@@ -123,11 +128,11 @@ success = html.Div([
       ], id='recipient', style={
         'height':'10%',
         'width':'100%',
-        'border-bottom':'1px solid black',
-        'background-color':'#2f4f04',
+        'borderBottom':'1px solid black',
+        'backgroundColor':'#2f4f04',
         'color':'white',
-        'font-weight':'bold',
-        'font-size':'30px',
+        'fontWeight':'bold',
+        'fontSize':'30px',
       }),
       html.Div([
         html.Div([
@@ -135,13 +140,13 @@ success = html.Div([
         ], id='messages',
                  style={
                    'overflow':'auto',
-                   'max-height':'80%'
+                   'maxHeight':'80%'
                  })
       ], id='conversation',
           style={
         'width':'100%',
         'height':'80%',
-        'border-bottom':'1px solid black',
+        'borderBottom':'1px solid black',
       }),
       html.Div([
         dcc.Input(
@@ -149,20 +154,20 @@ success = html.Div([
           style={
           'height':'50%',
           'width':'80%',
-          'margin-left': '10px'
+          'marginLeft': '10px'
         }),
         html.Button(['Send'], 
           id='send_message_btn', 
           style={
           'height':'50%',
           'width':'10%',
-          'margin-left':'5px'
+          'marginLeft':'5px'
         })
       ], style={
         'width':'100%',
         'height':'10%',
         'display':'flex',
-        'align-items':'center'
+        'alignItems':'center'
       })
     ], style={
         'margin':'auto',
@@ -172,7 +177,7 @@ success = html.Div([
     }),
 ], style={
   'display':'grid',
-  'grid-template-columns':'1fr 1fr',
+  'gridTemplateColumns':'1fr 1fr',
   'width':'95%',
   'height':'95vh',
   'margin':'auto'
