@@ -21,6 +21,9 @@ loginform = [
     html.Img(src=util.format_img('logo.png'), 
             style={'margin': '30px auto', 'display': 'block'}),
 
+    # Page header
+    html.H1("Login", className='page-title'),
+
     #Actual form area
     html.Div('Username', className='label', id='username-label'),
     dcc.Input('', className='input', id='user'),
@@ -42,6 +45,15 @@ loginform = [
         className='login-signup-toggle'
     ),
 
+    # Button to toggle between login and forgot password
+    html.Div(
+        dcc.Link(
+            "Forgot Password?", 
+            href='/reset'
+        ), 
+        id='password-toggle', 
+        className='login-signup-toggle'
+    ),
     #Submit button
     html.Button('Continue', id='submit-val', className='loginbutton'),
 ]
@@ -61,8 +73,8 @@ spinner = html.Div([html.Div(), html.Div(), html.Div(), html.Div()],
 #(copilot wrote the spaghetti part lmao) 
 
 @dash.callback(
-    [Output('hidden-login-div', 'children'), 
-    Output('session-userid', 'data'),],
+    Output('hidden-login-div', 'children'),
+    Output('session-userid', 'data'),
     Input('submit-val', 'n_clicks'),
     Input('user', 'n_submit'),
     Input('pw', 'n_submit'),
@@ -72,7 +84,6 @@ spinner = html.Div([html.Div(), html.Div(), html.Div(), html.Div()],
 )
 def authenticate(_, _user, _pw, username, password):
     # Guard against empty inputs
-
     if username == '' and password == '':
         return html.Div('Enter a username and password'), -1
     elif username == '':
@@ -80,31 +91,28 @@ def authenticate(_, _user, _pw, username, password):
     elif password == '':
         return html.Div('Password is empty, try again'), -1
 
-    return dcc.Location(pathname='/social', id='redirect'), -1
-
-# Uncomment after fixing loginRequest
-    # auth_response = None
-    # try:
-    #     auth_response = util.loginRequest(username, password)
-    # except:
-    #     print('hi')
-    #     return html.Div('An error occurred while running the login script'), -1
+    # Attempt to authenticate a user
+    auth_response = util.sendRequest(parameters=["authenticate_user", username, password])
     
-    # # Prints for debugging
-    # print('1')
-    # # Return the response in HTML
-    # if auth_response.get("returnCode") == "1":
-    #     print('2')
-    #     dcc.Store(id='stored-userid', 
-    #             data=auth_response.get("userid"), 
-    #             storage_type='session')
-    #     return dcc.Location(pathname='/social', id='redirect'), -1
-    # if auth_response.get("returnCode") == "2":
-    #     print('3')
-    #     return html.Div('Invalid login, try again',
-    #                      style={'color': 'red'})
-    # else:
-    #     return html.Div('Unhandled error', style={'color': 'red'}), -1
+    # Get the returnCode of the authentication attempt
+    returnCode = auth_response.get("returnCode")
+
+    # Return the response in HTML
+    if returnCode > 0:
+        userid = auth_response.get("userid")
+        # User logged in with actual password
+        if returnCode == 2:
+            return dcc.Location(pathname='/social', id='redirect'), userid
+        # User logged in with temp password
+        else:
+            return dcc.Location(pathname='/update-password', id='redirect'), userid
+    # Temp password expired
+    elif returnCode == -3:
+        return html.Div('Temporary password expired. Please reset password again.',
+                         style={'color': 'red'}), -1
+    else:
+        return html.Div('Invalid login, try again',
+                         style={'color': 'red'}), -1
 
 def layout():
     return loginpage
