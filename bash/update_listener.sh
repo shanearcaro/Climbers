@@ -19,7 +19,7 @@ do
     rm *.tar.gz
 
     # Run the restart_service.sh script
-    ./restart_service.sh
+    ./it490/bash/restart_service.sh
   fi
 
   # Sleep for 10 seconds before checking for the tar file again
