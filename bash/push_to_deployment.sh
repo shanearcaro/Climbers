@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Store the current directory in a variable
-app_dir="/path/to/it490"
+app_dir="/home/chris/it490"
 
 remoteip="192.168.191.60"
 
@@ -10,7 +10,7 @@ remoteip="192.168.191.60"
 read -p "Enter the desired version number: " version
 read -p "Enter the desired cluster name: " cluster
 read -p "Enter the sftp username: " sftp_user
-read -s -p "Enter the sftp password: " sftp_password
+#read -s -p "Enter the sftp password: " sftp_password
 
 # Create the tarball filename using the inputted version number and cluster name
 tarball_name="$cluster-$version.tar.gz"
@@ -19,20 +19,25 @@ tarball_name="$cluster-$version.tar.gz"
 tar -czvf "$tarball_name" "$app_dir"
 
 # Transfer the tarball to the remote server using scp
-scp "$tarball_name" "$sftp_user:$sftp_password@$remoteip:~/Deployment/"
+scp "$tarball_name" "$sftp_user@$remoteip:~/Deployment/"
 
 # Disconnect from the remote server
 exit
 
-# # Connect to the remote IP using sftp and the provided username and password
-# sftp "$sftp_user:$sftp_password@$remoteip" << EOF
+#echo "connecting to $remoteip..."
+#sftp "$sftp_user@$remoteip"  << EOF
+#put $tarball_name
+#EOF
 
-# # Navigate to the desired directory on the remote server
-# cd ~/Deployment/
+# Connect to the remote IP using sftp and the provided username and password
+#sftp "$sftp_user:$sftp_password@$remoteip" << EOF
 
-# # Transfer the tarball to the remote server
-# put "$tarball_name"
+# Navigate to the desired directory on the remote server
+#cd ~/Deployment/
 
-# # Disconnect from the remote server
-# exit
-EOF
+# Transfer the tarball to the remote server
+#put "$tarball_name"
+
+# Disconnect from the remote server
+#exit
+#EOF
