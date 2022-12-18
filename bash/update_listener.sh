@@ -13,7 +13,7 @@ do
   if ls *.tar.gz &> /dev/null
   then
     # Extract the tar file to the specified directory
-    tar -xzf *.tar.gz -C "$EXTRACT_DIRECTORY_NAME"
+    tar -xf *.tar.gz -C "$EXTRACT_DIRECTORY_NAME"
 
     # Delete the tar file
     rm *.tar.gz
