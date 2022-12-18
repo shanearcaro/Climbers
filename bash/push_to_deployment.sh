@@ -18,14 +18,21 @@ tarball_name="$cluster-$version.tar.gz"
 # Tar the current directory using the generated filename
 tar -czvf "$tarball_name" "$app_dir"
 
-# Connect to the remote IP using sftp and the provided username and password
-echo "open sftp://$sftp_user:$sftp_password@$remoteip" | sftp
-
-# Navigate to the desired directory on the remote server
-cd ~/Deployment/
-
-# Transfer the tarball to the remote server
-put "$tarball_name"
+# Transfer the tarball to the remote server using scp
+scp "$tarball_name" "$sftp_user:$sftp_password@$remoteip:~/Deployment/"
 
 # Disconnect from the remote server
 exit
+
+# # Connect to the remote IP using sftp and the provided username and password
+# sftp "$sftp_user:$sftp_password@$remoteip" << EOF
+
+# # Navigate to the desired directory on the remote server
+# cd ~/Deployment/
+
+# # Transfer the tarball to the remote server
+# put "$tarball_name"
+
+# # Disconnect from the remote server
+# exit
+EOF
