@@ -30,12 +30,13 @@ esac
 # Set the name of the file to be uploaded
 FILE_NAME="$2"
 
+#Every one of the machines has chris as the user name
+user="chris"
+
 # Use SFTP to upload the file to the IP addresses in the IP_ADDRESSES array
 for IP in "${IP_ADDRESSES[@]}"; do
   echo "$MESSAGE $IP..."
-  sftp user@$IP << EOF
-  put $FILE_NAME
-  EOF
+  scp "$FILE_NAME" "$user@$IP:~/"
 done
 
 echo "File successfully uploaded to all machines in $1."
