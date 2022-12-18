@@ -1,0 +1,9 @@
+[Unit]
+Description=Frontend Service for IT490 Project
+
+[Service]
+Type=simple
+ExecStart=<path to the start frontend script>
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,9 @@
+[Unit]
+Description=Backend Service for IT490 Project
+
+[Service]
+Type=simple
+ExecStart=<Path to the start backend service script>
+
+[Install]
+WantedBy=multi-user.target
