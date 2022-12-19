@@ -20,7 +20,7 @@ app.layout = html.Div(children=[
 context = ("../certificate/cert.pem", "../certificate/key.pem")
 
 if __name__ == "__main__":
-    app.run(debug=True, ssl_context=context)
+    app.run(debug=False, ssl_context=context)
 
 
 # Initial app layout

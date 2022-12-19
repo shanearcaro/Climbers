@@ -106,8 +106,8 @@ def authenticate(_, _user, _pw, username, password):
             return dcc.Location(pathname='/social', id='redirect'), userid
         # User logged in with temp password
         else:
-            return html.Div(returnCode), -1
-            # return dcc.Location(pathname='/update-password', id='redirect'), userid
+            # return html.Div(returnCode), -1
+            return dcc.Location(pathname='/update-password', id='redirect'), userid
     # Temp password expired
     elif returnCode == -3:
         return html.Div('Temporary password expired. Please reset password again.',
