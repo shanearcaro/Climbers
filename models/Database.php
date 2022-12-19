@@ -54,11 +54,11 @@ class Database
         $hash = password_hash($password, PASSWORD_DEFAULT, $options);
 
         $query = $this->db->prepare(
-            "INSERT INTO Users (userid, username, email, `hash`, temp, `timestamp`)
-            VALUES (?, ?, ?, ?, ?, ?)
+            "INSERT INTO Users (userid, username, email, `hash`, temp)
+            VALUES (?, ?, ?, ?, ?)
         ");
         try {
-            $query->execute([null, $username, $email, $hash, $hash, null]);
+            $query->execute([NULL, $username, $email, $hash, $hash]);
         } catch (PDOException $e) {
             return false;
         }
@@ -192,7 +192,7 @@ class Database
             SET hash = ?, temp = ?
             WHERE userid = ?
         ");
-        return $query->execute([$hash, $hash, $userid]);
+        return $query->execute([$hash, NULL, $userid]);
     }
 
     /**
@@ -240,7 +240,7 @@ class Database
             SET temp = ?
             WHERE userid = ?
         ");
-        return $query->execute([null, $userid]);
+        return $query->execute([NULL, $userid]);
     }
 
     /**
