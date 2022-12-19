@@ -22,7 +22,7 @@ register_page(
 )
 
 ## This is where we call to the DMZ for data
-lowest_areas_formatted = getLowestAreas()
+# lowest_areas_formatted = getLowestAreas()
       
 hours = [(dt.time(i).strftime('%I %p')) for i in range(24)]     
 # Get pandas dataframe for figure
