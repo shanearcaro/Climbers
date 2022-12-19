@@ -24,7 +24,7 @@ class Post
             $this->mail->Host = 'smtp.gmail.com';
             $this->mail->SMTPAuth = true;
             $this->mail->Username = "rockclimbingit490@gmail.com";
-            $this->mail->Password = "***REMOVED***";
+            $this->mail->Password = "qvcwclmfykpmwdvg";
             $this->mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
             $this->mail->Port = 465;
             $this->mail->setFrom('rockclimbingit490@gmail.com', 'Rock Climbing');
