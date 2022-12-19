@@ -3,9 +3,6 @@
 # Set the name of the directory to extract the tar file to
 EXTRACT_DIRECTORY_NAME="it490"
 
-#Move outside of the it490 project directory
-cd ../../
-
 # Run the loop indefinitely
 while true
 do
