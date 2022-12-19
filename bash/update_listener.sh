@@ -21,7 +21,7 @@ do
     cd ../../
 
     # Extract the tar file to the specified directory
-    tar -xf *.tar.gz -C "$EXTRACT_DIRECTORY_NAME"
+    tar -xf --delete *.tar.gz -C "$EXTRACT_DIRECTORY_NAME"
 
     # Delete the tar file
     rm *.tar.gz
