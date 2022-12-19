@@ -33,7 +33,7 @@ FILE_NAME="$2"
 # Use SFTP to upload the file to the IP addresses in the IP_ADDRESSES array
 for IP in "${IP_ADDRESSES[@]}"; do
   echo "$MESSAGE $IP..."
-  scp "$FILE_NAME" "chris@$IP:~"
+  scp "$FILE_NAME" "chris@$IP"
 done
 
 echo "File successfully uploaded to all machines in $1."
