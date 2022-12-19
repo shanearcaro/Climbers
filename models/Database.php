@@ -58,7 +58,7 @@ class Database
             VALUES (?, ?, ?, ?, ?)
         ");
         try {
-            $query->execute([NULL, $username, $email, $hash, $hash]);
+            $query->execute([NULL, $username, $email, $hash, NULL]);
         } catch (PDOException $e) {
             return false;
         }

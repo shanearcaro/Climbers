@@ -3,7 +3,7 @@ CREATE TABLE Users (
     username varchar(50) NOT NULL UNIQUE,
     email varchar(50) NOT NULL,
     hash varchar(100) NOT NULL,
-    temp varchar(100),
+    temp varchar(100) DEFAULT NULL
     timestamp DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY(userid)
 );

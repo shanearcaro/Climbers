@@ -12,7 +12,7 @@ import util
 dash.register_page(
     __name__,
     title='Login',
-    path='/login'
+    path= '/'
 )
 
 # Layout: Login Form
@@ -32,7 +32,7 @@ loginform = [
     #Empty Div for logic reasons
     html.Div(id='hidden-login-div', style={
         'color':'red',
-        'padding-bottom':'10px'
+        'paddingBottom':'10px'
     }),
 
     #Button to toggle between login and signup
@@ -96,6 +96,7 @@ def authenticate(_, _user, _pw, username, password):
     
     # Get the returnCode of the authentication attempt
     returnCode = auth_response.get("returnCode")
+    # return html.Div(returnCode)
 
     # Return the response in HTML
     if returnCode > 0:
@@ -105,7 +106,8 @@ def authenticate(_, _user, _pw, username, password):
             return dcc.Location(pathname='/social', id='redirect'), userid
         # User logged in with temp password
         else:
-            return dcc.Location(pathname='/update-password', id='redirect'), userid
+            return html.Div(returnCode), -1
+            # return dcc.Location(pathname='/update-password', id='redirect'), userid
     # Temp password expired
     elif returnCode == -3:
         return html.Div('Temporary password expired. Please reset password again.',
