@@ -30,7 +30,7 @@ do
     cd it490/bash/
 
     # Run the restart_service.sh script
-    ./restart_service.sh
+    ./start_service.sh
 
     cd ../../
   fi
