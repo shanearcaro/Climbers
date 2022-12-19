@@ -7,7 +7,7 @@ EXTRACT_DIRECTORY_NAME="it490"
 while true
 do
   # Check if a tar.gz file exists in the current directory
-  if ls *.tar.gz &> /dev/null
+  if [-f "*.tar.gz"]
   then
     # Move into the bash project directory
     cd it490/bash/

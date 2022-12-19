@@ -1,9 +1,12 @@
 #!/bin/bash
 
 # Store the current directory in a variable
-app_dir="/home/chris/it490"
+# app_dir="/home/chris/it490"
 
+# IP of Deployment Server
 remoteip="192.168.191.60"
+
+cd ../../
 
 # Prompt the user for the desired version number and cluster name, 
 # as well as the username and password for the sftp command
@@ -16,7 +19,7 @@ read -p "Enter the sftp username: " sftp_user
 tarball_name="$cluster-$version.tar.gz"
 
 # Tar the current directory using the generated filename
-tar -czvf "$tarball_name" "$app_dir"
+tar -czvf "$tarball_name" "it490/"
 
 # Transfer the tarball to the remote server using scp
 scp "$tarball_name" "$sftp_user@$remoteip:~/Deployment/"
